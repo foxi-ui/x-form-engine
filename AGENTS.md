@@ -6,7 +6,7 @@ Guidance for coding agents working in this repository.
 
 ## Repository state
 
-This repo is currently **design-documentation only** — there is no source code, `package.json`, or build tooling yet. The docs describe a planned enterprise Form Engine (React + TypeScript + Formily 2.x + Designable 2.x, pnpm monorepo). Do not assume any build, lint, or test command exists; none are configured. When implementation begins, the planned test stack is Vitest / Testing Library / Playwright (see `docs/tech-design/02-specs/10-testing-and-roadmap.md`).
+This repo is an implemented pnpm monorepo (React + TypeScript + Formily 2.3). The M1 scope is complete: the engine kernel, PC renderer, and base components are implemented across six workspace packages (`types`, `core`, `formily`, `renderer`, `components`, `sdk`) plus the `apps/playground` demo app. Use `pnpm test:run` for the full Vitest suite, `pnpm -r typecheck` for all packages, and `pnpm --filter playground dev|build` for the demo app. Readonly/mobile renderers, the designer adapter, real Snapshot generation, and asynchronous plugins remain in M2/M3.
 
 Documentation is written in Simplified Chinese with Mermaid diagrams; match that style when editing or adding docs.
 
@@ -38,7 +38,7 @@ Planned pnpm workspace, split by responsibility:
 | `packages/sdk` | Public consumer entry (`createFormEngine`, `FormEngineProvider`, `FormRenderer`, `ReadonlyRenderer`, `Designer`) |
 | `apps/` | playground, designer-demo, renderer-demo |
 
-Dependency direction is one-way and must be preserved: `types` depends on nothing; `core/registry` does not depend on React; `renderer/core` does not depend on Ant Design; `designer` never depends on Renderer; `formily/adapter` does not depend on Designable. Business projects should depend only on the SDK, not internal packages.
+Dependency direction is one-way and must be preserved: `types` depends on nothing; `core/registry` does not depend on React; `renderer/core` does not depend on Ant Design; `designer` never depends on Renderer; `formily/adapter` does not depend on Designable. Business projects depend on the two public packages `@x-form-engine/sdk` and `@x-form-engine/components`, and must not depend on internal implementation packages such as `core`, `renderer`, or `formily`.
 
 Three data classes are deliberately kept separate — do not collapse them:
 
