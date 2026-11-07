@@ -1,4 +1,3 @@
-import { FormEngineError } from '@x-form-engine/types';
 import type {
   EngineRegistry,
   EngineServices,
@@ -9,6 +8,9 @@ import type {
   FormEnginePlugin,
 } from '@x-form-engine/types';
 import { createEventBus } from './events/event-bus';
+import { resolvePluginOrder } from './plugin/dependency-resolver';
+import { createPluginManager } from './plugin/plugin-manager';
+import type { PluginManager } from './plugin/plugin-manager';
 import { createEngineRegistry } from './registry/engine-registry';
 
 /**
@@ -27,6 +29,8 @@ class Engine implements FormEngine {
   readonly services: EngineServices;
   status: EngineStatus;
 
+  private readonly pluginManager: PluginManager = createPluginManager(this);
+
   constructor(options: FormEngineOptions = {}) {
     this.id = options.id ?? 'form-engine';
     this.options = options;
@@ -43,15 +47,19 @@ class Engine implements FormEngine {
       );
     }
 
+    this.status = 'initializing';
+
+    const ordered = resolvePluginOrder(options.plugins ?? []);
+    for (const plugin of ordered) {
+      this.pluginManager.install(plugin);
+    }
+
     this.status = 'ready';
     this.events.emit('engine:init', undefined);
   }
 
-  installPlugin(_plugin: FormEnginePlugin): void {
-    throw new FormEngineError(
-      'PLUGIN_DEPENDENCY_MISSING',
-      'installPlugin 在 Task 4 实现'
-    );
+  installPlugin(plugin: FormEnginePlugin): void {
+    this.pluginManager.install(plugin);
   }
 
   dispose(): void {
@@ -59,6 +67,7 @@ class Engine implements FormEngine {
       return;
     }
 
+    this.pluginManager.disposeAll();
     this.events.emit('engine:dispose', undefined);
     this.status = 'disposed';
   }
