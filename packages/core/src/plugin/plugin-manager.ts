@@ -89,10 +89,21 @@ export function createPluginManager(engine: FormEngine): PluginManager {
           continue;
         }
 
+        // 先置为非活跃，保证重复 disposeAll 幂等；即使 dispose 抛错，
+        // finally 仍会释放该插件资源，后续插件也会继续卸载。
         record.active = false;
-        record.plugin.dispose?.(record.context);
-        releaseAll(engine, record.plugin.name);
-        engine.events.emit('plugin:dispose', { plugin: record.plugin.name });
+
+        try {
+          record.plugin.dispose?.(record.context);
+        } catch (error) {
+          engine.events.emit('plugin:failed', {
+            plugin: record.plugin.name,
+            error,
+          });
+        } finally {
+          releaseAll(engine, record.plugin.name);
+          engine.events.emit('plugin:dispose', { plugin: record.plugin.name });
+        }
       }
     },
 
