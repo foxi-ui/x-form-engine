@@ -1,0 +1,71 @@
+# AGENTS.md
+
+Guidance for coding agents working in this repository.
+
+> This is the canonical instruction file for all coding agents. `CLAUDE.md` imports this file, so edits here take effect for both — do not duplicate instructions into `CLAUDE.md`.
+
+## Repository state
+
+This repo is currently **design-documentation only** — there is no source code, `package.json`, or build tooling yet. The docs describe a planned enterprise Form Engine (React + TypeScript + Formily 2.x + Designable 2.x, pnpm monorepo). Do not assume any build, lint, or test command exists; none are configured. When implementation begins, the planned test stack is Vitest / Testing Library / Playwright (see `docs/tech-design/02-specs/10-testing-and-roadmap.md`).
+
+Documentation is written in Simplified Chinese with Mermaid diagrams; match that style when editing or adding docs.
+
+## Documentation map
+
+- `docs/tech-design/form-engine-architecture-design.md` — architecture baseline covering goals, layers, monorepo layout, domain models, compiler, all adapters, SDK, error handling, and milestones.
+- `docs/tech-design/02-specs/README.md` — spec index and recommended review/implementation order.
+- `01-types.md` … `10-testing-and-roadmap.md` — topic specs (types, component spec, registry/plugin, Formily adapter, renderer/SDK, runtime context, designer adapter, readonly renderer, value/snapshot, testing/roadmap).
+
+Recommended order: freeze `01` + `02` (public contracts) → implement `03` + `04` (registry/plugin + Formily adapter kernel) → parallelize `05`–`07` → review `08`/`09` against real business components and backend storage.
+
+Specs are **proposed contracts, not verified implementations**. Never present them as Formily/Designable native APIs; the docs repeatedly require validating exports, types, and runtime behavior against the pinned dependency versions before relying on them.
+
+## Architecture at a glance
+
+Planned pnpm workspace, split by responsibility:
+
+| Package | Responsibility |
+|---|---|
+| `packages/types` | Pure protocol types, domain models, error codes |
+| `packages/core` | Registry, Plugin, Context, Scope, Events, Runtime |
+| `packages/schema` | `x-engine` compiler, validation, migration |
+| `packages/formily` | Formily adapter, built-in effects, hooks |
+| `packages/renderer` | UI-agnostic render core, React entry, PC/Mobile/Readonly |
+| `packages/designer` | Designable adapter, materials, setters |
+| `packages/adapters` | Value, snapshot, datasource adapters |
+| `packages/components` | Shared definitions + platform implementations |
+| `packages/services` | Datasource, permission, i18n, snapshot |
+| `packages/sdk` | Public consumer entry (`createFormEngine`, `FormEngineProvider`, `FormRenderer`, `ReadonlyRenderer`, `Designer`) |
+| `apps/` | playground, designer-demo, renderer-demo |
+
+Dependency direction is one-way and must be preserved: `types` depends on nothing; `core/registry` does not depend on React; `renderer/core` does not depend on Ant Design; `designer` never depends on Renderer; `formily/adapter` does not depend on Designable. Business projects should depend only on the SDK, not internal packages.
+
+Three data classes are deliberately kept separate — do not collapse them:
+
+- **Schema** — form structure/configuration (versioned, persisted).
+- **Value** — stable business values (e.g. user IDs, not display names).
+- **Snapshot** — frozen display information captured at submission for faithful history rendering.
+
+Component identity is unified: one `FormComponentDefinition` drives designer material, PC/mobile editing, and readonly rendering; implementations map per platform and adapters handle value normalization/serialization/snapshot creation/restoration. Snapshot generation happens in `submit()`, which validates and returns `{ values, snapshot }` but never performs business HTTP itself.
+
+## Non-negotiable design constraints
+
+These recur across the specs and are the easiest things to violate during implementation:
+
+1. **Do not reimplement Formily.** The engine extends Formily (components, decorators, scope, effects, reactions, validation); it does not replace its field model, reactivity, validation, or effects.
+2. **`x-engine` is the only engine extension namespace.** Preserve unknown Formily native keys; validate or reject unknown `x-engine` extensions by protocol version.
+3. **Registry conflicts are strict.** No implicit last-write-wins. Duplicate names throw `PLUGIN_CONFLICT`; overrides require explicit trusted declaration and recorded provenance. Plugin installs are transactional with rollback, dependency topological ordering, and resource ownership so uninstall removes only the plugin's own registrations.
+4. **Readonly is an independent renderer**, not `disabled={true}`. It creates no Formily Form, runs no editing reactions/effects, and does not hit live datasources by default. Display priority: snapshot `displayValue` → component snapshot metadata → static schema rules → explicitly allowed compatibility lookup → raw value with diagnostics.
+5. **Frontend permissions are UX only.** Backend must independently enforce read/write/validation; schema permission config is not an authorization credential.
+6. **Version axes are distinct**: business `schemaVersion`, `engineSchemaVersion`, `snapshotVersion`, and component version. Migrations must be ordered, non-destructive to original snapshots, and version-detected on read.
+7. **Public API stability**: `types` must stay free of React/Formily/Designable/UI dependencies; `unknown` over `any`; never leak Formily internal types across all public packages.
+8. **`submit()` is transport-free** and `getFormilyForm()` (if exposed at all) is a version-coupled escape hatch, not a normal business API.
+
+## Implementation milestones (from the docs)
+
+- **M0** — pin dependency versions; validate Formily/Designable APIs with minimal demos; freeze types/component/schema-value-snapshot contracts.
+- **M1** — Types, Registry, Plugin, Runtime Context/Scope, Formily Adapter, PC Renderer, base components, minimal SDK.
+- **M2** — Designable adapter + materials/setters, Mobile and Readonly renderers, datasource/value/snapshot adapters, schema/snapshot migration basics.
+- **M3** — Plugin extension spec, permission/i18n services, Devtools/diagnostics, E2E/compat/performance testing, release and version governance.
+
+The architecture doc explicitly warns against building all business components, designer features, and backend snapshot protocols in the first phase; stabilize `types + component definition + registry/plugin + formily adapter` first.
