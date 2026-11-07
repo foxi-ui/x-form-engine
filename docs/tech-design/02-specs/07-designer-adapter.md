@@ -101,13 +101,14 @@ interface FormSchemaDocument {
 
 ## 7. 设计器预览
 
-预览应复用正式 Renderer 和组件 Registry：
+设计器画布与运行时 Renderer 是两条渲染路径，designer 不反向依赖 Renderer 包。预览复用**组件实现**与**Schema 编译产物**，而非复用 Renderer 渲染入口：
 
 - 预览数据与正式 Value 分离。
 - 预览模式不执行真实提交。
 - 外部服务调用可注入 Mock Service。
 - 设计器变更后应能增量刷新预览。
 - Schema 编译错误应定位到节点路径。
+- 通过「画布与运行时渲染一致性」验收用例锁定所见即所得。
 
 ## 8. 版本与迁移
 

@@ -51,7 +51,7 @@ export interface FormEngineOptions {
   platform?: Exclude<Platform, 'readonly'>;
   locale?: string;
   debug?: boolean;
-  components?: FormComponentDefinition[];
+  components?: ComponentBinding[];
   plugins?: FormEnginePlugin[];
   services?: Partial<EngineServices>;
 }
@@ -93,18 +93,17 @@ export interface ComponentSchemaDefinition {
   default?: Record<string, unknown>;
 }
 
-export interface FormComponentDefinition {
+export interface ComponentProtocolDefinition {
   name: ComponentName;
   version: string;
   meta: ComponentMeta;
   capabilities: ComponentCapabilities;
   schema: ComponentSchemaDefinition;
-  implementations: ComponentImplementations;
   adapter?: ComponentAdapter;
 }
 ```
 
-详细组件契约见 `02-component-spec.md`。
+`ComponentProtocolDefinition` 不含 React / Formily / Designable 依赖；React 实现通过组件实现层的 `ComponentBinding`（见 `02-component-spec.md`）绑定，不进入公共类型包。详细组件契约见 `02-component-spec.md`。
 
 ## 7. Schema 与版本
 
@@ -140,16 +139,20 @@ export interface FormSnapshot {
   schemaVersion: number;
   createdAt: string;
   locale?: string;
-  values: Record<string, unknown>;
   fields: Record<string, FieldSnapshot>;
 }
 
 export interface FieldSnapshot {
   path: FieldPath;
   component: ComponentName;
+  componentVersion?: string;
   title?: string;
   value: unknown;
   displayValue?: unknown;
+  options?: Array<{
+    label: string;
+    value: unknown;
+  }>;
   metadata?: Record<string, unknown>;
 }
 ```

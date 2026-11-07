@@ -71,7 +71,6 @@ export interface FormSnapshot {
   schemaVersion: number;
   createdAt: string;
   locale?: string;
-  values: Record<string, unknown>;
   fields: Record<string, FieldSnapshot>;
 }
 
@@ -110,9 +109,6 @@ Snapshot：
   "schemaId": "leave-form",
   "schemaVersion": 3,
   "createdAt": "2026-01-01T08:00:00.000Z",
-  "values": {
-    "applicant": "u_10001"
-  },
   "fields": {
     "applicant": {
       "path": "applicant",

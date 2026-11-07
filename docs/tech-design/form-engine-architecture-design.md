@@ -159,6 +159,7 @@ form-engine/
 - `designer` 可以依赖 `types`、`core` 和 Designable Adapter，但不反向依赖 Renderer。
 - 组件定义包不应把 PC 组件实现作为唯一实现。
 - SDK 是业务项目的主要依赖入口，内部包不建议由业务项目直接引用。
+- PC 组件通过 antd 无关的组件接口层访问 UI 原语，禁止组件实现直接 import antd；借自 `@formily/antd` 的组件单独登记「替换清单」，为后续 antd 5 升级（届时重写设计器）预留替换缝。
 
 ---
 
@@ -188,16 +189,19 @@ export interface ComponentMeta {
   tags?: string[];
 }
 
+// 对齐 JSON Schema（建议 draft-07，可用 ajv 校验）；default 作为引擎显式扩展关键字处理
 export interface ComponentSchemaDefinition {
   type: 'object';
   properties?: Record<string, unknown>;
   default?: Record<string, unknown>;
 }
 
-export interface ComponentImplementations {
-  pc?: React.ComponentType<any>;
-  mobile?: React.ComponentType<any>;
-  readonly?: React.ComponentType<any>;
+export interface AdapterContext {
+  schema: Record<string, unknown>;
+  path: string;
+  locale: string;
+  // 编辑期缓存的展示信息（JSON-safe），供 createSnapshot 读取，避免 submit 期间发起新请求
+  displayState?: Record<string, unknown>;
 }
 
 export interface ComponentAdapter<Value = unknown, Snapshot = unknown> {
@@ -207,50 +211,58 @@ export interface ComponentAdapter<Value = unknown, Snapshot = unknown> {
   restoreSnapshot?(snapshot: Snapshot, context: AdapterContext): Value;
 }
 
-export interface FormComponentDefinition {
+// 纯协议：不含 React / Formily / Designable / UI 依赖，可放在 packages/types
+export interface ComponentProtocolDefinition {
   name: string;
   version: string;
   meta: ComponentMeta;
   capabilities: ComponentCapabilities;
   schema: ComponentSchemaDefinition;
-  implementations: ComponentImplementations;
   adapter?: ComponentAdapter;
+}
+
+// React 实现绑定：放在组件实现层（packages/components 或 core/formily），不进入 types
+export interface ComponentBinding {
+  protocol: ComponentProtocolDefinition;
+  implementations: Partial<Record<Platform, React.ComponentType<unknown>>>;
 }
 ```
 
 ### 4.2 组件定义示例：UserSelect
 
 ```ts
-export const UserSelectDefinition: FormComponentDefinition = {
-  name: 'UserSelect',
-  version: '1.0.0',
-  meta: {
-    title: '人员选择',
-    category: 'organization',
-    description: '从组织架构中选择人员',
-  },
-  capabilities: {
-    editable: true,
-    readonly: true,
-    mobile: true,
-    datasource: true,
-    validation: true,
-    snapshot: true,
-  },
-  schema: {
-    type: 'object',
-    properties: {
-      multiple: { type: 'boolean', default: false },
-      datasource: { type: 'object' },
-      placeholder: { type: 'string' },
+export const UserSelectBinding: ComponentBinding = {
+  protocol: {
+    name: 'UserSelect',
+    version: '1.0.0',
+    meta: {
+      title: '人员选择',
+      category: 'organization',
+      description: '从组织架构中选择人员',
     },
+    capabilities: {
+      editable: true,
+      readonly: true,
+      mobile: true,
+      datasource: true,
+      validation: true,
+      snapshot: true,
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        multiple: { type: 'boolean', default: false },
+        datasource: { type: 'object' },
+        placeholder: { type: 'string' },
+      },
+    },
+    adapter: UserSelectAdapter,
   },
   implementations: {
     pc: UserSelectPC,
     mobile: UserSelectMobile,
     readonly: UserSelectReadonly,
   },
-  adapter: UserSelectAdapter,
 };
 ```
 
@@ -258,11 +270,11 @@ export const UserSelectDefinition: FormComponentDefinition = {
 
 ```ts
 export interface ComponentRegistry {
-  register(definition: FormComponentDefinition): void;
+  register(binding: ComponentBinding): void;
   unregister(name: string): void;
-  get(name: string): FormComponentDefinition | undefined;
+  get(name: string): ComponentBinding | undefined;
   has(name: string): boolean;
-  list(): FormComponentDefinition[];
+  list(): ComponentBinding[];
 }
 ```
 
@@ -272,7 +284,7 @@ export interface ComponentRegistry {
 - 版本是否兼容。
 - Schema 定义是否有效。
 - 声明支持的平台是否提供对应实现。
-- 声明支持快照的组件是否提供快照适配能力。
+- 声明支持快照的组件是否提供快照适配能力，并具备编辑期展示信息缓存能力（供 `createSnapshot` 读取）。
 - 插件依赖是否已满足。
 
 ---
@@ -323,6 +335,29 @@ export interface PluginContext {
 7. 引擎销毁时按逆序执行 `dispose`。
 
 插件不得随意修改其他插件内部状态。跨插件通信应通过公开服务、Registry 或事件完成。
+
+### 5.4 事件系统
+
+类型化 EventBus，事件与错误分开（错误走 `FormEngineError`，事件走 EventBus）：
+
+```ts
+export interface EventBus {
+  on<T>(event: string, handler: (payload: T) => void): () => void;
+  emit<T>(event: string, payload: T): void;
+  once<T>(event: string, handler: (payload: T) => void): () => void;
+}
+```
+
+内置生命周期事件（事件 = 命名空间 + 载荷 + 来源）：
+
+- `engine:init` / `engine:dispose`
+- `plugin:install` / `plugin:dispose` / `plugin:failed`
+- `schema:compile`
+- `renderer:mount` / `renderer:unmount`
+- `submit`
+- `snapshot:create`
+
+事件同步优先，异步订阅用微任务；payload 版本化，监听器返回 unsubscribe 函数。
 
 ---
 
@@ -400,6 +435,23 @@ SchemaCompiler 只处理引擎扩展，不替代 Formily Schema 解析器。
 6. 权限策略计算结果。
 
 权限结果不应简单被普通组件属性覆盖。权限属于安全与业务策略，最终仍需后端校验。
+
+上述优先级按「结构 / 权限 / 组件 props」三类分别收敛，不共用一套覆盖顺序：
+
+- **结构类**（`visible` / `display` / 布局）按平台合并，平台配置覆盖通用配置。
+- **权限类**（`disabled` / `readonly`）取 AND，权限结果只收敛（更严格）不放开。
+- **`x-component-props`** 仅在无冲突时作默认值，不覆盖权限收敛结果。
+- 只读渲染不套编辑态平台配置，也不套权限（见 §9）。
+
+### 6.4 `x-engine` 缺失时的缺省行为
+
+`x-engine` 可选，纯 Formily Schema 可正常编辑渲染。缺失时按以下缺省收敛：
+
+| 维度 | 缺省行为 |
+|---|---|
+| readonly 显示 | 组件声明 readonly 实现 → 用组件默认 display；未声明 → raw value + 诊断 |
+| snapshot | 无 `x-engine.snapshot.strategy` → 该字段不生成快照，历史展示降级 raw value + 诊断；审批/审计字段须显式声明，由提交校验兜底 |
+| permission | 无 `x-engine.permission` → 默认全允许（前端不收敛），后端兜底 |
 
 ---
 
@@ -500,19 +552,19 @@ export interface FormRendererInstance {
   validate(): Promise<void>;
   reset(): void;
   submit(): Promise<FormSubmitResult>;
-  getFormilyForm(): unknown;
+  getFormilyFormUnsafe(): unknown;
   destroy(): void;
 }
 ```
 
-`getFormilyForm()` 可作为高级逃生口，但应明确其与 Formily 版本绑定，普通业务不应依赖该接口。
+`getFormilyFormUnsafe()` 是版本耦合的高级逃生口：返回值与 Formily 版本绑定、不承诺稳定性、生产代码应避免依赖。它不属于稳定公共 API。
 
 ### 8.4 Form 生命周期
 
 - 每个 Renderer 实例独立创建和管理 Formily Form。
 - `FormEngineProvider` 提供 Engine，不应持有所有 Renderer 共用的 Form 实例。
-- Schema 发生结构性变化时，应明确是重建 Form 还是执行受控迁移。
-- 数据更新应区分初始化赋值和用户编辑，避免重复触发联动。
+- Schema 发生结构性变化（字段增删、组件替换）时，默认重建 Form；受控迁移仅作为显式高级 API（迁移函数式）提供。
+- 数据更新统一走 `setValues` 入口，内部区分初始化赋值与用户编辑，用 dirty/initialized 标记避免重复触发联动。
 - `submit()` 只负责校验、获取 Value、生成 Snapshot 并返回结果，不直接发起业务 HTTP 请求。
 
 ---
@@ -589,7 +641,7 @@ export interface FormEngineContext {
 - `app`：业务应用注入能力。
 - `custom`：业务自定义方法和数据。
 
-避免将所有方法直接平铺到同一个对象，减少命名冲突和权限边界不清晰的问题。
+运行时 Scope 顶层只暴露 `engine` / `app` / `custom` 三个命名空间对象，不提供平铺注入；Formily 原生保留名（`$self` / `$form` / `$values` 等）不进入这三个命名空间。业务方法默认进 `app`，引擎内置进 `engine`，`custom` 仅经显式 API 写入，并禁止静默覆盖同名属性（冲突时给出诊断）。
 
 ---
 
@@ -651,7 +703,6 @@ export interface FormSnapshot {
   schemaVersion: number;
   createdAt: string;
   locale?: string;
-  values: Record<string, unknown>;
   fields: Record<string, FieldSnapshot>;
 }
 
@@ -702,11 +753,12 @@ Snapshot：
 
 1. Value 保存业务需要的稳定值。
 2. Snapshot 保存历史展示所需的冻结信息。
-3. 组件通过 Adapter 生成快照，不由页面逐个拼装。
-4. 快照记录 Schema 版本和 Snapshot 版本。
-5. Snapshot 应支持向前兼容读取和显式迁移。
-6. 快照生成失败时，应根据业务重要性决定阻断提交还是记录降级错误；审批、审计类业务通常应阻断或采用明确的降级策略。
-7. Snapshot 不应保存敏感信息的冗余副本，需遵循数据最小化和权限控制。
+3. Snapshot 不携带顶层 `values`（业务值单独持久化）；提交时保证 `values[path] === snapshot.fields[path].value` 逐路径一致，由 `submit()` 维护。
+4. 组件通过 Adapter 生成快照，不由页面逐个拼装。
+5. 快照记录 Schema 版本和 Snapshot 版本。
+6. Snapshot 应支持向前兼容读取和显式迁移。
+7. 快照生成失败时，应根据业务重要性决定阻断提交还是记录降级错误；审批、审计类业务通常应阻断或采用明确的降级策略。
+8. Snapshot 不应保存敏感信息的冗余副本，需遵循数据最小化和权限控制。
 
 ---
 
@@ -732,6 +784,8 @@ Snapshot：
 - Setter 配置。
 - 平台能力声明。
 - Snapshot Adapter 能力。
+
+设计器画布与运行时 Renderer 是两条渲染路径：画布由 Designable 自带渲染、运行时由 Renderer 渲染。所见即所得（WYSIWYG）靠「同一份组件实现 + 同一份 Schema 编译产物」保证，并以「画布与运行时渲染一致性」验收用例锁定，而非复用同一个渲染入口（designer 不反向依赖 Renderer）。
 
 ### 13.3 Designer Material
 
@@ -771,7 +825,7 @@ export interface FormEngineOptions {
   platform?: Platform;
   locale?: string;
   plugins?: FormEnginePlugin[];
-  components?: FormComponentDefinition[];
+  components?: ComponentBinding[];
   services?: Partial<EngineServices>;
 }
 
@@ -786,7 +840,7 @@ React 使用示例：
 const engine = createFormEngine({
   platform: 'pc',
   locale: 'zh-CN',
-  components: [UserSelectDefinition],
+  components: [UserSelectBinding],
   services: {
     datasource: appDatasourceService,
   },
@@ -995,6 +1049,7 @@ export class FormEngineError extends Error {
 - 明确权限规则由前端展示控制还是后端强制执行；业务安全必须由后端兜底。
 - 明确 Schema 和 Snapshot 的版本升级、迁移及兼容窗口。
 - 评估 Designable 上游维护状态与 fork 策略（最后发布 2022-02-28，无 React 18 / antd 5 支持）。
+- 设计器与 antd 5 升级路径的决策与验收条件见 `docs/tech-design/adr/0001-antd5-upgrade-path.md`。
 
 > 上述事项已完成一次技术验证，结论与过程见 `docs/tech-design/verification/README.md`。其中 Designable 版本、Formily API 签名与设计器构建约束已按验证结果修订到本文。
 

@@ -44,8 +44,8 @@ Adapter 根据 Registry 获取目标平台组件：
 
 ```ts
 interface FormilyComponentMap {
-  components: Record<string, React.ComponentType<any>>;
-  decorators: Record<string, React.ComponentType<any>>;
+  components: Record<string, React.ComponentType<unknown>>;
+  decorators: Record<string, React.ComponentType<unknown>>;
 }
 ```
 

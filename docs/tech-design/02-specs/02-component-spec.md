@@ -19,15 +19,22 @@
 
 ```ts
 export interface ComponentImplementations {
-  pc?: React.ComponentType<any>;
-  mobile?: React.ComponentType<any>;
-  readonly?: React.ComponentType<any>;
+  pc?: React.ComponentType<unknown>;
+  mobile?: React.ComponentType<unknown>;
+  readonly?: React.ComponentType<unknown>;
+}
+
+export interface ComponentBinding {
+  protocol: ComponentProtocolDefinition;
+  implementations: ComponentImplementations;
 }
 
 export interface AdapterContext {
   schema: Record<string, unknown>;
   path: string;
   locale: string;
+  // 编辑期缓存的展示信息（JSON-safe），供 createSnapshot 读取
+  displayState?: Record<string, unknown>;
 }
 
 export interface ComponentAdapter<Value = unknown, Snapshot = unknown> {
@@ -53,7 +60,7 @@ export interface ComponentAdapter<Value = unknown, Snapshot = unknown> {
 }
 ```
 
-实现时应为 `React` 类型建立独立类型入口，避免 `types` 这个纯协议包被迫依赖 React。可将 `ComponentImplementations` 放在 React Adapter 包，或通过泛型注入组件类型。
+`types` 只放 `ComponentProtocolDefinition`（纯协议，无 React）；React 实现通过 `ComponentBinding` 在组件实现层绑定，实现层可建立独立 React 类型入口，避免纯协议包被迫依赖 React。
 
 ## 4. UserSelect 示例
 
@@ -102,35 +109,37 @@ export interface ComponentAdapter<Value = unknown, Snapshot = unknown> {
 ### 4.3 Definition 示例
 
 ```ts
-export const UserSelectDefinition = {
-  name: 'UserSelect',
-  version: '1.0.0',
-  meta: {
-    title: '人员选择',
-    category: 'organization',
-  },
-  capabilities: {
-    editable: true,
-    readonly: true,
-    mobile: true,
-    datasource: true,
-    validation: true,
-    snapshot: true,
-  },
-  schema: {
-    type: 'object',
-    properties: {
-      multiple: { type: 'boolean', default: false },
-      placeholder: { type: 'string' },
+export const UserSelectBinding: ComponentBinding = {
+  protocol: {
+    name: 'UserSelect',
+    version: '1.0.0',
+    meta: {
+      title: '人员选择',
+      category: 'organization',
     },
+    capabilities: {
+      editable: true,
+      readonly: true,
+      mobile: true,
+      datasource: true,
+      validation: true,
+      snapshot: true,
+    },
+    schema: {
+      type: 'object',
+      properties: {
+        multiple: { type: 'boolean', default: false },
+        placeholder: { type: 'string' },
+      },
+    },
+    adapter: UserSelectAdapter,
   },
   implementations: {
     pc: UserSelectPC,
     mobile: UserSelectMobile,
     readonly: UserSelectReadonly,
   },
-  adapter: UserSelectAdapter,
-} satisfies FormComponentDefinition;
+};
 ```
 
 上例为示意代码。若公共 types 包不依赖 React，应将实现映射拆至 React 专用定义类型。
@@ -140,6 +149,7 @@ export const UserSelectDefinition = {
 ### 编辑态组件
 
 - 遵循 Formily 字段组件约定，正确处理 `value`、`onChange`、`disabled`、`readOnly`。
+- 声明 `snapshot` 能力的组件应在编辑期把展示信息（如 `{ id, name, dept }`）缓存进字段状态（`displayState`），供 `createSnapshot` 读取。
 - 不自行创建第二份业务表单状态。
 - 不直接依赖全局单例 Engine。
 - 远程请求通过注入的数据源服务执行。
@@ -164,7 +174,7 @@ export const UserSelectDefinition = {
 
 - `normalizeValue`：兼容历史或外部输入，转为组件内部标准值。
 - `serializeValue`：输出后端业务值。
-- `createSnapshot`：生成历史展示信息。
+- `createSnapshot`：从编辑期缓存（`context.displayState`）读取展示信息生成历史展示，不发起新请求。
 - `restoreSnapshot`：从快照恢复展示或组件所需值。
 
 Adapter 应尽量纯函数化，避免网络请求和隐式全局状态。需要补充信息时，应由 Snapshot Service 或数据源层在明确的提交流程中完成。

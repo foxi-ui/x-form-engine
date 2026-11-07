@@ -29,7 +29,7 @@ export interface Registry<T> {
 }
 
 export interface EngineRegistry {
-  components: Registry<FormComponentDefinition>;
+  components: Registry<ComponentBinding>;
   decorators: Registry<unknown>;
   services: Registry<unknown>;
   formatters: Registry<unknown>;
@@ -100,7 +100,7 @@ const organizationPlugin: FormEnginePlugin = {
   install({ registry, services }) {
     registry.components.register(
       'UserSelect',
-      UserSelectDefinition
+      UserSelectBinding
     );
 
     registry.services.register(
@@ -125,14 +125,14 @@ export interface EventBus {
 }
 ```
 
-建议事件命名：
+建议事件命名（事件 = 命名空间 + 载荷 + 来源，同步优先，异步订阅用微任务）：
 
-- `engine:ready`
-- `plugin:installed`
-- `plugin:failed`
-- `schema:compiled`
-- `renderer:mounted`
-- `snapshot:created`
+- `engine:init` / `engine:dispose`
+- `plugin:install` / `plugin:dispose` / `plugin:failed`
+- `schema:compile`
+- `renderer:mount` / `renderer:unmount`
+- `submit`
+- `snapshot:create`
 
 ## 10. 验收标准
 

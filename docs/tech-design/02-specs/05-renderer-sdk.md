@@ -44,7 +44,7 @@ export interface FormRendererInstance {
 }
 ```
 
-可选的 `getFormilyForm()` 属于高级逃生口，会形成对 Formily 版本的耦合，应谨慎开放。
+可选的 `getFormilyFormUnsafe()` 是版本耦合的高级逃生口，返回值与 Formily 版本绑定、不承诺稳定性，生产代码应避免依赖。
 
 ## 5. submit 语义
 
@@ -71,7 +71,7 @@ export interface FormRendererInstance {
 export interface FormEngineOptions {
   platform?: 'pc' | 'mobile';
   locale?: string;
-  components?: FormComponentDefinition[];
+  components?: ComponentBinding[];
   plugins?: FormEnginePlugin[];
   services?: Partial<EngineServices>;
 }
@@ -97,7 +97,7 @@ export function createFormEngine(
 const engine = createFormEngine({
   platform: 'pc',
   locale: 'zh-CN',
-  components: [UserSelectDefinition],
+  components: [UserSelectBinding],
   services: {
     datasource: appDatasourceService,
   },

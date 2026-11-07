@@ -118,14 +118,6 @@ form_draft
     "schemaId": "leave-form",
     "schemaVersion": 3,
     "createdAt": "2026-11-07T09:00:00.000Z",
-    "values": {
-      "applicant": "u_10001",
-      "leaveType": 1,
-      "period": {
-        "start": "2026-11-10",
-        "end": "2026-11-11"
-      }
-    },
     "fields": {
       "applicant": {
         "path": "applicant",
@@ -144,7 +136,7 @@ form_draft
 
 约束：
 
-- `values` 与 `snapshot.values` 在提交时必须一致；由引擎 `submit()` 保证。
+- `values` 与 `snapshot.fields[*].value` 在提交时必须逐路径一致；由引擎 `submit()` 保证。
 - `snapshot` 不包含完整 Schema。
 - `idempotencyKey` 由调用方生成，同一次用户提交重试必须复用。
 - 前端生成的 `displayValue` 是**候选展示信息**，不是权威身份数据。

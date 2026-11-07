@@ -173,7 +173,7 @@ TypeError: Cannot read properties of undefined (reading 'title')
 建议 Adapter 做三件事：
 
 ```text
-引擎 FormComponentDefinition
+引擎 ComponentBinding（protocol + implementations）
   ├─ 运行时实现（PC / Mobile / Readonly）
   ├─ Schema 属性定义
   └─ Designer 物料描述

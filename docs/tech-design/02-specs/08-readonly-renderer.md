@@ -21,7 +21,8 @@
 ```ts
 export interface ReadonlyRendererProps {
   schema: Record<string, unknown>;
-  snapshot: FormSnapshot;
+  snapshot?: FormSnapshot;
+  values?: Record<string, unknown>;
   locale?: string;
   platform?: 'pc' | 'mobile';
 }
@@ -34,6 +35,8 @@ export interface ReadonlyComponentProps<Value = unknown> {
   context: ReadonlyRenderContext;
 }
 ```
+
+`snapshot` 与 `values` 至少提供其一：有 `snapshot` 时优先按 `fields` 展示（`displayValue` → 组件快照元数据 → 静态规则 → 显式兼容查询 → raw value + 诊断）；无 `snapshot` 时按 `values` 降级 raw value + 诊断。
 
 ## 4. 渲染流程
 

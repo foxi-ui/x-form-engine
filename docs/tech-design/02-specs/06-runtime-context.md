@@ -44,7 +44,7 @@ const scope = {
 };
 ```
 
-不要把所有方法平铺到同一个命名空间。应避免 Scope 暴露任意网络请求、敏感凭证或可绕过权限的操作。
+运行时 Scope 顶层只暴露 `engine` / `app` / `custom` 三个命名空间对象，不提供平铺注入；Formily 原生保留名（`$self` / `$form` / `$values` 等）不进入这三个命名空间。业务方法默认进 `app`，引擎内置进 `engine`，`custom` 仅经显式 API 写入。应避免 Scope 暴露任意网络请求、敏感凭证或可绕过权限的操作。
 
 ## 4. Scope 生命周期
 
@@ -83,16 +83,14 @@ Engine 不应绑定某个具体请求库。应用负责将服务接口适配到�
 
 事件用于观察生命周期和跨模块通知，不用于代替直接函数调用。
 
-建议事件：
+建议事件（同步优先，异步订阅用微任务）：
 
-- `engine:ready`
-- `engine:destroy`
-- `plugin:installed`
-- `plugin:failed`
-- `schema:compiled`
-- `renderer:mounted`
-- `renderer:unmounted`
-- `snapshot:created`
+- `engine:init` / `engine:dispose`
+- `plugin:install` / `plugin:dispose` / `plugin:failed`
+- `schema:compile`
+- `renderer:mount` / `renderer:unmount`
+- `submit`
+- `snapshot:create`
 
 事件 payload 应有版本化类型，监听器应返回 unsubscribe 函数。
 
