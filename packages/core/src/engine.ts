@@ -49,9 +49,16 @@ class Engine implements FormEngine {
 
     this.status = 'initializing';
 
-    const ordered = resolvePluginOrder(options.plugins ?? []);
-    for (const plugin of ordered) {
-      this.pluginManager.install(plugin);
+    try {
+      const ordered = resolvePluginOrder(options.plugins ?? []);
+      for (const plugin of ordered) {
+        this.pluginManager.install(plugin);
+      }
+    } catch (error) {
+      // 构造期任一插件安装失败：回滚所有已装插件，避免留下半初始化引擎。
+      this.pluginManager.disposeAll();
+      this.status = 'failed';
+      throw error;
     }
 
     this.status = 'ready';

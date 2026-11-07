@@ -7,13 +7,21 @@ import type { FormEnginePlugin } from '@x-form-engine/types';
  * 依赖边方向：`plugin` 依赖 `dependency`，即 `dependency` 必须更早安装。
  *
  * - 依赖缺失 → `PLUGIN_DEPENDENCY_MISSING`
- * - 存在循环依赖 → `PLUGIN_CONFLICT`
+ * - 插件名重复或存在循环依赖 → `PLUGIN_CONFLICT`
  */
 export function resolvePluginOrder(
   plugins: FormEnginePlugin[]
 ): FormEnginePlugin[] {
   const byName = new Map<string, FormEnginePlugin>();
   for (const plugin of plugins) {
+    // 同名插件会产生歧义拓扑节点，显式报冲突，而不是让后续长度校验误报循环依赖。
+    if (byName.has(plugin.name)) {
+      throw new FormEngineError(
+        'PLUGIN_CONFLICT',
+        `Duplicate plugin name "${plugin.name}"`,
+        { plugin: plugin.name }
+      );
+    }
     byName.set(plugin.name, plugin);
   }
 

@@ -37,6 +37,66 @@ test('循环依赖抛 PLUGIN_CONFLICT', () => {
   ])).toThrowError(expect.objectContaining({ code: 'PLUGIN_CONFLICT' }));
 });
 
+test('同名插件在解析阶段抛 PLUGIN_CONFLICT，而非误报循环依赖', () => {
+  expect(() => resolvePluginOrder([
+    { name: 'dup', version: '1.0.0', install: () => {} },
+    { name: 'dup', version: '2.0.0', install: () => {} },
+  ])).toThrowError(expect.objectContaining({ code: 'PLUGIN_CONFLICT' }));
+});
+
+test('同名插件二次 install 抛 PLUGIN_CONFLICT', () => {
+  const engine = createFormEngine();
+  engine.installPlugin({ name: 'dup', version: '1.0.0', install: () => {} });
+  expect(() => engine.installPlugin({
+    name: 'dup', version: '2.0.0', install: () => {},
+  })).toThrowError(expect.objectContaining({ code: 'PLUGIN_CONFLICT' }));
+});
+
+test('同名插件失败重装不删除旧资源', () => {
+  const engine = createFormEngine();
+  engine.installPlugin({
+    name: 'keep', version: '1.0.0',
+    install: ({ registry }) => registry.components.register('Keep', BINDING, 'keep'),
+  });
+
+  expect(() => engine.installPlugin({
+    name: 'keep', version: '2.0.0',
+    install: ({ registry }) => {
+      registry.components.register('Replacement', BINDING, 'keep');
+      throw new Error('reinstall fail');
+    },
+  })).toThrowError(expect.objectContaining({ code: 'PLUGIN_CONFLICT' }));
+
+  expect(engine.registry.components.has('Keep')).toBe(true);
+  expect(engine.registry.components.has('Replacement')).toBe(false);
+});
+
+test('名为 builtin 的插件 dispose 不删除引擎内置组件', () => {
+  const engine = createFormEngine({ components: [BINDING] });
+  engine.installPlugin({
+    name: 'builtin', version: '1.0.0',
+    install: ({ registry }) => registry.components.register('Custom', BINDING, 'builtin'),
+  });
+
+  engine.dispose();
+  expect(engine.registry.components.has('Temp')).toBe(true);
+  expect(engine.registry.components.has('Custom')).toBe(false);
+});
+
+test('名为 builtin 的插件安装失败时不删除引擎内置组件', () => {
+  const engine = createFormEngine({ components: [BINDING] });
+  expect(() => engine.installPlugin({
+    name: 'builtin', version: '1.0.0',
+    install: ({ registry }) => {
+      registry.components.register('Custom', BINDING, 'builtin');
+      throw new Error('builtin fail');
+    },
+  })).toThrowError(/builtin fail/);
+
+  expect(engine.registry.components.has('Temp')).toBe(true);
+  expect(engine.registry.components.has('Custom')).toBe(false);
+});
+
 test('install 中途抛错回滚已注册资源，不留半安装态', () => {
   const engine = createFormEngine();
   expect(() => engine.installPlugin({
