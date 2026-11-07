@@ -1,0 +1,45 @@
+import { FormEngineError } from '@x-form-engine/types';
+import type { FormEngine } from '@x-form-engine/types';
+import type { ComponentType } from 'react';
+
+/**
+ * Formily 组件映射。
+ *
+ * `components` 供 SchemaField 按 `x-component` / `x-decorator` 名称解析；
+ * `decorators` 暂未启用，保留为后续装饰器适配的扩展位。
+ */
+export interface FormilyComponentMap {
+  components: Record<string, ComponentType<unknown>>;
+  decorators: Record<string, ComponentType<unknown>>;
+}
+
+/**
+ * 把 Engine Registry 中的组件绑定映射为 Formily 可用的组件表。
+ *
+ * 只取 `implementations[platform]`：缺少对应平台实现时立即抛错，
+ * 而不是静默回退到其他平台，避免在运行时渲染出错误的平台实现。
+ */
+export function resolveFormilyComponentMap(
+  engine: FormEngine,
+  platform: 'pc' | 'mobile'
+): FormilyComponentMap {
+  const components: Record<string, ComponentType<unknown>> = {};
+  const decorators: Record<string, ComponentType<unknown>> = {};
+
+  for (const entry of engine.registry.components.list()) {
+    const implementation = entry.value.implementations[platform];
+
+    if (!implementation) {
+      throw new FormEngineError(
+        'COMPONENT_CAPABILITY_MISMATCH',
+        `组件 "${entry.name}" 缺少 ${platform} 平台实现`,
+        { name: entry.name, platform }
+      );
+    }
+
+    // React 边界收窄点：Registry 中的实现类型是 unknown。
+    components[entry.name] = implementation as ComponentType<unknown>;
+  }
+
+  return { components, decorators };
+}
