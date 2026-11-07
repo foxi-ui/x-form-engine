@@ -1,5 +1,6 @@
 import { createForm, onFormValuesChange } from '@formily/core';
 import { FormProvider } from '@formily/react';
+import { toJS } from '@formily/reactive';
 import { createEngineSchemaField } from '@x-form-engine/formily';
 import type { FormSubmitResult } from '@x-form-engine/types';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
@@ -30,11 +31,13 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
 
     const form = useMemo(
       () =>
-        createForm({
+        createForm<Record<string, unknown>>({
+          // initialValues 既是当前值（values），也是 reset() 的恢复目标。
+          initialValues: props.initialValues,
           values: props.initialValues,
           effects: () => {
             onFormValuesChange((changedForm) => {
-              onChangeRef.current?.(changedForm.values);
+              onChangeRef.current?.(toJS(changedForm.values));
             });
           },
         }),
@@ -55,7 +58,8 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
     useImperativeHandle(
       ref,
       () => ({
-        getValues: () => form.values,
+        // 返回普通对象快照，避免把 Formily 活 observable 泄漏给业务代码。
+        getValues: () => toJS(form.values),
         setValues: (values) => {
           form.setValues(values);
         },
@@ -68,7 +72,7 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
           await form.validate();
 
           return {
-            values: form.values,
+            values: toJS(form.values),
             snapshot: createPlaceholderSnapshot(),
           };
         },

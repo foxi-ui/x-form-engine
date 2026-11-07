@@ -186,6 +186,9 @@ importers:
       '@formily/react':
         specifier: 2.3.7
         version: 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3)
+      '@formily/reactive':
+        specifier: 2.3.7
+        version: 2.3.7
       '@x-form-engine/formily':
         specifier: workspace:*
         version: link:../formily
