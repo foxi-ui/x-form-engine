@@ -25,6 +25,7 @@ export function createEventBus(): EventBus {
       }
 
       if (once) {
+        active = false;
         detach(event, wrapped);
       }
 
@@ -39,6 +40,7 @@ export function createEventBus(): EventBus {
     handlers.add(wrapped);
 
     return () => {
+      active = false;
       detach(event, wrapped);
     };
   };

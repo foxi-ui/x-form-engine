@@ -33,3 +33,22 @@ test('退订函数幂等，退订后对应监听器被清理', () => {
   bus.emit('renderer:mount', 1);
   expect(calls).toEqual([]);
 });
+
+test('once 在监听器重入 emit 同事件时只触发一次', () => {
+  const bus = createEventBus();
+  const onceCalls: number[] = [];
+  let normalCalls = 0;
+
+  bus.on<number>('submit', () => {
+    normalCalls += 1;
+    if (normalCalls === 1) {
+      bus.emit('submit', 99);
+    }
+  });
+  bus.once<number>('submit', (p) => onceCalls.push(p));
+
+  bus.emit('submit', 1);
+
+  expect(normalCalls).toBe(2);
+  expect(onceCalls).toEqual([99]);
+});
