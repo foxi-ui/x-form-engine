@@ -4,3 +4,5 @@ export * from './events/event-bus';
 export * from './plugin/dependency-resolver';
 export * from './plugin/plugin-manager';
 export * from './engine';
+export * from './schema/parser';
+export * from './schema/validator';
