@@ -6,7 +6,13 @@
  */
 export * from '@x-form-engine/types';
 
-export { createFormEngine } from '@x-form-engine/core';
+export {
+  createFormEngine,
+  KNOWN_X_ENGINE_KEYS,
+  parseSchemaDocument,
+  validateEngineSchema,
+} from '@x-form-engine/core';
+export type { SchemaValidationResult } from '@x-form-engine/core';
 
 export {
   FormEngineProvider,
