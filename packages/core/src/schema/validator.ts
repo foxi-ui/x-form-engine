@@ -36,9 +36,12 @@ export function validateEngineSchema(schema: unknown): SchemaValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  const version = schema.engineSchemaVersion;
-  if (typeof version === 'string' && version !== ENGINE_SCHEMA_VERSION) {
-    errors.push(`unsupported engineSchemaVersion: ${version}`);
+  // 版本门禁：属性存在即必须是当前引擎版本；非字符串同样视为不支持。
+  if (
+    Object.prototype.hasOwnProperty.call(schema, 'engineSchemaVersion') &&
+    schema.engineSchemaVersion !== ENGINE_SCHEMA_VERSION
+  ) {
+    errors.push(`unsupported engineSchemaVersion: ${String(schema.engineSchemaVersion)}`);
   }
 
   collectProperties(schema, errors, warnings);

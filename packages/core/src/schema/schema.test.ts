@@ -32,3 +32,9 @@ test('validateEngineSchema 对不支持的 engineSchemaVersion 报错', () => {
   expect(r.valid).toBe(false);
   expect(r.errors.some((e) => e.includes('unsupported engineSchemaVersion'))).toBe(true);
 });
+
+test('validateEngineSchema 对非字符串 engineSchemaVersion 报错', () => {
+  const r = validateEngineSchema({ type: 'object', engineSchemaVersion: 1, properties: {} });
+  expect(r.valid).toBe(false);
+  expect(r.errors.some((e) => e.includes('unsupported engineSchemaVersion'))).toBe(true);
+});
