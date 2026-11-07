@@ -1,6 +1,6 @@
 # Form Engine 企业级前端渲染引擎设计方案
 
-> 技术栈：React + TypeScript + Formily 2.x + Designable 2.x  
+> 技术栈：React + TypeScript + Formily 2.x + Designable 1.x  
 > 形态：Monorepo、PC / 移动 Web / 只读多端渲染  
 > 文档状态：架构设计基线（接口为建议契约，落地前需按锁定依赖版本验证）
 
@@ -14,7 +14,7 @@
 
 - 表单 Schema 的定义、编译、校验和运行。
 - 基于 Formily 2.x 的编辑态表单渲染。
-- 基于 Designable 2.x 的可视化设计器适配。
+- 基于 Designable 1.x 的可视化设计器适配（上游无 2.x，见第 19 节）。
 - PC、移动 Web 和只读场景的多端渲染。
 - 业务组件、远程数据源、权限、国际化和插件扩展。
 - 表单元数据、业务值、历史快照之间的数据适配。
@@ -48,7 +48,7 @@ flowchart TB
   Mobile[Mobile Renderer]
   Readonly[Readonly Renderer]
   Designer[Designer Adapter]
-  Designable[Designable 2.x]
+  Designable[Designable 1.x]
   Services[Datasource / Permission / I18n / Snapshot]
   Backend[业务后端 / 元数据服务]
 
@@ -435,12 +435,19 @@ Formily Adapter 负责连接引擎与 Formily：
 - `onFieldReact`
 - `onFormValuesChange`
 
-> 注意：上述 API 的实际导出位置、类型签名和可用性必须按项目锁定的 Formily 2.x 具体版本核对；不要把引擎自定义 API 误称为 Formily 原生 API。
+> 上述 API 的导入来源与签名（已按 `@formily/core@2.3.7` / `@formily/react@2.3.7` 验证）：
+>
+> - `@formily/core`：`createForm`、`onFieldInit`、`onFieldValueChange`、`onFieldReact`、`onFormValuesChange`、`onFormInit`、`onFormMount`、`onFormReact` 等表单工厂与生命周期。
+> - `@formily/react`：`createSchemaField`、`FormProvider`、`Field`、`ObjectField`、`ArrayField`、`VoidField`、`useForm`、`useField`、`useFieldSchema`、`useFormEffects` 等 React 绑定。
+> - `onFormValuesChange` 的回调签名是 `(form: Form) => void`，值从 `form.values` 读取，不是 `(form, values) => void`。
+> - `useField` / `useFieldSchema` 必须位于字段渲染上下文内（如自定义字段组件或 `<Field>` 子树），仅在 `FormProvider` 下会取到空值。
+>
+> 不要把引擎自定义 API 误称为 Formily 原生 API；具体导出与签名仍以项目锁定的 Formily 版本为准。
 
 ### 7.3 适配示意
 
 ```tsx
-const schemaField = createSchemaField({
+const SchemaField = createSchemaField({
   components: engine.registry.getFormilyComponents('pc'),
   scope: engine.scope.toFormilyScope(),
 });
@@ -448,13 +455,13 @@ const schemaField = createSchemaField({
 function FormilyRenderer({ schema, form }: Props) {
   return (
     <FormProvider form={form}>
-      {schemaField({ schema })}
+      <SchemaField schema={schema} />
     </FormProvider>
   );
 }
 ```
 
-以上仅为结构示意。`scope` 的传递方式、SchemaField 的调用形式和类型应以实际依赖版本为准。
+`createSchemaField` 返回的是 React 组件，应使用 JSX 渲染（不要用 `schemaField({ schema })` 函数式调用，它绕过 React 组件边界，无法保证 Hooks/Context 语义）。`scope` 既可在工厂级 `createSchemaField({ scope })` 注入，也可在实例级 `<SchemaField schema={...} scope={...} />` 注入，实例级覆盖工厂级同名 key。以上仍以实际依赖版本为准。
 
 ---
 
@@ -739,7 +746,19 @@ export interface DesignerMaterialDefinition {
 }
 ```
 
-Designable Adapter 负责把上述定义转换成 Designable 2.x 可消费的物料和节点配置。具体 API 需按实际 Designable 版本验证。
+Designable Adapter 负责把上述定义转换成 Designable 1.x 可消费的物料和节点配置。具体 API 需按实际 Designable 版本验证。
+
+### 13.4 落地约束（已验证）
+
+按 `@designable/*@1.0.0-beta.45` 验证，设计器适配需遵守以下约束：
+
+- **技术栈绑定**：Designable 上游 peer 依赖 React 16.x/17.x、antd 4.x，最后发布于 2022 年；设计器应作为独立应用或懒加载模块，不进入运行时 Renderer 的主包。
+- **构建链路**：Designable 与 `@formily/antd` 的 CJS 产物直接 `require('.less')`，Node/SSR 无法直接解析；需使用 ESM 产物并配置 less/CSS 处理，且必须开启 `skipLibCheck`。
+- **初始化顺序**：`Engine.setCurrentTree()` 在未创建 workspace 时是空操作，需先 `workbench.ensureWorkspace(...)` / `addWorkspace(...)` 再设置节点树，否则画布静默为空。
+- **Setter 上下文依赖**：`ValidatorSetter` 依赖 Formily `useField()`（读取 `field.title`），`ReactionsSetter` / `DataSourceSetter` 依赖 Designable Designer/Theme 上下文；不能脱离对应 Provider 独立挂载。
+- **节点 ID 语义**：`x-designable-id` 是设计器内部节点标识，不参与业务 Value / Snapshot 语义，渲染器编译时应忽略。
+
+更完整结论见 `docs/tech-design/verification/04-designable.md`。
 
 ---
 
@@ -954,7 +973,7 @@ export class FormEngineError extends Error {
 4. `04-formily-adapter.md`：Formily 2.x 适配、原生能力和 Effects。
 5. `05-renderer-sdk.md`：Renderer、实例 API 和 SDK。
 6. `06-runtime-context.md`：Context、Scope、事件和服务注入。
-7. `07-designer-adapter.md`：Designable 2.x 适配、物料和 Setter。
+7. `07-designer-adapter.md`：Designable 1.x 适配、物料和 Setter。
 8. `08-readonly-renderer.md`：只读渲染和 Formatter。
 9. `09-value-snapshot.md`：Value、Snapshot、后端存储与历史回显协议。
 10. `10-testing-and-roadmap.md`：测试策略、验收标准和研发计划。
@@ -967,7 +986,7 @@ export class FormEngineError extends Error {
 
 本方案是架构基线，不等同于已经验证过的可编译实现。正式开发前应完成以下技术验证：
 
-- 锁定 React、TypeScript、Formily 2.x、Designable 2.x 的具体版本。
+- 锁定 React、TypeScript、Formily 2.x、Designable 1.x 的具体版本（上游无 Designable 2.x，最新为 1.0.0-beta.45）。
 - 核对 Formily API 的实际导出位置、参数类型和 SchemaField Scope 传递方式。
 - 用最小 Demo 验证 `x-reactions`、自定义组件、Effects 和动态校验。
 - 验证 Designable 物料、Setter 与 Schema 回写机制。
@@ -975,5 +994,8 @@ export class FormEngineError extends Error {
 - 明确人员、部门、字典等组件的 Value 标准及 Snapshot 标准。
 - 明确权限规则由前端展示控制还是后端强制执行；业务安全必须由后端兜底。
 - 明确 Schema 和 Snapshot 的版本升级、迁移及兼容窗口。
+- 评估 Designable 上游维护状态与 fork 策略（最后发布 2022-02-28，无 React 18 / antd 5 支持）。
+
+> 上述事项已完成一次技术验证，结论与过程见 `docs/tech-design/verification/README.md`。其中 Designable 版本、Formily API 签名与设计器构建约束已按验证结果修订到本文。
 
 **最终建议：** 先以 `types + component definition + registry/plugin + formily adapter` 建立稳定内核，再实现多端 Renderer 和 Designer；不要在第一阶段同时把所有业务组件、设计器能力和后端快照协议全部做完。

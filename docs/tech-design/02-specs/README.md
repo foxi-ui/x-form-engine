@@ -12,7 +12,7 @@
 | 04-formily-adapter.md | Formily 2.x 适配与原生能力 | Formily 适配开发 |
 | 05-renderer-sdk.md | Renderer、实例 API、React SDK | 前端应用接入方 |
 | 06-runtime-context.md | Context、Scope、事件与服务注入 | 引擎核心开发 |
-| 07-designer-adapter.md | Designable 2.x、物料和 Setter | 设计器开发 |
+| 07-designer-adapter.md | Designable 1.x、物料和 Setter | 设计器开发 |
 | 08-readonly-renderer.md | 独立只读渲染器与 Formatter | 只读详情开发 |
 | 09-value-snapshot.md | Value、Snapshot、后端存储与历史回显 | 前后端、业务架构 |
 | 10-testing-and-roadmap.md | 测试、验收、研发计划和风险 | 项目负责人、QA |

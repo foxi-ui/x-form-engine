@@ -1,0 +1,25 @@
+# 版本证据（生成时间：2026-11-07T09:58:47.196Z）
+
+## 解析后的依赖版本
+react@17.0.2
+react-dom@17.0.2
+react-is@17.0.2
+@formily/core@2.3.7
+@formily/react@2.3.7
+@formily/json-schema@2.3.7
+@formily/reactive@2.3.7
+@formily/antd@2.3.7
+antd@4.22.8
+@designable/core@1.0.0-beta.45
+@designable/react@1.0.0-beta.45
+@designable/formily-antd@1.0.0-beta.45
+@designable/formily-setters@1.0.0-beta.45
+@designable/formily-transformer@1.0.0-beta.45
+typescript@5.9.3
+vitest@3.2.7
+jsdom@26.1.0
+less@4.9.1
+
+## Node / pnpm
+node v22.23.2
+pnpm 10.34.5

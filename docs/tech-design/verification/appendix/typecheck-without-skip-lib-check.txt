@@ -1,0 +1,13 @@
+node_modules/.pnpm/@formily+antd@2.3.7_@ant-design+icons@4.8.3_react-dom@17.0.2_react@17.0.2__react@17.0.2_33c39d433cf127058d46bb1168a15744/node_modules/@formily/antd/esm/form-drawer/index.d.ts(14,18): error TS2430: Interface 'IDrawerProps' incorrectly extends interface 'DrawerProps'.
+  Types of property 'onClose' are incompatible.
+    Type '((e: EventType) => boolean | void) | undefined' is not assignable to type '((e: KeyboardEvent<Element> | MouseEvent<Element, MouseEvent>) => void) | undefined'.
+      Type '(e: EventType) => boolean | void' is not assignable to type '(e: KeyboardEvent<Element> | MouseEvent<Element, MouseEvent>) => void'.
+        Types of parameters 'e' and 'e' are incompatible.
+          Type 'KeyboardEvent<Element> | MouseEvent<Element, MouseEvent>' is not assignable to type 'EventType'.
+            Type 'KeyboardEvent<Element>' is not assignable to type 'EventType'.
+              Type 'KeyboardEvent<Element>' is not assignable to type 'KeyboardEvent<HTMLDivElement>'.
+                Type 'Element' is missing the following properties from type 'HTMLDivElement': align, accessKey, accessKeyLabel, autocapitalize, and 130 more.
+node_modules/.pnpm/rc-tree@5.6.9_react-dom@17.0.2_react@17.0.2__react@17.0.2/node_modules/rc-tree/lib/NodeList.d.ts(15,23): error TS2344: Type 'TreeDataType' does not satisfy the constraint 'BasicDataNode'.
+node_modules/.pnpm/rc-tree@5.6.9_react-dom@17.0.2_react@17.0.2__react@17.0.2/node_modules/rc-tree/lib/NodeList.d.ts(18,29): error TS2344: Type 'TreeDataType' does not satisfy the constraint 'BasicDataNode'.
+node_modules/.pnpm/resize-observer-polyfill@1.5.1/node_modules/resize-observer-polyfill/src/index.d.ts(19,18): error TS2717: Subsequent property declarations must have the same type.  Property 'contentRect' must be of type 'DOMRectReadOnly', but here has type 'DOMRectReadOnly'.
+skip_lib_check_false_exit=2

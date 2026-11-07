@@ -1,0 +1,5 @@
+
+> form-engine-verification@0.1.0 typecheck /Users/mawq/workspaces/x-form-engine/verification
+> tsc --noEmit
+
+typecheck_exit=0

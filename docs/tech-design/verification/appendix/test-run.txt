@@ -1,0 +1,49 @@
+
+> form-engine-verification@0.1.0 test /Users/mawq/workspaces/x-form-engine/verification
+> vitest run --reporter=verbose
+
+
+ RUN  v3.2.7 /Users/mawq/workspaces/x-form-engine/verification
+
+ ✓ src/08-migration-protocol.test.ts > 第 8 项：Schema / Snapshot 版本迁移协议 > 按注册顺序执行多跳迁移链 1ms
+ ✓ src/08-migration-protocol.test.ts > 第 8 项：Schema / Snapshot 版本迁移协议 > 迁移不修改原始数据，便于保留历史快照 0ms
+ ✓ src/08-migration-protocol.test.ts > 第 8 项：Schema / Snapshot 版本迁移协议 > 缺少迁移器时抛出可诊断错误，并保留原始数据 0ms
+ ✓ src/08-migration-protocol.test.ts > 第 8 项：Schema / Snapshot 版本迁移协议 > 已是目标版本时为空操作 0ms
+ ✓ src/08-migration-protocol.test.ts > 第 8 项：Schema / Snapshot 版本迁移协议 > 迁移器输出版本不符合声明时立即失败 0ms
+ ✓ src/08-migration-protocol.test.ts > 第 8 项：Schema / Snapshot 版本迁移协议 > 检测迁移环，避免读取时死循环 0ms
+ ✓ src/08-migration-protocol.test.ts > 第 8 项：Schema / Snapshot 版本迁移协议 > 同一起点的重复迁移器应被拒绝，避免执行顺序不确定 0ms
+ ✓ src/08-migration-protocol.test.ts > 第 8 项：Schema / Snapshot 版本迁移协议 > schemaVersion 与 snapshotVersion 两条版本轴互不混用 0ms
+ ✓ src/07-permission-contract.test.ts > 第 7 项：权限规则的前后端边界 > 缺少权限信封时 fail-closed 1ms
+ ✓ src/07-permission-contract.test.ts > 第 7 项：权限规则的前后端边界 > 权限信封版本过期时拒绝，而不是沿用旧权限 0ms
+ ✓ src/07-permission-contract.test.ts > 第 7 项：权限规则的前后端边界 > 表单整体不可读时所有字段拒绝 0ms
+ ✓ src/07-permission-contract.test.ts > 第 7 项：权限规则的前后端边界 > 字段未在信封中声明时默认拒绝 0ms
+ ✓ src/07-permission-contract.test.ts > 第 7 项：权限规则的前后端边界 > 支持只读字段、可写字段和不可见字段三态 0ms
+ ✓ src/07-permission-contract.test.ts > 第 7 项：权限规则的前后端边界 > Schema 权限提示只能收紧，不能提权 0ms
+ ✓ src/07-permission-contract.test.ts > 第 7 项：权限规则的前后端边界 > 提交前剔除无写权限字段 0ms
+ ✓ src/07-permission-contract.test.ts > 第 7 项：权限规则的前后端边界 > 提交动作需要独立的 submit 权限且同样 fail-closed 0ms
+ ✓ src/06-value-snapshot-contract.test.ts > 第 6 项：人员 / 部门 / 字典的 Value 与 Snapshot 标准 > 人员单选 Value 只保存稳定 ID，空值归一为 null 1ms
+ ✓ src/06-value-snapshot-contract.test.ts > 第 6 项：人员 / 部门 / 字典的 Value 与 Snapshot 标准 > 人员多选 Value 为去重后的 ID 数组，空值为 [] 0ms
+ ✓ src/06-value-snapshot-contract.test.ts > 第 6 项：人员 / 部门 / 字典的 Value 与 Snapshot 标准 > 人员 Snapshot 冻结提交时展示信息，未知 ID 保留并标记 missing 0ms
+ ✓ src/06-value-snapshot-contract.test.ts > 第 6 项：人员 / 部门 / 字典的 Value 与 Snapshot 标准 > 部门 Value 与人员共用 ID 规则，Snapshot 可附带路径信息 0ms
+ ✓ src/06-value-snapshot-contract.test.ts > 第 6 项：人员 / 部门 / 字典的 Value 与 Snapshot 标准 > 字典 Snapshot 冻结 label 与字典版本，缺失选项不伪造 label 0ms
+ ✓ src/06-value-snapshot-contract.test.ts > 第 6 项：人员 / 部门 / 字典的 Value 与 Snapshot 标准 > Value 与 Snapshot 的职责边界可被断言 0ms
+ ✓ src/02-formily-api.test.tsx > 第 2 项：Formily API 导出位置、类型与 Scope 传递 > 核心 API 的导出位置与类型可见 2ms
+ ✓ src/02-formily-api.test.tsx > 第 2 项：Formily API 导出位置、类型与 Scope 传递 > createSchemaField({ scope }) 可向 Schema 表达式注入作用域 15ms
+ ✓ src/02-formily-api.test.tsx > 第 2 项：Formily API 导出位置、类型与 Scope 传递 > SchemaField 实例级 scope 可覆盖工厂级 scope 2ms
+ ✓ src/02-formily-api.test.tsx > 第 2 项：Formily API 导出位置、类型与 Scope 传递 > useForm / useField / useFieldSchema 在字段渲染上下文内可用 2ms
+ ✓ src/03-formily-behavior.test.tsx > 第 3 项：x-reactions、自定义组件、Effects 与动态校验 > 自定义组件可通过 createSchemaField components 注册并双向绑定 21ms
+ ✓ src/03-formily-behavior.test.tsx > 第 3 项：x-reactions、自定义组件、Effects 与动态校验 > x-reactions dependencies + display 可驱动字段显隐 6ms
+ ✓ src/03-formily-behavior.test.tsx > 第 3 项：x-reactions、自定义组件、Effects 与动态校验 > x-reactions 可动态设置 required，并配合 x-validator 自定义校验 6ms
+ ✓ src/03-formily-behavior.test.tsx > 第 3 项：x-reactions、自定义组件、Effects 与动态校验 > createForm effects 与 useFormEffects 均可注册生命周期 4ms
+ ✓ src/04-designable.test.tsx > 第 4 项：Designable 物料、Setter 与 Schema 回写 > 物料通过 Behavior / Resource 声明并可被注册中心匹配 2ms
+ ✓ src/04-designable.test.tsx > 第 4 项：Designable 物料、Setter 与 Schema 回写 > createBehavior / createResource 可独立扩展自定义物料 0ms
+ ✓ src/04-designable.test.tsx > 第 4 项：Designable 物料、Setter 与 Schema 回写 > Designer Engine 可管理节点树、选中节点与属性更新 1ms
+ ✓ src/04-designable.test.tsx > 第 4 项：Designable 物料、Setter 与 Schema 回写 > Formily Schema 与 Designable TreeNode 可双向回写并保持节点 ID 1ms
+ ✓ src/04-designable.test.tsx > 第 4 项：Designable 物料、Setter 与 Schema 回写 > Setter 组件对外暴露受控 value/onChange 协议 23ms
+
+ Test Files  6 passed (6)
+      Tests  35 passed (35)
+   Start at  17:58:41
+   Duration  2.41s (transform 448ms, setup 38ms, collect 2.30s, tests 92ms, environment 1.65s, prepare 458ms)
+
+test_exit=0

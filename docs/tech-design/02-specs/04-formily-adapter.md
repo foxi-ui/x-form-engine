@@ -75,20 +75,20 @@ function EngineFormRenderer({ engine, schema, initialValues }) {
     [engine]
   );
 
-  const schemaField = useMemo(
+  const SchemaField = useMemo(
     () => createEngineSchemaField(engine, 'pc'),
     [engine]
   );
 
   return (
     <FormProvider form={form}>
-      {schemaField({ schema })}
+      <SchemaField schema={schema} />
     </FormProvider>
   );
 }
 ```
 
-这是伪代码示意。实际 `createForm`、`createSchemaField`、SchemaField 调用和销毁 API 应按锁定版本实现，并确保 Form 在正确的生命周期中创建和释放。
+这是伪代码示意。实际 `createForm`、`createSchemaField`、SchemaField 调用和销毁 API 应按锁定版本实现，并确保 Form 在正确的生命周期中创建和释放。`createSchemaField` 返回的是 React 组件，应使用 JSX 渲染，不要用 `schemaField({ schema })` 函数式调用。
 
 ## 7. Effects 组织
 
