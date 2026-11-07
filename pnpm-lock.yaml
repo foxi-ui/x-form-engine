@@ -135,6 +135,37 @@ importers:
         specifier: 3.2.7
         version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)
 
+  packages/sdk:
+    dependencies:
+      '@x-form-engine/core':
+        specifier: workspace:*
+        version: link:../core
+      '@x-form-engine/renderer':
+        specifier: workspace:*
+        version: link:../renderer
+      '@x-form-engine/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      '@testing-library/react':
+        specifier: 12.1.5
+        version: 12.1.5(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@types/react':
+        specifier: 17.0.0
+        version: 17.0.0
+      '@types/react-dom':
+        specifier: 17.0.0
+        version: 17.0.0
+      jsdom:
+        specifier: 26.1.0
+        version: 26.1.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 3.2.7
+        version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)
+
   packages/types: {}
 
 packages:
