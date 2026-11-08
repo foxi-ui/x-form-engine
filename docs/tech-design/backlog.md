@@ -1,12 +1,44 @@
 # 技术债台账（Backlog）
 
-> 本文由 `m2-backlog.md` 迁移而来（原文件已删除）。
-> 迁移日期：2026-11-08。
->
-> ⚠️ **状态说明**：下表是 **2026-11-08 M1 全分支评审**时的快照，标注的是当时"进入 M2 迭代"的延期项。
-> 之后 M2（Designer 闭环）、M3（Value/Snapshot/Readonly 闭环）已合入，其中**部分项可能已随 M2/M3 解决**。
-> 在下次迭代规划前，请**逐条复核并勾销**已解决项，不要直接据此排期。
+> 本文由 `m2-backlog.md` 迁移而来（原文件已删除）。迁移日期：2026-11-08。
 > 已随 M1 修复波解决的项不再列入本台账（见 git 历史 `m2-backlog.md` §2）。
+
+## 现状核对（2026-11-08 已逐条复核，共 33 项）
+
+> 结论：**大多数延期项在 M2/M3 期间未被顺手解决，仍挂账 23 项；已解决 3 项、部分解决 7 项。**
+
+### 已解决（3）
+
+| 项 | 结论 |
+|---|---|
+| T7 | `no-react-deps.test.ts` 已补源码 import 扫描（`readFileSync` + 正则匹配） |
+| D3 | sdk 现含 `.tsx` 测试，`@testing-library/react`/`@types/react` 为合理 devDep |
+| G1 | AGENTS.md 已更新为「已实现」措辞 |
+
+### 部分解决（7）
+
+| 项 | 现状 |
+|---|---|
+| T6 | reset/submit/initialValues 已覆盖；destroy/disabled/readOnly 专项仍缺 |
+| T8 | 有「实例覆盖工厂 scope」测试；缺「仅工厂 key 透传」独立断言 |
+| R1 | mode 收窄到 `edit/preview`（readonly 已拆独立渲染器）；FormRenderer 仍未消费 mode |
+| R2 | destroy 仍是 no-op，已加「M1 占位」注释 |
+| C1 | Radio/Checkbox 已无 placeholder；仍缺 `default: []` |
+| E1 | 根 README 已补；CI/lint 仍无 |
+| G2 | destroy 已标注占位；mode 等占位未标注 |
+
+### 仍挂账（23）
+
+| 主题 | 项 |
+|---|---|
+| 测试 | T1、T2、T3、T4、T5、T9 |
+| 依赖 | D1（dev 依赖环）、D2（@types/node）、D4（icons/formily-react 冗余）、D5（caret 版本） |
+| 渲染器 | R3（漏 engine.options.platform）、R4（disabled 首帧闪烁）、R5（reset 丢 Promise） |
+| 插件 | P1（disposed 守卫）、P2（listener 抛错）、P3（依赖失败无 failed 事件）、P4（异步插件 = FUT-03）、P5（toJS 引用） |
+| 组件 | C2（无 README）、C3（Textarea 冒烟） |
+| 工程化 | E2（main/private）、E3（vitest workspace 旧 API）、E4（registeredAt Date.now） |
+
+以下为原 M1 评审快照明细，供排期定位。
 
 ## 1. 延期项（按主题）
 
