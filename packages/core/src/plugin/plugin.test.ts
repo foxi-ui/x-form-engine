@@ -160,3 +160,19 @@ test('插件 dispose 抛错时资源仍释放、后续插件继续卸载、engin
   expect(engine.registry.components.has('Good')).toBe(false);
   expect(engine.status).toBe('disposed');
 });
+
+test('installPlugin 依赖缺失派发 plugin:failed 并抛 PLUGIN_DEPENDENCY_MISSING', () => {
+  const engine = createFormEngine();
+  const failed: Array<{ plugin: string; error?: unknown }> = [];
+  engine.events.on('plugin:failed', (payload: { plugin: string; error?: unknown }) => failed.push(payload));
+
+  expect(() =>
+    engine.installPlugin({
+      name: 'lonely', version: '1.0.0', dependencies: ['missing'], install: () => {},
+    })
+  ).toThrowError(expect.objectContaining({ code: 'PLUGIN_DEPENDENCY_MISSING' }));
+
+  expect(failed).toHaveLength(1);
+  expect(failed[0].plugin).toBe('lonely');
+  expect(failed[0].error).toBeInstanceOf(Error);
+});

@@ -159,12 +159,13 @@ export function createPluginManager(engine: FormEngine): PluginManager {
       const installed = managed
         .filter((record) => record.active)
         .map((record) => record.plugin);
-      resolvePluginOrder([...installed, plugin]);
 
       const context = createContext();
       const snapshots = snapshotAll(engine);
 
       try {
+        // 依赖校验也纳入事务：失败时同样回滚（此时无新增资源）并派发 plugin:failed。
+        resolvePluginOrder([...installed, plugin]);
         plugin.install(context);
       } catch (error) {
         // 只回滚本次安装新增的资源，不触碰该 source 之前已存在的资源。
