@@ -10,7 +10,7 @@ test('x-decorator: FormItem 在 SchemaField 内渲染出标签', () => {
     components: basicComponents,
     decorators: basicDecorators,
   });
-  const SchemaField = createEngineSchemaField(engine, 'pc');
+  const { SchemaField } = createEngineSchemaField(engine, 'pc');
   const form = createForm();
   const { container } = render(
     <FormProvider form={form}>

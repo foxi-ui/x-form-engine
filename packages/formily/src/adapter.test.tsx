@@ -37,21 +37,22 @@ function renderWithForm(node: ReactNode) {
   return render(<FormProvider form={form}>{node}</FormProvider>);
 }
 
-test('resolveFormilyComponentMap 按平台取实现、缺实现抛错', () => {
+test('resolveFormilyComponentMap 按平台取实现，mobile 缺实现回退 pc 并记诊断', () => {
   const engine = createFormEngine({ components: [inputBinding] });
 
   const map = resolveFormilyComponentMap(engine, 'pc');
-  expect(map.components.Input).toBeDefined();
+  expect(map.components.Input).toBe(TextInput);
   expect(map.decorators).toEqual({});
+  expect(map.diagnostics).toEqual([]);
 
-  expect(() => resolveFormilyComponentMap(engine, 'mobile')).toThrowError(
-    expect.objectContaining({ code: 'COMPONENT_CAPABILITY_MISMATCH' })
-  );
+  const mobile = resolveFormilyComponentMap(engine, 'mobile');
+  expect(mobile.components.Input).toBe(TextInput);
+  expect(mobile.diagnostics).toHaveLength(1);
 });
 
 test('createEngineSchemaField 以 JSX 渲染，registry 组件在字段上下文内可用', async () => {
   const engine = createFormEngine({ components: [inputBinding] });
-  const SchemaField = createEngineSchemaField(engine, 'pc');
+  const { SchemaField } = createEngineSchemaField(engine, 'pc');
 
   renderWithForm(
     <SchemaField
@@ -70,7 +71,7 @@ test('createEngineSchemaField 以 JSX 渲染，registry 组件在字段上下文
 
 test('含 x-engine 的 schema 可正常渲染且保留 Formily 原生键', async () => {
   const engine = createFormEngine({ components: [inputBinding] });
-  const SchemaField = createEngineSchemaField(engine, 'pc');
+  const { SchemaField } = createEngineSchemaField(engine, 'pc');
 
   renderWithForm(
     <SchemaField
@@ -92,7 +93,9 @@ test('含 x-engine 的 schema 可正常渲染且保留 Formily 原生键', async
 
 test('实例级 scope 覆盖工厂级同名 key', async () => {
   const engine = createFormEngine({ components: [inputBinding] });
-  const SchemaField = createEngineSchemaField(engine, 'pc', { label: 'factory' });
+  const { SchemaField } = createEngineSchemaField(engine, 'pc', {
+    label: 'factory',
+  });
 
   renderWithForm(
     <SchemaField

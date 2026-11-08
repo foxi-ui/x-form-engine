@@ -23,7 +23,7 @@ export const DesignerPreview: ComponentType<DesignerPreviewProps> = (props) => {
 
   // 每个预览实例只创建一次 form；schema 变化由 SchemaField 自行响应。
   const form = useMemo(() => createForm<Record<string, unknown>>(), []);
-  const SchemaField = useMemo(
+  const { SchemaField } = useMemo(
     () => createEngineSchemaField(engine, platform),
     [engine, platform]
   );
