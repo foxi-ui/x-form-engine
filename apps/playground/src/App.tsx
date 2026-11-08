@@ -1,4 +1,5 @@
-import { basicComponents } from '@x-form-engine/components';
+import { Button, Input, message, Modal } from 'antd';
+import { basicComponents, basicDecorators } from '@x-form-engine/components';
 import {
   FormEngineProvider,
   FormRenderer,
@@ -10,6 +11,35 @@ import type { FormRendererInstance, FormSubmitResult } from '@x-form-engine/sdk'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 /**
+ * 从 localStorage 加载设计器导出的 Schema 文档（跨应用：designer-demo 保存 →
+ * playground 渲染）。无导入时回退到下方 `demoSchema`。
+ */
+function loadImportedDoc(): {
+  schema: Record<string, unknown>;
+  schemaId?: string;
+  schemaVersion?: number;
+} | null {
+  try {
+    const raw = localStorage.getItem('x-form-engine:playground:schema');
+    if (!raw) {
+      return null;
+    }
+    const doc = JSON.parse(raw) as Record<string, unknown>;
+    const schema = 'schema' in doc ? (doc.schema as Record<string, unknown>) : doc;
+    if (!schema || typeof schema !== 'object') {
+      return null;
+    }
+    return {
+      schema,
+      schemaId: typeof doc.schemaId === 'string' ? doc.schemaId : undefined,
+      schemaVersion: typeof doc.version === 'number' ? doc.version : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/**
  * M3 演示 schema：复用 M1 的 Input / Select / DatePicker / Textarea。
  * 提交后生成候选快照（Value + Snapshot），并用独立只读渲染器做历史还原。
  */
@@ -19,6 +49,7 @@ const demoSchema: Record<string, unknown> = {
     姓名: {
       type: 'string',
       title: '姓名',
+      'x-decorator': 'FormItem',
       'x-component': 'Input',
       'x-component-props': {
         placeholder: '请输入姓名',
@@ -29,6 +60,7 @@ const demoSchema: Record<string, unknown> = {
     部门: {
       type: 'string',
       title: '部门',
+      'x-decorator': 'FormItem',
       'x-component': 'Select',
       enum: [
         { label: '研发部', value: 'rd' },
@@ -44,6 +76,7 @@ const demoSchema: Record<string, unknown> = {
     入职日期: {
       type: 'string',
       title: '入职日期',
+      'x-decorator': 'FormItem',
       'x-component': 'DatePicker',
       'x-component-props': {
         placeholder: '请选择入职日期',
@@ -53,6 +86,7 @@ const demoSchema: Record<string, unknown> = {
     备注: {
       type: 'string',
       title: '备注',
+      'x-decorator': 'FormItem',
       'x-component': 'Textarea',
       'x-component-props': {
         placeholder: '选填：补充说明',
@@ -79,12 +113,26 @@ export default function App(): JSX.Element {
         platform: 'pc',
         locale: 'zh-CN',
         components: basicComponents,
+        decorators: basicDecorators,
         plugins: [defaultFormattersPlugin],
       }),
     []
   );
 
   useEffect(() => () => engine.dispose(), [engine]);
+
+  const imported = useMemo(() => loadImportedDoc(), []);
+  const [importedState, setImportedState] = useState<{
+    schema: Record<string, unknown>;
+    schemaId?: string;
+    schemaVersion?: number;
+  } | null>(null);
+  const [importVisible, setImportVisible] = useState(false);
+  const [importText, setImportText] = useState('');
+  const effectiveImported = importedState ?? imported;
+  const renderSchema = effectiveImported?.schema ?? demoSchema;
+  const schemaId = effectiveImported?.schemaId ?? 'demo-employee';
+  const schemaVersion = effectiveImported?.schemaVersion ?? 1;
 
   const formRef = useRef<FormRendererInstance>(null);
   const [submitted, setSubmitted] = useState<FormSubmitResult | null>(null);
@@ -109,6 +157,27 @@ export default function App(): JSX.Element {
     }
   }, []);
 
+  const handleImport = () => {
+    try {
+      const doc = JSON.parse(importText) as Record<string, unknown>;
+      const schema = 'schema' in doc ? (doc.schema as Record<string, unknown>) : doc;
+      if (!schema || typeof schema !== 'object') {
+        throw new Error('schema 不是对象');
+      }
+      localStorage.setItem('x-form-engine:playground:schema', importText.trim());
+      setImportedState({
+        schema,
+        schemaId: typeof doc.schemaId === 'string' ? doc.schemaId : undefined,
+        schemaVersion: typeof doc.version === 'number' ? doc.version : undefined,
+      });
+      setImportVisible(false);
+      setSubmitted(null);
+      message.success('已导入 Schema');
+    } catch (error) {
+      message.error(`导入失败：${error instanceof Error ? error.message : String(error)}`);
+    }
+  };
+
   return (
     <FormEngineProvider engine={engine}>
       <main style={pageStyle}>
@@ -117,11 +186,17 @@ export default function App(): JSX.Element {
           M3 演示：填写 → 提交生成 Value + 候选 Snapshot → 只读历史还原。
         </p>
 
+        <div style={{ marginBottom: 12 }}>
+          <Button size="small" onClick={() => setImportVisible(true)}>
+            导入 Schema
+          </Button>
+        </div>
+
         <FormRenderer
           ref={formRef}
-          schema={demoSchema}
-          schemaId="demo-employee"
-          schemaVersion={1}
+          schema={renderSchema}
+          schemaId={schemaId}
+          schemaVersion={schemaVersion}
         />
 
         <button
@@ -155,7 +230,7 @@ export default function App(): JSX.Element {
                 background: '#fafafa',
               }}
             >
-              <ReadonlyRenderer schema={demoSchema} snapshot={submitted.snapshot} />
+              <ReadonlyRenderer schema={renderSchema} snapshot={submitted.snapshot} />
             </div>
 
             <h2 style={{ fontSize: 16, marginTop: 24 }}>提交的 Value</h2>
@@ -183,6 +258,44 @@ export default function App(): JSX.Element {
             </pre>
           </section>
         ) : null}
+
+        <section style={{ marginTop: 24 }}>
+          <h2 style={{ fontSize: 16 }}>Schema</h2>
+          <pre
+            style={{
+              background: '#f5f5f5',
+              borderRadius: 4,
+              padding: 12,
+              overflowX: 'auto',
+            }}
+          >
+            {JSON.stringify(renderSchema, null, 2)}
+          </pre>
+        </section>
+
+        <Modal
+          title="导入 Schema"
+          visible={importVisible}
+          onCancel={() => setImportVisible(false)}
+          width={720}
+          footer={[
+            <Button key="import" type="primary" onClick={handleImport}>
+              导入
+            </Button>,
+            <Button key="cancel" onClick={() => setImportVisible(false)}>
+              取消
+            </Button>,
+          ]}
+        >
+          <p style={{ color: '#666' }}>粘贴设计器「导出」的 Schema JSON：</p>
+          <Input.TextArea
+            value={importText}
+            onChange={(e) => setImportText(e.target.value)}
+            autoSize={{ minRows: 10, maxRows: 22 }}
+            placeholder='{"schemaId":"...","schema":{...}}'
+            style={{ fontFamily: 'monospace' }}
+          />
+        </Modal>
       </main>
     </FormEngineProvider>
   );

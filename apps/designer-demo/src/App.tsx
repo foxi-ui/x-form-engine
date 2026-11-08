@@ -27,7 +27,7 @@ import {
   importSchemaDocument,
   OptionsSetter,
 } from '@x-form-engine/designer';
-import { Button, message, Space } from 'antd';
+import { Button, Input as AntInput, message, Modal, Space } from 'antd';
 import { useState } from 'react';
 import type { FC, ReactNode } from 'react';
 
@@ -81,6 +81,8 @@ export default function App() {
   const [mode, setMode] = useState<Mode>('design');
   const [schemaVersion, setSchemaVersion] = useState(0);
   const [previewSchema, setPreviewSchema] = useState<Record<string, unknown> | null>(null);
+  const [exportJson, setExportJson] = useState('');
+  const [exportVisible, setExportVisible] = useState(false);
 
   const handleSave = () => {
     try {
@@ -124,6 +126,28 @@ export default function App() {
     }
   };
 
+  const handleExport = () => {
+    try {
+      const doc = exportSchemaDocument(engine.getCurrentTree(), {
+        schemaId: SCHEMA_ID,
+        previousVersion: Math.max(schemaVersion, readStoredVersion()),
+      });
+      setExportJson(JSON.stringify(doc, null, 2));
+      setExportVisible(true);
+    } catch (error) {
+      message.error(`导出失败：${toErrorMessage(error)}`);
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(exportJson);
+      message.success('已复制到剪贴板');
+    } catch {
+      message.error('复制失败，请手动全选复制');
+    }
+  };
+
   return (
     <Designer engine={engine}>
       <Workbench>
@@ -153,6 +177,7 @@ export default function App() {
                 <Button type={mode === 'preview' ? 'primary' : 'default'} onClick={handlePreview}>
                   预览
                 </Button>
+                <Button onClick={handleExport}>导出</Button>
               </Space>
               <Space size={4}>
                 <DesignerToolsWidget />
@@ -174,6 +199,28 @@ export default function App() {
           </SettingsPanel>
         </StudioPanel>
       </Workbench>
+
+      <Modal
+        title="导出 Schema"
+        visible={exportVisible}
+        onCancel={() => setExportVisible(false)}
+        width={720}
+        footer={[
+          <Button key="copy" type="primary" onClick={handleCopy}>
+            复制到剪贴板
+          </Button>,
+          <Button key="close" onClick={() => setExportVisible(false)}>
+            关闭
+          </Button>,
+        ]}
+      >
+        <AntInput.TextArea
+          value={exportJson}
+          readOnly
+          autoSize={{ minRows: 12, maxRows: 24 }}
+          style={{ fontFamily: 'monospace' }}
+        />
+      </Modal>
     </Designer>
   );
 }
