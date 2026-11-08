@@ -138,3 +138,35 @@ test('onValuesChange 回读 form.values 且与 getValues 一致', async () => {
   fireEvent.change(screen.getByTestId('field'), { target: { value: 'x' } });
   expect(seen.at(-1)).toEqual(ref.current!.getValues());
 });
+
+test('platform 未传时回退到 engine.options.platform', () => {
+  const engine = createFormEngine({ platform: 'mobile', components: [inputBinding] });
+  expect(() =>
+    render(
+      <FormEngineProvider engine={engine}>
+        <FormRenderer
+          schema={{ type: 'object', properties: { name: { type: 'string', 'x-component': 'Input' } } }}
+        />
+      </FormEngineProvider>
+    )
+  ).toThrowError(
+    expect.objectContaining({
+      code: 'COMPONENT_CAPABILITY_MISMATCH',
+      details: expect.objectContaining({ platform: 'mobile' }),
+    })
+  );
+});
+
+test('props.platform 优先于 engine.options.platform', () => {
+  const engine = createFormEngine({ platform: 'mobile', components: [inputBinding] });
+  expect(() =>
+    render(
+      <FormEngineProvider engine={engine}>
+        <FormRenderer
+          platform="pc"
+          schema={{ type: 'object', properties: { name: { type: 'string', 'x-component': 'Input' } } }}
+        />
+      </FormEngineProvider>
+    )
+  ).not.toThrow();
+});

@@ -12,7 +12,7 @@ import type { FormRendererInstance, FormRendererProps } from './types';
 export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
   function FormRenderer(props, ref) {
     const engine = useFormEngine();
-    const platform = props.platform ?? 'pc';
+    const platform = props.platform ?? engine.options.platform ?? 'pc';
 
     // 回调与提交配置放在 ref 中，保证变化不会重建 form。
     const onChangeRef = useRef(props.onValuesChange);
