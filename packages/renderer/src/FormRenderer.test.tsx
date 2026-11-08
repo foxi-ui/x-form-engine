@@ -216,3 +216,25 @@ test('disabled 优先于 readOnly', () => {
   );
   expect(renderedPatterns[0]).toBe('disabled');
 });
+
+test('submit 返回的 Date 不共享表单状态引用', async () => {
+  const engine = createFormEngine({ components: [inputBinding] });
+  const ref = createRef<FormRendererInstance>();
+  render(
+    <FormEngineProvider engine={engine}>
+      <FormRenderer
+        ref={ref}
+        initialValues={{ when: new Date('2026-11-08T00:00:00.000Z') }}
+        schema={{ type: 'object', properties: { when: { type: 'string', 'x-component': 'Input' } } }}
+      />
+    </FormEngineProvider>
+  );
+
+  let result!: Awaited<ReturnType<FormRendererInstance['submit']>>;
+  await act(async () => {
+    result = await ref.current!.submit();
+  });
+
+  (result.values.when as Date).setFullYear(2030);
+  expect((ref.current!.getValues().when as Date).getFullYear()).toBe(2026);
+});

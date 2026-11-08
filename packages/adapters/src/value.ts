@@ -7,7 +7,7 @@ import type {
   NormalizeWarning,
 } from '@x-form-engine/types';
 import { resolveFieldMeta } from './field-meta';
-import { isObjectArrayField, isPlainObject } from './internal';
+import { cloneValue, isObjectArrayField, isPlainObject } from './internal';
 
 export interface NormalizeOptions {
   locale?: string;
@@ -43,7 +43,8 @@ export function normalizeFormValues(
   );
 
   return {
-    value: isPlainObject(normalized) ? normalized : {},
+    // 深拷贝返回结果，确保规范化后的 Value 不共享调用方（如表单状态）的可变叶子（Date/File/Blob）。
+    value: isPlainObject(normalized) ? (cloneValue(normalized) as FormValue) : {},
     warnings,
     errors,
   };
