@@ -1,4 +1,4 @@
-import type { ComponentName } from './base';
+import type { ComponentName, Platform } from './base';
 import type { ReadonlyImplementations } from './readonly';
 
 export interface ComponentCapabilities {
@@ -63,4 +63,12 @@ export interface ComponentBinding<Impl = unknown, ReadonlyImpl = unknown> {
   implementations: ComponentImplementations<Impl>;
   /** 只读渲染实现：按 当前平台 → default → Formatter → Unknown 兜底解析。 */
   readonly?: ReadonlyImplementations<ReadonlyImpl>;
+}
+
+/** mobile 平台缺失实现时，字段/装饰器回退到 pc 产生的一次诊断。 */
+export interface PlatformFallbackDiagnostic {
+  kind: 'component' | 'decorator';
+  name: string;
+  requestedPlatform: Platform;
+  fallbackPlatform: Platform;
 }
