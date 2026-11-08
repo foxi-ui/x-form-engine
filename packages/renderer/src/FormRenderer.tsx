@@ -9,6 +9,13 @@ import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'rea
 import { useFormEngine } from './context';
 import type { FormRendererInstance, FormRendererProps } from './types';
 
+function resolvePattern(
+  disabled?: boolean,
+  readOnly?: boolean
+): 'editable' | 'disabled' | 'readOnly' {
+  return disabled ? 'disabled' : readOnly ? 'readOnly' : 'editable';
+}
+
 export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
   function FormRenderer(props, ref) {
     const engine = useFormEngine();
@@ -31,6 +38,8 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
           // initialValues 既是当前值（values），也是 reset() 的恢复目标。
           initialValues: props.initialValues,
           values: props.initialValues,
+          // 初始 pattern 在首帧即生效，避免 disabled/readOnly 在 effect 后置造成的可编辑闪烁。
+          pattern: resolvePattern(props.disabled, props.readOnly),
           effects: () => {
             onFormValuesChange((changedForm) => {
               onChangeRef.current?.(toJS(changedForm.values));
@@ -48,7 +57,7 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
 
     const { disabled, readOnly } = props;
     useEffect(() => {
-      form.setPattern(disabled ? 'disabled' : readOnly ? 'readOnly' : 'editable');
+      form.setPattern(resolvePattern(disabled, readOnly));
     }, [form, disabled, readOnly]);
 
     useImperativeHandle(

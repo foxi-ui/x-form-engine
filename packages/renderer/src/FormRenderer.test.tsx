@@ -170,3 +170,49 @@ test('props.platform 优先于 engine.options.platform', () => {
     )
   ).not.toThrow();
 });
+
+const renderedPatterns: string[] = [];
+function PatternProbe() {
+  const field = useField<Field>();
+  renderedPatterns.push(field.pattern);
+  return <span>{field.pattern}</span>;
+}
+const patternProbeBinding = {
+  protocol: {
+    name: 'Probe',
+    version: '1',
+    meta: { title: 'P' },
+    capabilities: { editable: true, readonly: true, mobile: false },
+    schema: { type: 'object' as const },
+  },
+  implementations: { pc: PatternProbe },
+};
+
+test('readOnly 首帧即生效，不依赖 effect 后置', () => {
+  renderedPatterns.length = 0;
+  const engine = createFormEngine({ components: [patternProbeBinding] });
+  render(
+    <FormEngineProvider engine={engine}>
+      <FormRenderer
+        readOnly
+        schema={{ type: 'object', properties: { f: { type: 'string', 'x-component': 'Probe' } } }}
+      />
+    </FormEngineProvider>
+  );
+  expect(renderedPatterns[0]).toBe('readOnly');
+});
+
+test('disabled 优先于 readOnly', () => {
+  renderedPatterns.length = 0;
+  const engine = createFormEngine({ components: [patternProbeBinding] });
+  render(
+    <FormEngineProvider engine={engine}>
+      <FormRenderer
+        disabled
+        readOnly
+        schema={{ type: 'object', properties: { f: { type: 'string', 'x-component': 'Probe' } } }}
+      />
+    </FormEngineProvider>
+  );
+  expect(renderedPatterns[0]).toBe('disabled');
+});
