@@ -5,3 +5,8 @@ coverage/
 *.tsbuildinfo
 .vitest/
 pnpm-debug.log*
+
+# 本地 agent 工具与技能（非项目源码）
+.agents/
+.claude/
+skills-lock.json
