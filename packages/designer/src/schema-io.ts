@@ -1,4 +1,4 @@
-import type { TreeNode } from '@designable/core';
+import { TreeNode } from '@designable/core';
 import { transformToSchema, transformToTreeNode } from '@designable/formily-transformer';
 import type { ISchema } from '@formily/json-schema';
 import { parseSchemaDocument, validateEngineSchema } from '@x-form-engine/core';
@@ -57,7 +57,7 @@ export function importSchemaDocument(input: unknown): ImportedSchemaDocument {
     );
   }
 
-  const tree = transformToTreeNode({ schema: doc.schema as ISchema }) as TreeNode;
+  const tree = new TreeNode(transformToTreeNode({ schema: doc.schema as ISchema }));
 
   return { tree, doc };
 }

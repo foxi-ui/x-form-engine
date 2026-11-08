@@ -34,6 +34,7 @@ test('导出：信封字段齐全且 schema 校验通过、版本自增', () => 
 test('往返：导出再导入复用 x-designable-id 且结构一致', () => {
   const doc = exportSchemaDocument(inputTree(), { schemaId: 's1' });
   const { tree, doc: parsed } = importSchemaDocument(doc);
+  expect(tree instanceof TreeNode).toBe(true);
   expect(parsed.schemaId).toBe('s1');
   expect(tree.children).toHaveLength(1);
   expect(tree.children![0].props!['x-component']).toBe('Input');
