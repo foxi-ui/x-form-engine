@@ -1,5 +1,7 @@
 # 10. 测试策略、验收标准与研发路线
 
+> 状态：部分过时（§5 研发阶段已迁至 `mvp-roadmap.md` §6，本文不再维护）｜ 最后更新：2026-11-08
+
 ## 1. 测试目标
 
 验证引擎的正确性、兼容性、扩展性和可维护性。测试不能只覆盖基础输入框，需要覆盖 Formily 原生能力、多端一致性、历史快照和插件生命周期。
@@ -67,78 +69,7 @@
 
 ## 5. 研发阶段
 
-### M0：技术验证与协议冻结
-
-交付：
-
-- 依赖版本矩阵。
-- Formily 原生能力验证 Demo。
-- Designable 物料和 Setter 验证 Demo。
-- Schema / Value / Snapshot 初版协议。
-- Monorepo 工程规范。
-
-退出条件：
-
-- 核心 API 已按实际版本验证。
-- 关键技术风险有结论。
-- 公共类型和组件契约通过评审。
-
-### M1：核心渲染引擎
-
-交付：
-
-- Types。
-- Registry。
-- Plugin System。
-- Runtime Context / Scope。
-- Formily Adapter。
-- PC Renderer。
-- 基础组件集。
-- SDK 最小 API。
-
-退出条件：
-
-- Formily 原生 Schema 可渲染。
-- 自定义组件可注册。
-- 校验、联动和 Effects 正常。
-- Renderer 生命周期和资源清理通过测试。
-
-### M2：设计器、只读与数据适配
-
-交付：
-
-- Designable Adapter。
-- Designer Materials / Setters。
-- Mobile Renderer。
-- Readonly Renderer。
-- Datasource Service。
-- Value / Snapshot Adapter。
-- Schema 和 Snapshot 迁移基础能力。
-
-退出条件：
-
-- 设计器产出的 Schema 可运行。
-- PC 与移动端 Value 一致。
-- 提交结果包含 Value 和 Snapshot。
-- 历史记录可脱离实时数据源展示。
-
-### M3：生产化与开放扩展
-
-交付：
-
-- 插件扩展规范。
-- 自定义组件开发文档。
-- 权限和国际化服务。
-- Devtools 和诊断能力。
-- E2E、兼容性和性能测试。
-- 发布和版本治理规范。
-
-退出条件：
-
-- 外部业务应用可通过 SDK 接入。
-- 第三方组件按规范扩展。
-- 生产问题可诊断、可回滚。
-- Schema 和 Snapshot 有明确兼容策略。
+里程碑与分期以《MVP 实施基线》`docs/tech-design/mvp-roadmap.md` §6 为唯一权威，本文不再重复定义（M1 Engine 内核 / M2 Designer 闭环 / M3 Value-Snapshot-Readonly 闭环 / M4 工程化与发布）。本文 §1~§4 的测试分层、场景与性能指标仍有效。
 
 ## 6. 角色建议
 

@@ -1,5 +1,7 @@
 # 07. Designer 与 Designable 1.x Adapter
 
+> 状态：implemented ｜ 落地对照：`packages/designer` ｜ 最后更新：2026-11-08
+
 ## 1. 目标
 
 使用 Designable 1.x（上游无 2.x，最新为 `1.0.0-beta.45`）构建可视化设计器，并通过 Adapter 将引擎组件定义映射为设计器物料、节点和 Setter。设计器与运行时共享组件元数据，避免两套组件定义长期漂移。

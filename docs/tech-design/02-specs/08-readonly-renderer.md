@@ -1,6 +1,6 @@
 # 08. 独立只读渲染器设计
 
-> 实现状态（M3，2026-11-08）：已实现独立只读渲染器 `ReadonlyRenderer`（`packages/renderer`）、Formatter 注册表与默认 Formatter（`packages/services`）、默认只读/Unknown 兜底（`packages/components` + renderer 内置）。详见 `docs/superpowers/specs/2026-11-08-m3-value-snapshot-readonly-design.md`。
+> 状态：implemented ｜ 落地对照：`packages/renderer/readonly`、`packages/services`（Formatter）、`packages/components` ｜ 最后更新：2026-11-08
 
 ## 1. 目标
 

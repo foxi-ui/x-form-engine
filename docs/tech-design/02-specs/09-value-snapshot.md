@@ -1,6 +1,6 @@
 # 09. Value、Snapshot 与后端存储协议
 
-> 实现状态（M3，2026-11-08）：已实现 Value 规范化与 Candidate Snapshot 生成（`packages/adapters`）、稳定 fieldId/itemId（`packages/core`）、权限 fail-closed（`packages/services`）、Schema/Snapshot 有序迁移（`packages/core`）。Canonical Snapshot 权威补全与原子持久化仍属后端职责。详见 `docs/superpowers/specs/2026-11-08-m3-value-snapshot-readonly-design.md`。
+> 状态：implemented（前端侧；Canonical Snapshot 权威补全与原子持久化仍属后端职责）｜ 落地对照：`packages/adapters`、`packages/types/value.ts`、`packages/services` ｜ 最后更新：2026-11-08
 
 ## 1. 目标
 

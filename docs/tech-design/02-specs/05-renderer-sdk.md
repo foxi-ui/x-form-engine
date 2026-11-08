@@ -1,5 +1,7 @@
 # 05. Renderer 与 React SDK
 
+> 状态：implemented（PC + Readonly）｜ 落地对照：`packages/renderer`、`packages/sdk` ｜ 最后更新：2026-11-08
+
 ## 1. 目标
 
 提供业务项目易于接入的统一 React API，同时保留必要的高级扩展入口。SDK 应隐藏内部包组合和初始化细节，但不屏蔽 Formily 原生能力。

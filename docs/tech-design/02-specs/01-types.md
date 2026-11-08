@@ -1,5 +1,7 @@
 # 01. 公共类型、领域模型与协议
 
+> 状态：implemented ｜ 落地对照：`packages/types` ｜ 最后更新：2026-11-08
+
 ## 1. 目标
 
 定义 Form Engine 各子包之间稳定、低耦合的公共契约。公共类型包不得依赖 React、Formily、Designable 或具体 UI 组件库。
@@ -21,7 +23,7 @@
 ## 3. 基础类型
 
 ```ts
-export type Platform = 'pc' | 'mobile' | 'readonly';
+export type Platform = 'pc' | 'mobile'; // 'readonly' 是 RenderMode，不是 Platform
 export type RenderMode = 'edit' | 'preview' | 'readonly';
 
 export type Primitive =
@@ -48,7 +50,7 @@ export type PluginName = string;
 ```ts
 export interface FormEngineOptions {
   id?: string;
-  platform?: Exclude<Platform, 'readonly'>;
+  platform?: Platform;
   locale?: string;
   debug?: boolean;
   components?: ComponentBinding[];
@@ -146,6 +148,8 @@ export interface FieldSnapshot {
   path: FieldPath;
   component: ComponentName;
   componentVersion?: string;
+  /** 稳定字段身份（name 拼接），与用下标访问的 path 分离 */
+  fieldId?: string;
   title?: string;
   value: unknown;
   displayValue?: unknown;
@@ -154,6 +158,14 @@ export interface FieldSnapshot {
     value: unknown;
   }>;
   metadata?: Record<string, unknown>;
+  /** 数组字段的行级快照 */
+  items?: RepeatItemSnapshot[];
+}
+
+/** 重复数组行的稳定快照：itemId 保证行身份稳定，不错位 */
+export interface RepeatItemSnapshot {
+  itemId: string;
+  fields: Record<string, FieldSnapshot>;
 }
 ```
 

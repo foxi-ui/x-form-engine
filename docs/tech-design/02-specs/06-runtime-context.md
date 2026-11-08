@@ -1,5 +1,7 @@
 # 06. Runtime Context、Scope、事件与服务注入
 
+> 状态：implemented ｜ 落地对照：`packages/core`（context/scope/events）｜ 最后更新：2026-11-08
+
 ## 1. 目标
 
 为组件、Effects、Schema 表达式和插件提供受控的运行时能力访问方式，避免组件依赖全局单例或直接导入业务模块。
@@ -9,7 +11,7 @@
 ```ts
 export interface RuntimeContext {
   engine: FormEngine;
-  platform: 'pc' | 'mobile' | 'readonly';
+  platform: 'pc' | 'mobile';
   mode: 'edit' | 'preview' | 'readonly';
   locale: string;
   services: EngineServices;

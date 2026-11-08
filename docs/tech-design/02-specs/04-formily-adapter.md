@@ -1,5 +1,7 @@
 # 04. Formily 2.x Adapter 设计
 
+> 状态：implemented ｜ 落地对照：`packages/formily` ｜ 最后更新：2026-11-08
+
 ## 1. 目标与边界
 
 Formily Adapter 是 Form Engine 与 Formily 2.x 之间的适配层。它负责注册组件、装饰器和 Scope，接入原生 Formily 生命周期，并把引擎扩展元数据转换为 Formily 可消费的 Schema。

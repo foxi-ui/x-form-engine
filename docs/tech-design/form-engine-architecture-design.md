@@ -202,6 +202,10 @@ export interface AdapterContext {
   locale: string;
   // 编辑期缓存的展示信息（JSON-safe），供 createSnapshot 读取，避免 submit 期间发起新请求
   displayState?: Record<string, unknown>;
+  // 记录可恢复的规范化告警（不阻断提交）
+  warn?(code: string, message: string): void;
+  // 记录不可恢复的规范化错误（阻断提交）
+  error?(code: string, message: string): void;
 }
 
 export interface ComponentAdapter<Value = unknown, Snapshot = unknown> {
@@ -222,9 +226,17 @@ export interface ComponentProtocolDefinition {
 }
 
 // React 实现绑定：放在组件实现层（packages/components 或 core/formily），不进入 types
+// 权威定义见 02-specs/02-component-spec.md 与 packages/types（readonly 是独立实现维度，不是 Platform）
+export interface ReadonlyImplementations {
+  pc?: React.ComponentType<unknown>;
+  mobile?: React.ComponentType<unknown>;
+  default?: React.ComponentType<unknown>;
+}
+
 export interface ComponentBinding {
   protocol: ComponentProtocolDefinition;
   implementations: Partial<Record<Platform, React.ComponentType<unknown>>>;
+  readonly?: ReadonlyImplementations;
 }
 ```
 
@@ -261,7 +273,9 @@ export const UserSelectBinding: ComponentBinding = {
   implementations: {
     pc: UserSelectPC,
     mobile: UserSelectMobile,
-    readonly: UserSelectReadonly,
+  },
+  readonly: {
+    pc: UserSelectReadonly,
   },
 };
 ```
@@ -709,6 +723,9 @@ export interface FormSnapshot {
 export interface FieldSnapshot {
   path: string;
   component: string;
+  componentVersion?: string;
+  /** 稳定字段身份（name 拼接），与用下标访问的 path 分离 */
+  fieldId?: string;
   title?: string;
   value: unknown;
   displayValue?: unknown;
@@ -717,6 +734,14 @@ export interface FieldSnapshot {
     value: unknown;
   }>;
   metadata?: Record<string, unknown>;
+  /** 数组字段的行级快照 */
+  items?: RepeatItemSnapshot[];
+}
+
+/** 重复数组行的稳定快照：itemId 保证行身份稳定 */
+export interface RepeatItemSnapshot {
+  itemId: string;
+  fields: Record<string, FieldSnapshot>;
 }
 ```
 

@@ -1,5 +1,7 @@
 # 03. Registry 与 Plugin 系统
 
+> 状态：implemented（同步插件）｜ 落地对照：`packages/core/registry`、`packages/core/plugin` ｜ 最后更新：2026-11-08
+
 ## 1. 设计目标
 
 Registry 管理引擎可发现的扩展资源；Plugin 将一组资源和服务以可控生命周期安装到 Engine。两者应支持冲突检测、依赖管理、卸载和诊断。

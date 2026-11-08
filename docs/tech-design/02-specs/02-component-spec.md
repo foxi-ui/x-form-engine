@@ -1,5 +1,7 @@
 # 02. 组件定义、Adapter 与组件开发规范
 
+> 状态：implemented ｜ 落地对照：`packages/types/component.ts`、`packages/components` ｜ 最后更新：2026-11-08
+
 ## 1. 目标
 
 建立统一组件契约，使同一个业务组件可以被设计器、PC 编辑器、移动端编辑器和只读渲染器识别，并共享一致的 Value 与 Snapshot 语义。
@@ -21,12 +23,19 @@
 export interface ComponentImplementations {
   pc?: React.ComponentType<unknown>;
   mobile?: React.ComponentType<unknown>;
-  readonly?: React.ComponentType<unknown>;
+}
+
+export interface ReadonlyImplementations {
+  pc?: React.ComponentType<unknown>;
+  mobile?: React.ComponentType<unknown>;
+  default?: React.ComponentType<unknown>;
 }
 
 export interface ComponentBinding {
   protocol: ComponentProtocolDefinition;
   implementations: ComponentImplementations;
+  /** 只读实现按 当前平台 → default → Formatter → Unknown 兜底解析 */
+  readonly?: ReadonlyImplementations;
 }
 
 export interface AdapterContext {
@@ -35,6 +44,10 @@ export interface AdapterContext {
   locale: string;
   // 编辑期缓存的展示信息（JSON-safe），供 createSnapshot 读取
   displayState?: Record<string, unknown>;
+  // 记录可恢复的规范化告警（不阻断提交）
+  warn?(code: string, message: string): void;
+  // 记录不可恢复的规范化错误（阻断提交）
+  error?(code: string, message: string): void;
 }
 
 export interface ComponentAdapter<Value = unknown, Snapshot = unknown> {
@@ -137,7 +150,9 @@ export const UserSelectBinding: ComponentBinding = {
   implementations: {
     pc: UserSelectPC,
     mobile: UserSelectMobile,
-    readonly: UserSelectReadonly,
+  },
+  readonly: {
+    pc: UserSelectReadonly,
   },
 };
 ```
