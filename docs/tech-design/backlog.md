@@ -3,42 +3,70 @@
 > 本文由 `m2-backlog.md` 迁移而来（原文件已删除）。迁移日期：2026-11-08。
 > 已随 M1 修复波解决的项不再列入本台账（见 git 历史 `m2-backlog.md` §2）。
 
-## 现状核对（2026-11-08 已逐条复核，共 33 项）
+## 现状核对与排期优先级（2026-11-08 已逐条复核）
 
-> 结论：**大多数延期项在 M2/M3 期间未被顺手解决，仍挂账 23 项；已解决 3 项、部分解决 7 项。**
+> 33 项已复核：**3 已解决、30 待处理**（P1 正确性 ×6 / P2 加固 ×20 / P3 发布门禁 ×3 / Future ×1）。
+> 优先级沿用：P1 = 正确性/一致性，尽早处理；P2 = 加固/测试补强，不阻塞新功能；P3 = 生产化/发布前必须。
 
-### 已解决（3）
+### ✅ 已解决（3）
 
 | 项 | 结论 |
 |---|---|
-| T7 | `no-react-deps.test.ts` 已补源码 import 扫描（`readFileSync` + 正则匹配） |
+| T7 | `no-react-deps.test.ts` 已补源码 import 扫描 |
 | D3 | sdk 现含 `.tsx` 测试，`@testing-library/react`/`@types/react` 为合理 devDep |
 | G1 | AGENTS.md 已更新为「已实现」措辞 |
 
-### 部分解决（7）
+### 🔴 P1 正确性 / 一致性（6，应尽早处理）
 
-| 项 | 现状 |
+| 项 | 缺口 |
 |---|---|
-| T6 | reset/submit/initialValues 已覆盖；destroy/disabled/readOnly 专项仍缺 |
-| T8 | 有「实例覆盖工厂 scope」测试；缺「仅工厂 key 透传」独立断言 |
-| R1 | mode 收窄到 `edit/preview`（readonly 已拆独立渲染器）；FormRenderer 仍未消费 mode |
-| R2 | destroy 仍是 no-op，已加「M1 占位」注释 |
-| C1 | Radio/Checkbox 已无 placeholder；仍缺 `default: []` |
-| E1 | 根 README 已补；CI/lint 仍无 |
-| G2 | destroy 已标注占位；mode 等占位未标注 |
+| R3 | `FormRenderer` 取 platform 漏 `engine.options.platform`，两处来源未合并 |
+| R4 | `disabled/readOnly` 在 useEffect 后置，首帧可编辑闪烁（权限 UX 边界） |
+| P1 | `installPlugin` 无 disposed 守卫，销毁后仍可安装 |
+| P2 | EventBus `emit` 无异常隔离，监听器抛错中断派发 |
+| P3 | `resolvePluginOrder` 在 try 外，依赖失败不派发 `plugin:failed`（违反 spec 03 §5.8） |
+| P5 | `toJS` 对 Date/File/Blob 按引用，候选快照可能被后续修改污染 |
 
-### 仍挂账（23）
+### 🟡 P2 加固 / 测试补强（20）
 
-| 主题 | 项 |
+| 项 | 缺口 |
 |---|---|
-| 测试 | T1、T2、T3、T4、T5、T9 |
-| 依赖 | D1（dev 依赖环）、D2（@types/node）、D4（icons/formily-react 冗余）、D5（caret 版本） |
-| 渲染器 | R3（漏 engine.options.platform）、R4（disabled 首帧闪烁）、R5（reset 丢 Promise） |
-| 插件 | P1（disposed 守卫）、P2（listener 抛错）、P3（依赖失败无 failed 事件）、P4（异步插件 = FUT-03）、P5（toJS 引用） |
-| 组件 | C2（无 README）、C3（Textarea 冒烟） |
-| 工程化 | E2（main/private）、E3（vitest workspace 旧 API）、E4（registeredAt Date.now） |
+| T1 | 7 基础组件仅 Input 触 DOM onChange，其余只验证可注册 |
+| T2 | 集成测试校验拒绝仅 `rejects.toBeDefined()`，未断言 path |
+| T3 | `toBe(0)` 无区分力，未先断言 `出差天数` 为 undefined |
+| T4 | DatePicker 无真实 DOM onChange 用例 |
+| T5 | `dispose` 未放 `afterEach`，断言提前失败残留 engine |
+| T6 | destroy/disabled/readOnly 实例 API 专项仍缺 |
+| T8 | 缺「仅工厂 scope key 透传」独立断言 |
+| T9 | sdk 缺「类型全量 re-export」编译期断言 |
+| D1 | renderer↔components dev 依赖环（跨包集成测试迁独立包） |
+| D2 | types/sdk/playground 未声明 `@types/node` |
+| D4 | components 冗余 `@ant-design/icons`、`@formily/react` |
+| D5 | playground vite/less/@vitejs/plugin-react 用 caret |
+| R1 | mode 收窄后仍未消费（静默 no-op，实现或移除） |
+| R2 | destroy 仍 no-op（已标注占位，评估真实释放） |
+| R5 | reset 返回 void 丢弃异步完成信号 |
+| C1 | Radio/Checkbox 缺 `options` 的 `default: []` |
+| C2 | components 无消费方构建文档（LESS/`~antd` alias） |
+| C3 | Textarea 无渲染冒烟 |
+| E4 | `registeredAt` 用 `Date.now()`，同毫秒可能碰撞 |
+| G2 | mode 等占位能力未在 JSDoc 标注 |
 
-以下为原 M1 评审快照明细，供排期定位。
+### 🔵 P3 发布门禁（3）
+
+| 项 | 缺口 |
+|---|---|
+| E1 | 无 CI / lint（README 已补） |
+| E2 | 各包 `main` 指向 TS 源码、`private: true`（发布前补产物/exports） |
+| E3 | `vitest.workspace.ts` 旧 API（迁移 `test.projects`） |
+
+### ⏳ Future（1，非技术债）
+
+| 项 | 说明 |
+|---|---|
+| P4 | 异步插件 owned 记录，对应 roadmap FUT-03 |
+
+以下为原 M1 评审快照明细（含位置与建议），供排期定位。
 
 ## 1. 延期项（按主题）
 
