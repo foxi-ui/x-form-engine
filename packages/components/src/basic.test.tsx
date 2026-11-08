@@ -50,3 +50,16 @@ test('Input 在字段上下文内 useField 可用且值可回写', () => {
   fireEvent.change(input, { target: { value: 'hello' } });
   expect(ref.current!.getValues().name).toBe('hello');
 });
+
+test('七个基础组件族的协议声明 mobile 能力（描述性，不参与运行时回退）', () => {
+  for (const binding of basicComponents) {
+    expect(binding.protocol.capabilities.mobile).toBe(true);
+  }
+});
+
+test('PC 物料入口仍然只提供 pc 实现', () => {
+  for (const binding of basicComponents) {
+    expect(binding.implementations.pc).toBeTruthy();
+    expect(binding.implementations.mobile).toBeUndefined();
+  }
+});
