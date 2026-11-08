@@ -7,6 +7,7 @@ import type {
   FormEngineOptions,
   FormEnginePlugin,
 } from '@x-form-engine/types';
+import { FormEngineError } from '@x-form-engine/types';
 import { createEventBus } from './events/event-bus';
 import { resolvePluginOrder } from './plugin/dependency-resolver';
 import { createPluginManager } from './plugin/plugin-manager';
@@ -74,6 +75,13 @@ class Engine implements FormEngine {
   }
 
   installPlugin(plugin: FormEnginePlugin): void {
+    if (this.status === 'disposed') {
+      throw new FormEngineError(
+        'ENGINE_DISPOSED',
+        'Cannot install plugin after engine is disposed',
+        { plugin: plugin.name }
+      );
+    }
     this.pluginManager.install(plugin);
   }
 

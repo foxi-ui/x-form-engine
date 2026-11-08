@@ -57,3 +57,11 @@ test('dispose 幂等且置为 disposed，释放监听器', () => {
   expect(engine.status).toBe('disposed');
   expect(events).toEqual(['dispose']);
 });
+
+test('dispose 后 installPlugin 抛 ENGINE_DISPOSED', () => {
+  const engine = createFormEngine();
+  engine.dispose();
+  expect(() =>
+    engine.installPlugin({ name: 'late', version: '1.0.0', install: () => {} })
+  ).toThrowError(expect.objectContaining({ code: 'ENGINE_DISPOSED' }));
+});

@@ -11,7 +11,8 @@ export type FormEngineErrorCode =
   | 'MIGRATION_FAILED'
   | 'VALUE_NORMALIZE_FAILED'
   | 'SNAPSHOT_VERSION_UNSUPPORTED'
-  | 'RENDER_FAILED';
+  | 'RENDER_FAILED'
+  | 'ENGINE_DISPOSED';
 
 export class FormEngineError extends Error {
   constructor(
