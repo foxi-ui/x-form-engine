@@ -50,6 +50,20 @@ function createPropsSchema(binding: ReactComponentBinding): ISchema {
     declaredPropertySchemas[name] = createDeclaredPropertySchema(name, property);
   }
 
+  const componentPropsProperties: Record<string, ISchema> = { ...declaredPropertySchemas };
+
+  // 只有协议显式声明了 `options` 的组件（Select/Radio/Checkbox）才挂载选项编辑器，
+  // 避免 Input/Textarea 等纯输入组件出现无意义的 options 设置项。
+  if (Object.prototype.hasOwnProperty.call(declaredProperties, 'options')) {
+    componentPropsProperties.options = {
+      type: 'array',
+      'x-decorator': 'FormItem',
+      title: '选项',
+      ...declaredProperties.options,
+      'x-component': OPTIONS_SETTER,
+    };
+  }
+
   return {
     type: 'object',
     properties: {
@@ -63,16 +77,7 @@ function createPropsSchema(binding: ReactComponentBinding): ISchema {
       required: { type: 'boolean', 'x-decorator': 'FormItem', 'x-component': 'Switch' },
       'x-component-props': {
         type: 'object',
-        properties: {
-          ...declaredPropertySchemas,
-          options: {
-            type: 'array',
-            'x-decorator': 'FormItem',
-            title: '选项',
-            ...declaredProperties.options,
-            'x-component': OPTIONS_SETTER,
-          },
-        },
+        properties: componentPropsProperties,
       },
     },
   };

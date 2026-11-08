@@ -40,7 +40,41 @@ test('往返：导出再导入复用 x-designable-id 且结构一致', () => {
   expect(tree.children![0].props!['x-component']).toBe('Input');
 });
 
-test('重复字段 name 导出被拒绝', () => {
+test('缺失 name 的字段导出时补齐 field_ 默认命名而非 UUID', () => {
+  const tree = new TreeNode({
+    componentName: 'Form',
+    children: [
+      { componentName: 'Field', props: { 'x-component': 'Input' } },
+      { componentName: 'Field', props: { 'x-component': 'Select' } },
+    ],
+  });
+
+  const doc = exportSchemaDocument(tree, { schemaId: 's1' });
+  const properties = (doc.schema as any).properties;
+  expect(Object.keys(properties)).toEqual(['field_1', 'field_2']);
+});
+
+test('不同父节点下的同名字段合法', () => {
+  const tree = new TreeNode({
+    componentName: 'Form',
+    children: [
+      {
+        componentName: 'Field',
+        props: { name: 'user', type: 'object', 'x-component': 'Object' },
+        children: [{ componentName: 'Field', props: { name: 'name', 'x-component': 'Input' } }],
+      },
+      {
+        componentName: 'Field',
+        props: { name: 'company', type: 'object', 'x-component': 'Object' },
+        children: [{ componentName: 'Field', props: { name: 'name', 'x-component': 'Input' } }],
+      },
+    ],
+  });
+
+  expect(() => exportSchemaDocument(tree, { schemaId: 's1' })).not.toThrow();
+});
+
+test('同一父节点下重复字段 name 导出被拒绝', () => {
   const tree = new TreeNode({
     componentName: 'Form',
     children: [

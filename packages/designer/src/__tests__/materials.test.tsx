@@ -51,6 +51,17 @@ test('propsSchema 字段级属性在顶层、组件属性在 x-component-props',
   expect(props.options).toBeUndefined(); // 不得泄漏到顶层
 });
 
+test('仅协议声明 options 的组件挂载选项编辑器', () => {
+  const input = (material.Input.Behavior as any[]).find((b) => b.name === 'Input');
+  const inputProps = input.designerProps.propsSchema.properties['x-component-props'].properties;
+  expect(inputProps.options).toBeUndefined();
+
+  const select = (material.Select.Behavior as any[]).find((b) => b.name === 'Select');
+  const selectProps = select.designerProps.propsSchema.properties['x-component-props'].properties;
+  expect(selectProps.options).toBeTruthy();
+  expect(selectProps.options['x-component']).toBe('OptionsSetter');
+});
+
 test('propsSchema 按 JSON 类型为声明属性补出可渲染的设置组件', () => {
   const behavior = (material.Input.Behavior as any[]).find((b) => b.name === 'Input');
   const props = behavior.designerProps.propsSchema.properties['x-component-props'].properties;

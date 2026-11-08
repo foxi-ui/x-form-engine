@@ -6,8 +6,10 @@ import type { ComponentType } from 'react';
  * Formily 组件映射。
  *
  * `components` 供 SchemaField 按 `x-component` / `x-decorator` 名称解析
- * （Formily 的 createSchemaField 用同一张 components 表解析两者）；
- * `decorators` 暂未启用，保留为后续装饰器适配的扩展位。
+ * （Formily 的 createSchemaField 用同一张 components 表解析两者）：
+ * `registry.decorators` 中的装饰器会按名称合并进同一张 `components` 表，
+ * 因此 `x-decorator` 与 `x-component` 走同一条解析路径。
+ * `decorators` 字段是已废弃的空占位，仅为兼容旧调用方保留。
  */
 export interface FormilyComponentMap {
   components: Record<string, ComponentType<unknown>>;
