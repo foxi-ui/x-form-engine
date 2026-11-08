@@ -6,7 +6,7 @@ Guidance for coding agents working in this repository.
 
 ## Repository state
 
-This repo is an implemented pnpm monorepo (React + TypeScript + Formily 2.3). The M1 scope is complete: the engine kernel, PC renderer, and base components are implemented across six workspace packages (`types`, `core`, `formily`, `renderer`, `components`, `sdk`) plus the `apps/playground` demo app. Use `pnpm test:run` for the full Vitest suite, `pnpm -r typecheck` for all packages, and `pnpm --filter playground dev|build` for the demo app. Readonly/mobile renderers, the designer adapter, real Snapshot generation, and asynchronous plugins remain in M2/M3.
+This repo is an implemented pnpm monorepo (React + TypeScript + Formily 2.3). M1 is complete — the engine kernel, PC renderer, and base components across six packages (`types`, `core`, `formily`, `renderer`, `components`, `sdk`) plus `apps/playground`. M2's **Designer closed loop** is also complete — `packages/designer` (Designable 1.x adapter: materials, schema round-trip/import-export, bootstrap, preview, OptionsSetter) plus the `apps/designer-demo` full Workbench. Use `pnpm test:run` for the full Vitest suite, `pnpm -r typecheck` for all packages, and `pnpm --filter playground dev|build` / `pnpm --filter designer-demo dev|build` for the demo apps. Still remaining (M2 remainder / M3): Mobile and Readonly renderers, value/snapshot/datasource adapters, real Snapshot generation, schema/snapshot migration, and asynchronous plugins.
 
 Documentation is written in Simplified Chinese with Mermaid diagrams; match that style when editing or adding docs.
 
@@ -22,21 +22,20 @@ Specs are **proposed contracts, not verified implementations**. Never present th
 
 ## Architecture at a glance
 
-Planned pnpm workspace, split by responsibility:
+pnpm workspace, split by responsibility. **Implemented** (M1/M2): `types`, `core`, `formily`, `renderer`, `components`, `sdk`, `designer` + `apps/playground`, `apps/designer-demo`. **Planned**: `adapters`, `services`, `apps/renderer-demo`. `packages/schema` was merged into `packages/core` (M1 baseline).
 
-| Package | Responsibility |
-|---|---|
-| `packages/types` | Pure protocol types, domain models, error codes |
-| `packages/core` | Registry, Plugin, Context, Scope, Events, Runtime |
-| `packages/schema` | `x-engine` compiler, validation, migration |
-| `packages/formily` | Formily adapter, built-in effects, hooks |
-| `packages/renderer` | UI-agnostic render core, React entry, PC/Mobile/Readonly |
-| `packages/designer` | Designable adapter, materials, setters |
-| `packages/adapters` | Value, snapshot, datasource adapters |
-| `packages/components` | Shared definitions + platform implementations |
-| `packages/services` | Datasource, permission, i18n, snapshot |
-| `packages/sdk` | Public consumer entry (`createFormEngine`, `FormEngineProvider`, `FormRenderer`, `ReadonlyRenderer`, `Designer`) |
-| `apps/` | playground, designer-demo, renderer-demo |
+| Package | Responsibility | Status |
+|---|---|---|
+| `packages/types` | Pure protocol types, domain models, error codes | implemented |
+| `packages/core` | Registry, Plugin, Context, Scope, Events, Runtime, `x-engine` schema parser/validator | implemented |
+| `packages/formily` | Formily adapter (component/decorator map + SchemaField) | implemented |
+| `packages/renderer` | UI-agnostic render core, React entry, PC Renderer | implemented (PC only) |
+| `packages/designer` | Designable 1.x adapter — materials, schema round-trip, bootstrap, preview, setters | implemented |
+| `packages/components` | Shared component definitions + platform implementations | implemented |
+| `packages/sdk` | Public consumer entry (`createFormEngine`, `FormEngineProvider`, `FormRenderer`, schema parse/validate) | implemented |
+| `packages/adapters` | Value, snapshot, datasource adapters | planned (M2/M3) |
+| `packages/services` | Datasource, permission, i18n, snapshot | planned (M3) |
+| `apps/` | playground (M1 demo), designer-demo (M2 demo) | implemented |
 
 Dependency direction is one-way and must be preserved: `types` depends on nothing; `core/registry` does not depend on React; `renderer/core` does not depend on Ant Design; `designer` never depends on Renderer; `formily/adapter` does not depend on Designable. Business projects depend on the two public packages `@x-form-engine/sdk` and `@x-form-engine/components`, and must not depend on internal implementation packages such as `core`, `renderer`, or `formily`.
 
@@ -65,7 +64,7 @@ These recur across the specs and are the easiest things to violate during implem
 
 - **M0** — pin dependency versions; validate Formily/Designable APIs with minimal demos; freeze types/component/schema-value-snapshot contracts.
 - **M1** — Types, Registry, Plugin, Runtime Context/Scope, Formily Adapter, PC Renderer, base components, minimal SDK.
-- **M2** — Designable adapter + materials/setters, Mobile and Readonly renderers, datasource/value/snapshot adapters, schema/snapshot migration basics.
+- **M2** — Designable adapter + materials/setters (**done** — Designer closed loop); still open: Mobile renderer, datasource/value/snapshot adapters, schema/snapshot migration basics.
 - **M3** — Plugin extension spec, permission/i18n services, Devtools/diagnostics, E2E/compat/performance testing, release and version governance.
 
 The architecture doc explicitly warns against building all business components, designer features, and backend snapshot protocols in the first phase; stabilize `types + component definition + registry/plugin + formily adapter` first.
