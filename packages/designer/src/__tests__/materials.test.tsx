@@ -50,3 +50,16 @@ test('propsSchema 字段级属性在顶层、组件属性在 x-component-props',
   expect(props['x-component-props'].properties.options).toBeTruthy(); // options 在 x-component-props 内
   expect(props.options).toBeUndefined(); // 不得泄漏到顶层
 });
+
+test('propsSchema 按 JSON 类型为声明属性补出可渲染的设置组件', () => {
+  const behavior = (material.Input.Behavior as any[]).find((b) => b.name === 'Input');
+  const props = behavior.designerProps.propsSchema.properties['x-component-props'].properties;
+  expect(props.placeholder['x-component']).toBe('Input');
+});
+
+test('Form 根节点保留可放置能力但不暴露表单级 propsSchema', () => {
+  const behavior = (material.Form.Behavior as any[]).find((b) => b.name === 'Form');
+  const designerProps = behavior.designerProps(new TreeNode({ componentName: 'Form' }));
+  expect(designerProps.droppable).toBe(true);
+  expect(designerProps.propsSchema).toBeUndefined();
+});

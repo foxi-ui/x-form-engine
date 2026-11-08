@@ -21,6 +21,70 @@ importers:
         specifier: 3.2.7
         version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)(less@4.9.1)
 
+  apps/designer-demo:
+    dependencies:
+      '@designable/core':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive@2.3.7)
+      '@designable/react':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2))(@formily/reactive@2.3.7)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
+      '@designable/react-settings-form':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/antd@2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3))(@formily/core@2.3.7)(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3))(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2))(@formily/reactive@2.3.7)(@formily/shared@2.3.7)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@formily/antd':
+        specifier: 2.3.7
+        version: 2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3)
+      '@formily/core':
+        specifier: 2.3.7
+        version: 2.3.7
+      '@formily/json-schema':
+        specifier: 2.3.7
+        version: 2.3.7(typescript@5.9.3)
+      '@formily/react':
+        specifier: 2.3.7
+        version: 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3)
+      '@x-form-engine/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@x-form-engine/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@x-form-engine/designer':
+        specifier: workspace:*
+        version: link:../../packages/designer
+      '@x-form-engine/formily':
+        specifier: workspace:*
+        version: link:../../packages/formily
+      antd:
+        specifier: 4.22.8
+        version: 4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      react:
+        specifier: 17.0.2
+        version: 17.0.2
+      react-dom:
+        specifier: 17.0.2
+        version: 17.0.2(react@17.0.2)
+    devDependencies:
+      '@types/react':
+        specifier: 17.0.0
+        version: 17.0.0
+      '@types/react-dom':
+        specifier: 17.0.0
+        version: 17.0.0
+      '@vitejs/plugin-react':
+        specifier: ^4
+        version: 4.7.0(vite@5.4.21(@types/node@22.20.5)(less@4.9.1))
+      less:
+        specifier: ^4
+        version: 4.9.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vite:
+        specifier: ^5
+        version: 5.4.21(@types/node@22.20.5)(less@4.9.1)
+
   apps/playground:
     dependencies:
       '@x-form-engine/components':
@@ -2631,12 +2695,50 @@ snapshots:
       - react
       - react-dom
 
+  '@designable/react-settings-form@1.0.0-beta.45(@formily/antd@2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3))(@formily/core@2.3.7)(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3))(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2))(@formily/reactive@2.3.7)(@formily/shared@2.3.7)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)':
+    dependencies:
+      '@babel/parser': 7.29.13
+      '@designable/core': 1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive@2.3.7)
+      '@designable/react': 1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2))(@formily/reactive@2.3.7)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
+      '@designable/shared': 1.0.0-beta.45
+      '@formily/antd': 2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3)
+      '@formily/core': 2.3.7
+      '@formily/react': 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3)
+      '@formily/reactive': 2.3.7
+      '@formily/reactive-react': 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)
+      '@formily/shared': 2.3.7
+      '@monaco-editor/react': 4.7.0(monaco-editor@0.25.2)(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      antd: 4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      monaco-editor: 0.25.2
+      prettier: 2.8.8
+      react-color: 2.19.3(react@17.0.2)
+      react-tiny-popover: 6.0.10(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+    transitivePeerDependencies:
+      - '@formily/json-schema'
+      - '@formily/path'
+      - react
+      - react-dom
+
   '@designable/react@1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2))(@formily/reactive@2.3.7)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)':
     dependencies:
       '@designable/core': 1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive@2.3.7)
       '@designable/shared': 1.0.0-beta.45
       '@formily/reactive': 2.3.7
       '@formily/reactive-react': 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)
+      '@juggle/resize-observer': 3.4.0
+      antd: 4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      dateformat: 4.6.3
+      react: 17.0.2
+    transitivePeerDependencies:
+      - '@formily/json-schema'
+      - '@formily/path'
+
+  '@designable/react@1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2))(@formily/reactive@2.3.7)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)':
+    dependencies:
+      '@designable/core': 1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive@2.3.7)
+      '@designable/shared': 1.0.0-beta.45
+      '@formily/reactive': 2.3.7
+      '@formily/reactive-react': 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)
       '@juggle/resize-observer': 3.4.0
       antd: 4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
       dateformat: 4.6.3
@@ -2768,6 +2870,31 @@ snapshots:
       - prop-types
       - typescript
 
+  '@formily/antd@2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3)':
+    dependencies:
+      '@ant-design/icons': 4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@dnd-kit/core': 6.3.1(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@dnd-kit/sortable': 7.0.2(@dnd-kit/core@6.3.1(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
+      '@formily/core': 2.3.7
+      '@formily/grid': 2.3.7(typescript@5.9.3)
+      '@formily/json-schema': 2.3.7(typescript@5.9.3)
+      '@formily/react': 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3)
+      '@formily/reactive': 2.3.7
+      '@formily/reactive-react': 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)
+      '@formily/shared': 2.3.7
+      antd: 4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      classnames: 2.5.1
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
+      react-is: 19.3.1
+      react-sticky-box: 0.9.3(prop-types@15.8.1)(react@17.0.2)
+    optionalDependencies:
+      '@types/react': 17.0.0
+      '@types/react-dom': 17.0.0
+    transitivePeerDependencies:
+      - prop-types
+      - typescript
+
   '@formily/core@2.3.7':
     dependencies:
       '@formily/reactive': 2.3.7
@@ -2807,6 +2934,24 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
+  '@formily/react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)(typescript@5.9.3)':
+    dependencies:
+      '@formily/core': 2.3.7
+      '@formily/json-schema': 2.3.7(typescript@5.9.3)
+      '@formily/reactive': 2.3.7
+      '@formily/reactive-react': 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)
+      '@formily/shared': 2.3.7
+      '@formily/validator': 2.3.7
+      hoist-non-react-statics: 3.3.2
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
+      react-is: 19.3.1
+    optionalDependencies:
+      '@types/react': 17.0.0
+      '@types/react-dom': 17.0.0
+    transitivePeerDependencies:
+      - typescript
+
   '@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)':
     dependencies:
       '@formily/reactive': 2.3.7
@@ -2814,6 +2959,17 @@ snapshots:
       react: 17.0.2
       react-dom: 17.0.2(react@17.0.2)
       react-is: 17.0.2
+    optionalDependencies:
+      '@types/react': 17.0.0
+      '@types/react-dom': 17.0.0
+
+  '@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@19.3.1)(react@17.0.2)':
+    dependencies:
+      '@formily/reactive': 2.3.7
+      hoist-non-react-statics: 3.3.2
+      react: 17.0.2
+      react-dom: 17.0.2(react@17.0.2)
+      react-is: 19.3.1
     optionalDependencies:
       '@types/react': 17.0.0
       '@types/react-dom': 17.0.0

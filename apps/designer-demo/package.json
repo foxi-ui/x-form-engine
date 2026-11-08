@@ -1,0 +1,35 @@
+{
+  "name": "designer-demo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@designable/core": "1.0.0-beta.45",
+    "@designable/react": "1.0.0-beta.45",
+    "@designable/react-settings-form": "1.0.0-beta.45",
+    "@formily/antd": "2.3.7",
+    "@formily/core": "2.3.7",
+    "@formily/json-schema": "2.3.7",
+    "@formily/react": "2.3.7",
+    "@x-form-engine/components": "workspace:*",
+    "@x-form-engine/core": "workspace:*",
+    "@x-form-engine/designer": "workspace:*",
+    "@x-form-engine/formily": "workspace:*",
+    "antd": "4.22.8",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "17.0.0",
+    "@types/react-dom": "17.0.0",
+    "@vitejs/plugin-react": "^4",
+    "less": "^4",
+    "typescript": "5.9.3",
+    "vite": "^5"
+  }
+}
