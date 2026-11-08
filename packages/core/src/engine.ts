@@ -47,6 +47,14 @@ class Engine implements FormEngine {
       );
     }
 
+    for (const binding of options.decorators ?? []) {
+      this.registry.decorators.register(
+        binding.protocol.name,
+        binding,
+        BUILTIN_SOURCE
+      );
+    }
+
     this.status = 'initializing';
 
     try {

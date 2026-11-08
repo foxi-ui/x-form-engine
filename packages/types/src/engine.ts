@@ -59,6 +59,7 @@ export interface FormEngineOptions {
   locale?: string;
   debug?: boolean;
   components?: ComponentBinding[];
+  decorators?: ComponentBinding[];
   plugins?: FormEnginePlugin[];
   services?: Partial<EngineServices>;
 }

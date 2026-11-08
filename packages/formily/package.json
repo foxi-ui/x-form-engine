@@ -24,6 +24,7 @@
     "react-is": "17.0.2"
   },
   "devDependencies": {
+    "@x-form-engine/components": "workspace:*",
     "@x-form-engine/core": "workspace:*",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "12.1.5",
