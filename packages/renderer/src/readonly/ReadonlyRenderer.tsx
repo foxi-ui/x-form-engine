@@ -127,7 +127,7 @@ function resolveEnumFromSchema(
  */
 export function ReadonlyRenderer(props: ReadonlyRendererProps): ReactElement {
   const engine = useFormEngine();
-  const platform: Platform = props.platform ?? 'pc';
+  const platform: Platform = props.platform ?? engine.options.platform ?? 'pc';
   const locale = props.locale ?? engine.options.locale ?? 'zh-CN';
   const diagnostics: ReadonlyDiagnostic[] = [];
   const context: ReadonlyRenderContext = { locale, platform, diagnostics };

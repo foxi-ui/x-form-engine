@@ -29,6 +29,24 @@ function renderReadonly(ui: React.ReactElement): void {
   render(<FormEngineProvider engine={engine}>{ui}</FormEngineProvider>);
 }
 
+function PcReadonly(): React.ReactElement {
+  return <span>readonly-pc</span>;
+}
+function MobileReadonly(): React.ReactElement {
+  return <span>readonly-mobile</span>;
+}
+const platformReadonlyBinding = {
+  protocol: {
+    name: 'Probe',
+    version: '1',
+    meta: { title: 'P' },
+    capabilities: { editable: true, readonly: true, mobile: true },
+    schema: { type: 'object' as const },
+  },
+  implementations: {},
+  readonly: { pc: PcReadonly, mobile: MobileReadonly },
+};
+
 describe('ReadonlyRenderer', () => {
   it('无快照时按 values 降级显示', () => {
     renderReadonly(
@@ -120,5 +138,22 @@ describe('ReadonlyRenderer', () => {
     );
     expect(screen.getByText('2026-11-10')).toBeTruthy();
     expect(screen.getByText('开始日期')).toBeTruthy();
+  });
+
+  it('platform 未传时回退到 engine.options.platform', () => {
+    const engine = createFormEngine({
+      platform: 'mobile',
+      components: [platformReadonlyBinding],
+    });
+    render(
+      <FormEngineProvider engine={engine}>
+        <ReadonlyRenderer
+          schema={{ type: 'object', properties: { f: { type: 'string', 'x-component': 'Probe' } } }}
+          values={{ f: 'x' }}
+        />
+      </FormEngineProvider>
+    );
+    expect(screen.getByText('readonly-mobile')).toBeTruthy();
+    expect(screen.queryByText('readonly-pc')).toBeNull();
   });
 });
