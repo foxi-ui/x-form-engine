@@ -142,6 +142,6 @@
 | 1.3 渲染器 `mode`/`destroy` 占位 | FUT-01（Mobile Renderer） |
 | 1.4 P4 异步插件 | FUT-03（异步 Plugin） |
 | 1.5 组件包 Radio/Checkbox options | FUT-16（设计器高级 Setter） |
-| 1.6 工程化/发布治理 | M4（工程化与发布） |
+| 1.6 工程化/发布治理 | M5（工程化与发布） |
 
 其余项为 M1 执行过程中新发现的技术债，按本台账跟踪。

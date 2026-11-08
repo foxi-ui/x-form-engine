@@ -6,7 +6,7 @@ Guidance for coding agents working in this repository.
 
 ## Repository state
 
-This repo is an implemented pnpm monorepo (React + TypeScript + Formily 2.3). M1 is complete — the engine kernel, PC renderer, and base components across six packages (`types`, `core`, `formily`, `renderer`, `components`, `sdk`) plus `apps/playground`. M2's **Designer closed loop** is also complete — `packages/designer` (Designable 1.x adapter: materials, schema round-trip/import-export, bootstrap, preview, OptionsSetter) plus the `apps/designer-demo` full Workbench. M3's **Value / Snapshot / Readonly 闭环** is complete — `packages/adapters` (Value 规范化 + Candidate Snapshot 生成), `packages/services` (权限解析 / Formatter / i18n / 静态数据源), the independent Readonly renderer (`ReadonlyRenderer`), and schema/snapshot 有序迁移注册表 in `core`. Use `pnpm test:run` for the full Vitest suite, `pnpm -r typecheck` for all packages, and `pnpm --filter playground dev|build` / `pnpm --filter designer-demo dev|build` for the demo apps. Still remaining: full Mobile renderer, asynchronous plugins, backend Canonical Snapshot integration, Devtools/diagnostics, E2E/compatibility/performance testing, and release/version governance.
+This repo is an implemented pnpm monorepo (React + TypeScript + Formily 2.3). M1 is complete — the engine kernel, PC renderer, and base components across six packages (`types`, `core`, `formily`, `renderer`, `components`, `sdk`) plus `apps/playground`. M2's **Designer closed loop** is also complete — `packages/designer` (Designable 1.x adapter: materials, schema round-trip/import-export, bootstrap, preview, OptionsSetter) plus the `apps/designer-demo` full Workbench. M3's **Value / Snapshot / Readonly 闭环** is complete — `packages/adapters` (Value 规范化 + Candidate Snapshot 生成), `packages/services` (权限解析 / Formatter / i18n / 静态数据源), the independent Readonly renderer (`ReadonlyRenderer`), and schema/snapshot 有序迁移注册表 in `core`. M4's **Mobile renderer** is also complete — the `@x-form-engine/components/mobile` entry, seven P0 antd-mobile components + FormItem, per-field PC fallback diagnostics, and the `apps/mobile-demo` acceptance app. Use `pnpm test:run` for the full Vitest suite, `pnpm -r typecheck` for all packages, and `pnpm --filter playground dev|build` / `pnpm --filter designer-demo dev|build` / `pnpm --filter mobile-demo dev|build` for the demo apps. Still remaining: asynchronous plugins, backend Canonical Snapshot integration, Devtools/diagnostics, E2E/compatibility/performance testing, and release/version governance.
 
 Documentation is written in Simplified Chinese with Mermaid diagrams; match that style when editing or adding docs.
 
@@ -14,7 +14,7 @@ Documentation is written in Simplified Chinese with Mermaid diagrams; match that
 
 - `README.md` + `docs/README.md` — the canonical doc map: five-layer structure, authority rules, and per-spec landing status. Start here for "where is X documented".
 - `docs/tech-design/form-engine-architecture-design.md` — architecture baseline (goals, layers, monorepo layout, domain models, adapters, error handling). Milestones point to `mvp-roadmap.md` §6.
-- `docs/tech-design/mvp-roadmap.md` — MVP baseline: Core/Contract/Future classification, BLOCK items, M1–M4 milestones, acceptance criteria.
+- `docs/tech-design/mvp-roadmap.md` — MVP baseline: Core/Contract/Future classification, BLOCK items, M1–M5 milestones, acceptance criteria.
 - `docs/tech-design/backlog.md` — tech-debt ledger (M1 review carryovers; re-verify each before planning).
 - `docs/tech-design/pending-confirmations.md` — 13 backend/business/security questions to close before backend integration.
 - `docs/tech-design/02-specs/` — topic specs `01`–`10`. Each carries a status stamp (`implemented` / `proposed` / superseded) and a `落地对照` pointer to the owning `packages/*` source.
@@ -26,16 +26,16 @@ Recommended order: freeze `01` + `02` (public contracts) → implement `03` + `0
 
 ## Architecture at a glance
 
-pnpm workspace, split by responsibility. **Implemented** (M1/M2/M3): `types`, `core`, `formily`, `renderer`, `components`, `sdk`, `designer`, `adapters`, `services` + `apps/playground`, `apps/designer-demo`. **Planned**: `apps/renderer-demo`. `packages/schema` was merged into `packages/core` (M1 baseline).
+pnpm workspace, split by responsibility. **Implemented** (M1–M4): `types`, `core`, `formily`, `renderer`, `components`, `sdk`, `designer`, `adapters`, `services` + `apps/playground`, `apps/designer-demo`, `apps/mobile-demo`. **Planned**: `apps/renderer-demo`. `packages/schema` was merged into `packages/core` (M1 baseline).
 
 | Package | Responsibility | Status |
 |---|---|---|
 | `packages/types` | Pure protocol types, domain models, error codes | implemented |
 | `packages/core` | Registry, Plugin, Context, Scope, Events, Runtime, `x-engine` schema parser/validator | implemented |
 | `packages/formily` | Formily adapter (component/decorator map + SchemaField) | implemented |
-| `packages/renderer` | UI-agnostic render core, React entry, PC Renderer, Readonly Renderer | implemented (PC + Readonly) |
+| `packages/renderer` | UI-agnostic render core, React entry, PC Renderer, Mobile renderer, Readonly Renderer | implemented (PC + Mobile + Readonly) |
 | `packages/designer` | Designable 1.x adapter — materials, schema round-trip, bootstrap, preview, setters | implemented |
-| `packages/components` | Shared component definitions + platform implementations | implemented |
+| `packages/components` | Shared component definitions + platform implementations (PC entry + `@x-form-engine/components/mobile` subpath + readonly) | implemented |
 | `packages/sdk` | Public consumer entry (`createFormEngine`, `FormEngineProvider`, `FormRenderer`, schema parse/validate) | implemented |
 | `packages/adapters` | Value 规范化 + Candidate Snapshot 生成 + 实体/字典参考适配器 | implemented |
 | `packages/services` | Permission 解析、Formatter、i18n、静态 Datasource | implemented |
@@ -70,6 +70,8 @@ These recur across the specs and are the easiest things to violate during implem
 - **M0** — pin dependency versions; validate Formily/Designable APIs with minimal demos; freeze types/component/schema-value-snapshot contracts.
 - **M1** — Types, Registry, Plugin, Runtime Context/Scope, Formily Adapter, PC Renderer, base components, minimal SDK.
 - **M2** — Designable adapter + materials/setters (**done** — Designer closed loop).
-- **M3** — Value / Snapshot / Readonly 闭环（**done**）：Value 规范化、稳定 fieldId/itemId、Candidate Snapshot、Canonical Snapshot 协议、Readonly 渲染器、Formatter 注册表、权限 fail-closed、历史 Schema/Snapshot 有序迁移。Still open: full Mobile renderer, asynchronous plugins, backend Canonical Snapshot integration, Devtools/diagnostics, E2E/compat/perf testing, release/version governance.
+- **M3** — Value / Snapshot / Readonly 闭环（**done**）：Value 规范化、稳定 fieldId/itemId、Candidate Snapshot、Canonical Snapshot 协议、Readonly 渲染器、Formatter 注册表、权限 fail-closed、历史 Schema/Snapshot 有序迁移。
+- **M4** — Mobile renderer (**done**): `@x-form-engine/components/mobile` entry, seven P0 antd-mobile components + FormItem, per-field PC fallback diagnostics, `apps/mobile-demo`, and the mobile bundle-purity check.
+- **M5** — Engineering and release (**open**): package builds, public API/type exports, unit/integration/E2E tests, Playground docs, versioning, and npm/workspace integration validation. Still open beyond it: asynchronous plugins, backend Canonical Snapshot integration, Devtools/diagnostics, E2E/compatibility/performance testing.
 
 The architecture doc explicitly warns against building all business components, designer features, and backend snapshot protocols in the first phase; stabilize `types + component definition + registry/plugin + formily adapter` first.

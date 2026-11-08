@@ -25,10 +25,10 @@
 | 文档 | 主题 | 落地状态 |
 |---|---|---|
 | [`01-types.md`](tech-design/02-specs/01-types.md) | 公共类型、领域模型、错误协议 | 已实现（权威见 `packages/types`） |
-| [`02-component-spec.md`](tech-design/02-specs/02-component-spec.md) | 组件定义、Adapter、开发规范 | 已实现（权威见 `packages/types/component.ts`） |
+| [`02-component-spec.md`](tech-design/02-specs/02-component-spec.md) | 组件定义、Adapter、开发规范 | 已实现（权威见 `packages/types/component.ts`、`packages/components/src/mobile`） |
 | [`03-registry-plugin.md`](tech-design/02-specs/03-registry-plugin.md) | Registry、Plugin 生命周期与冲突 | 已实现（同步插件，见 `packages/core`） |
 | [`04-formily-adapter.md`](tech-design/02-specs/04-formily-adapter.md) | Formily 2.x 适配 | 已实现（见 `packages/formily`） |
-| [`05-renderer-sdk.md`](tech-design/02-specs/05-renderer-sdk.md) | Renderer、实例 API、SDK | 已实现（PC + Readonly） |
+| [`05-renderer-sdk.md`](tech-design/02-specs/05-renderer-sdk.md) | Renderer、实例 API、SDK | 已实现（PC + Mobile + Readonly） |
 | [`06-runtime-context.md`](tech-design/02-specs/06-runtime-context.md) | Context、Scope、事件、服务注入 | 已实现 |
 | [`07-designer-adapter.md`](tech-design/02-specs/07-designer-adapter.md) | Designable 1.x 适配 | 已实现（见 `packages/designer`） |
 | [`08-readonly-renderer.md`](tech-design/02-specs/08-readonly-renderer.md) | 只读渲染器与 Formatter | 已实现 |
@@ -45,7 +45,7 @@
 
 ### 实施 / 追踪
 
-- [`tech-design/mvp-roadmap.md`](tech-design/mvp-roadmap.md) — MVP 实施基线：Core/Contract/Future 分级、BLOCK 阻塞项、M1~M4 里程碑、验收标准。
+- [`tech-design/mvp-roadmap.md`](tech-design/mvp-roadmap.md) — MVP 实施基线：Core/Contract/Future 分级、BLOCK 阻塞项、M1~M5 里程碑、验收标准。
 - [`tech-design/backlog.md`](tech-design/backlog.md) — 技术债台账（M1 评审延期项，需逐条复核现状）。
 - [`tech-design/pending-confirmations.md`](tech-design/pending-confirmations.md) — 后端/业务/安全 13 项待确认问题，后端联调前须逐项关闭。
 

@@ -69,7 +69,7 @@
 
 ## 5. 研发阶段
 
-里程碑与分期以《MVP 实施基线》`docs/tech-design/mvp-roadmap.md` §6 为唯一权威，本文不再重复定义（M1 Engine 内核 / M2 Designer 闭环 / M3 Value-Snapshot-Readonly 闭环 / M4 工程化与发布）。本文 §1~§4 的测试分层、场景与性能指标仍有效。
+里程碑与分期以《MVP 实施基线》`docs/tech-design/mvp-roadmap.md` §6 为唯一权威，本文不再重复定义（M1 Engine 内核 / M2 Designer 闭环 / M3 Value-Snapshot-Readonly 闭环 / M4 Mobile 渲染器 / M5 工程化与发布）。本文 §1~§4 的测试分层、场景与性能指标仍有效。
 
 ## 6. 角色建议
 

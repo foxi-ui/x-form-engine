@@ -1,6 +1,6 @@
 # 02. 组件定义、Adapter 与组件开发规范
 
-> 状态：implemented ｜ 落地对照：`packages/types/component.ts`、`packages/components` ｜ 最后更新：2026-11-08
+> 状态：implemented ｜ 落地对照：`packages/types/component.ts`、`packages/components`、`packages/components/src/mobile` ｜ 最后更新：2026-11-08
 
 ## 1. 目标
 
@@ -16,6 +16,8 @@
 4. **Designer Material**：设计器物料、默认 Schema 和 Setter。
 
 不要求所有组件都必须同时提供全部平台实现，但必须声明能力并定义缺失时的处理策略。
+
+平台物料分入口交付：PC 物料从 `@x-form-engine/components` 引入，移动物料从子路径 `@x-form-engine/components/mobile` 引入；两个入口共享同一份组件协议（名称、版本、能力、Schema），只替换平台实现。移动端缺失某组件实现时，渲染器按字段回退到 PC 实现并发出 `component:platform-fallback` 诊断；`capabilities.mobile` 是描述性元数据，不参与渲染决策，是否具备实现以 `implementations` / `readonly` 映射为准。
 
 ## 3. 建议接口
 

@@ -983,7 +983,8 @@ export class FormEngineError extends Error {
 | M1 | Engine 内核 | 已完成 |
 | M2 | Designer 闭环 | 已完成 |
 | M3 | Value / Snapshot / Readonly 闭环 | 已完成 |
-| M4 | 工程化与发布 | 未开始 |
+| M4 | Mobile 渲染器 | 已完成 |
+| M5 | 工程化与发布 | 未开始 |
 
 各阶段任务与验收标准见 `mvp-roadmap.md` §6。
 

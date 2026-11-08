@@ -152,7 +152,7 @@ MVP 建议采用适度合并：
 | Formily Adapter | Core | Schema 转换、Form 创建、校验和 Value 获取 |
 | Designable Adapter | Core | 基础设计器接入 |
 | PC Renderer | Core | 编辑、预览 |
-| Mobile Renderer | Contract | 保留独立入口，提供基础响应式兜底 |
+| Mobile Renderer | Core | 编辑、预览、只读；七类 P0 移动组件 + FormItem；缺实现按字段回退并记诊断（M4 已落地） |
 | Readonly Renderer | Core | 独立只读运行时、PC 实现、默认兜底 |
 | Component Definition | Core | 统一组件定义契约 |
 | Basic Components | Core | 基础输入和选择组件 |
@@ -296,7 +296,7 @@ ReadonlyUnknown
 - 实现默认只读组件。
 - 实现基础 Formatter。
 - 实现 Unknown Fallback。
-- Mobile 保留独立入口，使用基础响应式布局兜底。
+- Mobile 使用 antd-mobile 独立实现，缺实现按字段回退并记诊断。
 
 ### 暂不实现
 
@@ -579,8 +579,8 @@ MVP 插件初始化可以同步完成。
 
 | 编号 | 能力 | MVP 处理 | 后续迭代 |
 |---|---|---|---|
-| FUT-01 | 完整 Mobile Renderer | 基础响应式兜底 | M2 |
-| FUT-02 | Mobile 专用组件库 | 支持注册入口 | M2 |
+| FUT-01 | 完整 Mobile Renderer | 基础响应式兜底 | M4（已落地：七类 P0） |
+| FUT-02 | Mobile 专用组件库 | 支持注册入口 | M4（已落地：七类 P0） |
 | FUT-03 | 异步 Plugin | 同步插件 | M2 |
 | FUT-04 | Schema Migration | 版本识别 | M2 |
 | FUT-05 | 高级 Datasource | 基础远程请求 | M2 |
@@ -685,22 +685,34 @@ MVP 插件初始化可以同步完成。
 - [x] 缺少组件时能够降级展示（Unknown Fallback + 诊断）。
 - [x] 未授权用户无法读取受保护的数据（前端 fail-closed；后端独立强制）。
 
-## M4：工程化与发布
+## M4：Mobile 渲染器
+
+目标：同一份 Schema 在移动端完成编辑、校验、提交和只读还原，业务 Value 与 PC 一致。
+
+- [x] M4-01：移动物料入口 `@x-form-engine/components/mobile`。
+- [x] M4-02：Input / Textarea / Number / Select / Radio / Checkbox / DatePicker 的 antd-mobile 实现。
+- [x] M4-03：FormItem 移动装饰器。
+- [x] M4-04：mobile 缺实现按字段回退 pc 并产生诊断。
+- [x] M4-05：移动端只读还原。
+- [x] M4-06：`apps/mobile-demo` 端到端验收。
+- [x] M4-07：移动产物不夹带桌面 antd 的构建校验。
+
+## M5：工程化与发布
 
 目标：形成可接入业务项目的 MVP SDK。
 
 ### 任务
 
-- [ ] M4-01：完成包构建配置。
-- [ ] M4-02：完成公共 API 导出。
-- [ ] M4-03：完成 TypeScript 类型导出。
-- [ ] M4-04：完成核心单元测试。
-- [ ] M4-05：完成关键集成测试。
-- [ ] M4-06：完成端到端闭环测试。
-- [ ] M4-07：完成 Playground。
-- [ ] M4-08：完成基础组件文档。
-- [ ] M4-09：完成版本管理。
-- [ ] M4-10：完成 npm 发布或 Workspace 接入验证。
+- [ ] M5-01：完成包构建配置。
+- [ ] M5-02：完成公共 API 导出。
+- [ ] M5-03：完成 TypeScript 类型导出。
+- [ ] M5-04：完成核心单元测试。
+- [ ] M5-05：完成关键集成测试。
+- [ ] M5-06：完成端到端闭环测试。
+- [ ] M5-07：完成 Playground。
+- [ ] M5-08：完成基础组件文档。
+- [ ] M5-09：完成版本管理。
+- [ ] M5-10：完成 npm 发布或 Workspace 接入验证。
 
 ---
 

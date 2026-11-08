@@ -1,6 +1,6 @@
 # 05. Renderer 与 React SDK
 
-> 状态：implemented（PC + Readonly）｜ 落地对照：`packages/renderer`、`packages/sdk` ｜ 最后更新：2026-11-08
+> 状态：implemented（PC + Mobile + Readonly）｜ 落地对照：`packages/renderer`、`packages/sdk` ｜ 最后更新：2026-11-08
 
 ## 1. 目标
 
@@ -15,6 +15,8 @@
 | readonly | 历史详情和审批详情 | 不创建编辑态 Form |
 
 `readonly` 应使用独立只读渲染器，详细规则见 `08-readonly-renderer.md`。
+
+平台由应用或 Engine 选定：`createFormEngine({ platform })` 设定默认值，`FormRenderer platform="mobile"` 可按表单覆盖。移动端物料通过独立入口 `@x-form-engine/components/mobile` 注册；不新增移动专用渲染组件，`FormRenderer` 的 `platform` prop 是唯一 API 入口。mobile 平台缺少组件实现时按字段回退到 PC 实现，并通过 `onDiagnostic` 回调与 Engine 事件 `component:platform-fallback` 发出 `PlatformFallbackDiagnostic`（同一组件只报一次）。
 
 ## 3. 主要 Props
 

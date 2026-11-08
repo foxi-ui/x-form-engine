@@ -40,14 +40,15 @@ pnpm workspace monorepo，按职责拆包，依赖方向单向。
 | `packages/types` | 纯协议类型、领域模型、错误码（无 React/UI 依赖） | 已实现 |
 | `packages/core` | Registry、Plugin、Context、Scope、事件、`x-engine` Schema 解析/校验、有序迁移 | 已实现 |
 | `packages/formily` | Formily 适配层（组件/装饰器映射 + SchemaField） | 已实现 |
-| `packages/renderer` | UI 无关渲染核心、React 入口、PC Renderer、Readonly Renderer | 已实现（PC + Readonly） |
-| `packages/components` | 共享组件定义 + 平台实现（PC 编辑 + 只读） | 已实现 |
+| `packages/renderer` | UI 无关渲染核心、React 入口、PC Renderer、Mobile 渲染、Readonly Renderer | 已实现（PC + Mobile + Readonly） |
+| `packages/components` | 共享组件定义 + 平台实现（PC 编辑 + 移动编辑 + 只读） | 已实现 |
 | `packages/designer` | Designable 1.x 适配（物料、Schema 导入导出、Setter） | 已实现 |
 | `packages/adapters` | Value 规范化 + Candidate Snapshot 生成 | 已实现 |
 | `packages/services` | 权限解析、Formatter、i18n、静态数据源 | 已实现 |
 | `packages/sdk` | 公共消费入口（`createFormEngine`、`FormRenderer`、schema 解析/校验） | 已实现 |
 | `apps/playground` | 渲染器 demo | 已实现 |
 | `apps/designer-demo` | 设计器 demo（完整 Workbench） | 已实现 |
+| `apps/mobile-demo` | 移动渲染器 demo（七类 P0 + 回退诊断验收） | 已实现 |
 
 业务项目只依赖两个公共包：`@x-form-engine/sdk`、`@x-form-engine/components`，不应直接引用 `core` / `renderer` / `formily` 等内部实现包。
 
@@ -56,9 +57,10 @@ pnpm workspace monorepo，按职责拆包，依赖方向单向。
 - ✅ **M1** Engine 内核（Types / Registry / Plugin / Formily Adapter / PC Renderer / 基础组件）
 - ✅ **M2** Designer 闭环（Designable 适配 + 物料 + Schema 导入导出）
 - ✅ **M3** Value / Snapshot / Readonly 闭环（Value 规范化、稳定 fieldId/itemId、Candidate Snapshot、Readonly 渲染器、权限 fail-closed、有序迁移）
-- ⬜ **M4** 工程化与发布（CI / 构建产物 / 单元与 E2E 测试 / 版本治理）
+- ✅ **M4** Mobile 渲染器（七类 P0 / 回退诊断 / mobile-demo）
+- ⬜ **M5** 工程化与发布（CI / 构建产物 / 单元与 E2E 测试 / 版本治理）
 
-未完成：完整 Mobile Renderer、异步 Plugin、后端 Canonical Snapshot 集成、Devtools、E2E/兼容/性能测试。
+未完成：异步 Plugin、后端 Canonical Snapshot 集成、Devtools、E2E/兼容/性能测试。
 
 ## 文档
 
