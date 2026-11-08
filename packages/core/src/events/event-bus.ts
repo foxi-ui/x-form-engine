@@ -8,6 +8,8 @@ type AnyHandler = (payload: unknown) => void;
  * - `on` 返回退订函数，可重复调用（幂等）。
  * - `once` 在首次触发后自动移除。
  * - `emit` 同步派发；派发期间修改监听器集合不会影响本次遍历。
+ * - `emit` 隔离监听器异常：单个监听器抛错不影响其余监听器、也不向
+ *   emit 抛出，仅记录日志（事件是通知，不用于传播错误）。
  */
 export function createEventBus(): EventBus {
   const listeners = new Map<string, Set<AnyHandler>>();
@@ -73,7 +75,11 @@ export function createEventBus(): EventBus {
       }
 
       for (const handler of [...handlers]) {
-        handler(payload);
+        try {
+          handler(payload);
+        } catch (error) {
+          console.error(`[x-form-engine] 事件 "${event}" 监听器抛错:`, error);
+        }
       }
     },
   };

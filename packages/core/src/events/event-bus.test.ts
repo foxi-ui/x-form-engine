@@ -52,3 +52,26 @@ test('once 在监听器重入 emit 同事件时只触发一次', () => {
   expect(normalCalls).toBe(2);
   expect(onceCalls).toEqual([99]);
 });
+
+test('监听器抛错不中断派发，也不向 emit 抛出', () => {
+  const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const bus = createEventBus();
+  const calls: number[] = [];
+  bus.on<number>('submit', () => { calls.push(1); throw new Error('boom'); });
+  bus.on<number>('submit', (p) => calls.push(p));
+  expect(() => bus.emit('submit', 2)).not.toThrow();
+  expect(calls).toEqual([1, 2]);
+  expect(spy).toHaveBeenCalledTimes(1);
+  spy.mockRestore();
+});
+
+test('once 监听器抛错后仍被退订', () => {
+  const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const bus = createEventBus();
+  const calls: number[] = [];
+  bus.once<number>('submit', () => { calls.push(1); throw new Error('boom'); });
+  expect(() => bus.emit('submit', 1)).not.toThrow();
+  bus.emit('submit', 2);
+  expect(calls).toEqual([1]);
+  spy.mockRestore();
+});
