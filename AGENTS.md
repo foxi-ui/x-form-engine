@@ -12,13 +12,17 @@ Documentation is written in Simplified Chinese with Mermaid diagrams; match that
 
 ## Documentation map
 
-- `docs/tech-design/form-engine-architecture-design.md` — architecture baseline covering goals, layers, monorepo layout, domain models, compiler, all adapters, SDK, error handling, and milestones.
-- `docs/tech-design/02-specs/README.md` — spec index and recommended review/implementation order.
-- `01-types.md` … `10-testing-and-roadmap.md` — topic specs (types, component spec, registry/plugin, Formily adapter, renderer/SDK, runtime context, designer adapter, readonly renderer, value/snapshot, testing/roadmap).
+- `README.md` + `docs/README.md` — the canonical doc map: five-layer structure, authority rules, and per-spec landing status. Start here for "where is X documented".
+- `docs/tech-design/form-engine-architecture-design.md` — architecture baseline (goals, layers, monorepo layout, domain models, adapters, error handling). Milestones point to `mvp-roadmap.md` §6.
+- `docs/tech-design/mvp-roadmap.md` — MVP baseline: Core/Contract/Future classification, BLOCK items, M1–M4 milestones, acceptance criteria.
+- `docs/tech-design/backlog.md` — tech-debt ledger (M1 review carryovers; re-verify each before planning).
+- `docs/tech-design/pending-confirmations.md` — 13 backend/business/security questions to close before backend integration.
+- `docs/tech-design/02-specs/` — topic specs `01`–`10`. Each carries a status stamp (`implemented` / `proposed` / superseded) and a `落地对照` pointer to the owning `packages/*` source.
+- `docs/tech-design/verification/` + `adr/` — read-only facts and decisions.
 
 Recommended order: freeze `01` + `02` (public contracts) → implement `03` + `04` (registry/plugin + Formily adapter kernel) → parallelize `05`–`07` → review `08`/`09` against real business components and backend storage.
 
-Specs are **proposed contracts, not verified implementations**. Never present them as Formily/Designable native APIs; the docs repeatedly require validating exports, types, and runtime behavior against the pinned dependency versions before relying on them.
+**Authority rule**: implemented interfaces are authoritative in code (`packages/types`, etc.), not in prose. Specs describe intent + point to code; never copy a type definition into a second file. Conflicts resolve code → spec → roadmap → architecture baseline → verification. Specs are **proposed contracts, not verified implementations** — never present them as Formily/Designable native APIs; validate exports/types/runtime behavior against the pinned versions before relying on them.
 
 ## Architecture at a glance
 
@@ -59,6 +63,7 @@ These recur across the specs and are the easiest things to violate during implem
 6. **Version axes are distinct**: business `schemaVersion`, `engineSchemaVersion`, `snapshotVersion`, and component version. Migrations must be ordered, non-destructive to original snapshots, and version-detected on read.
 7. **Public API stability**: `types` must stay free of React/Formily/Designable/UI dependencies; `unknown` over `any`; never leak Formily internal types across all public packages.
 8. **`submit()` is transport-free** and `getFormilyForm()` (if exposed at all) is a version-coupled escape hatch, not a normal business API.
+9. **Docs must not drift from code.** When a PR lands a protocol/interface, it must set the owning spec's status stamp to `implemented` and add the `落地对照` pointer to the source; `packages/types` (and other implemented packages) are the single authority, so specs must not re-copy type definitions. Process artifacts (spikes, plans) stay out of `docs/tech-design/`.
 
 ## Implementation milestones (from the docs)
 
