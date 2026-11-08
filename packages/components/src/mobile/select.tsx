@@ -57,6 +57,19 @@ export function toPickerValue(value: unknown): string[] {
 }
 
 /**
+ * 单选 Picker 的选项列。antd-mobile Picker 用严格相等（`item.value === v`）
+ * 匹配列项，而 `toPickerValue` 输出的是 `string[]`，因此这里必须把列的
+ * `value` 一并字符串化；否则数字值（如 `5`）永远匹配不中，滚轮会回落到
+ * 首项并在确认时把值改写成首项。`optionValueFromPicker` 按 `String` 匹配，
+ * 确认后仍能还原原始 `number` 值。
+ */
+export function toPickerColumns(
+  options: MobileSelectOption[]
+): Array<{ label: string; value: string }> {
+  return options.map((option) => ({ ...option, value: String(option.value) }));
+}
+
+/**
  * Picker 的单列数组 → 单选框原值。匹配选项时返回原始 `value`（保留
  * number 类型），未匹配则回退为 Picker 给出的字符串。
  */
@@ -126,7 +139,7 @@ function SingleSelect({
       </List.Item>
       <Picker
         visible={visible}
-        columns={[options]}
+        columns={[toPickerColumns(options)]}
         value={pickerValue}
         onClose={() => setVisible(false)}
         onConfirm={(values) => {
