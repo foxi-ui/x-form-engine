@@ -28,3 +28,38 @@ export function isObjectArrayField(
   const items = fieldSchema.items;
   return isPlainObject(items) && isPlainObject(items.properties);
 }
+
+/**
+ * 深拷贝候选快照的输入值，确保快照不引用调用方传入的可变对象。
+ *
+ * 处理 Date / File / Blob（`toJS` 按引用返回的可变/非 plain 叶子），
+ * 并递归 plain object 与数组；其余值（primitive、函数等）原样返回。
+ */
+export function cloneValue(value: unknown): unknown {
+  if (value === null || typeof value !== 'object') {
+    return value;
+  }
+  if (value instanceof Date) {
+    return new Date(value.getTime());
+  }
+  if (typeof File !== 'undefined' && value instanceof File) {
+    return new File([value], value.name, {
+      type: value.type,
+      lastModified: value.lastModified,
+    });
+  }
+  if (typeof Blob !== 'undefined' && value instanceof Blob) {
+    return value.slice(0, value.size, value.type);
+  }
+  if (Array.isArray(value)) {
+    return value.map(cloneValue);
+  }
+  if (isPlainObject(value)) {
+    const result: Record<string, unknown> = {};
+    for (const key of Object.keys(value)) {
+      result[key] = cloneValue(value[key]);
+    }
+    return result;
+  }
+  return value;
+}

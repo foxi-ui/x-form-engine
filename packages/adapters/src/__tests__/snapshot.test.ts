@@ -156,4 +156,57 @@ describe('createCandidateSnapshot', () => {
     );
     expect(snapshot.fields.mystery.component).toBe('Ghost');
   });
+
+  it('快照深拷贝 Date/File/Blob，不被后续修改污染', () => {
+    const date = new Date('2026-11-08T00:00:00.000Z');
+    const file = new File(['hello'], 'a.txt', { type: 'text/plain' });
+    const blob = new Blob(['world'], { type: 'text/plain' });
+
+    const { snapshot } = createCandidateSnapshot(
+      engine,
+      {
+        type: 'object',
+        properties: {
+          when: { type: 'string', 'x-component': 'DatePicker' },
+          attach: { type: 'string', 'x-component': 'Upload' },
+          blob: { type: 'string', 'x-component': 'Upload' },
+        },
+      },
+      { when: date, attach: file, blob }
+    );
+
+    expect(snapshot.fields.when.value).not.toBe(date);
+    expect(snapshot.fields.attach.value).not.toBe(file);
+    expect(snapshot.fields.blob.value).not.toBe(blob);
+    expect((snapshot.fields.when.value as Date).getTime()).toBe(date.getTime());
+
+    date.setFullYear(2030);
+    expect((snapshot.fields.when.value as Date).getFullYear()).toBe(2026);
+  });
+
+  it('对象数组行内 Date 也深拷贝', () => {
+    const rowDate = new Date('2026-01-01T00:00:00.000Z');
+    const { snapshot } = createCandidateSnapshot(
+      engine,
+      {
+        type: 'object',
+        properties: {
+          rows: {
+            type: 'array',
+            'x-component': 'ArrayTable',
+            items: {
+              type: 'object',
+              properties: { at: { type: 'string', 'x-component': 'DatePicker' } },
+            },
+          },
+        },
+      },
+      { rows: [{ id: 'r1', at: rowDate }] }
+    );
+
+    const rowField = snapshot.fields.rows.items?.[0].fields['rows.0.at'];
+    expect(rowField?.value).not.toBe(rowDate);
+    rowDate.setFullYear(2030);
+    expect((rowField?.value as Date).getFullYear()).toBe(2026);
+  });
 });

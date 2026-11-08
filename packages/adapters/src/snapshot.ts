@@ -9,7 +9,7 @@ import type {
   RepeatItemSnapshot,
 } from '@x-form-engine/types';
 import { resolveFieldMeta, type FieldOption } from './field-meta';
-import { isObjectArrayField, isPlainObject } from './internal';
+import { cloneValue, isObjectArrayField, isPlainObject } from './internal';
 
 export interface CandidateSnapshotOptions {
   locale?: string;
@@ -43,7 +43,7 @@ export function createCandidateSnapshot(
   const fields: Record<string, FieldSnapshot> = {};
   const locale = options.locale ?? engine.options.locale ?? 'zh-CN';
 
-  buildFields(engine, schema, values, [], [], fields, locale, diagnostics);
+  buildFields(engine, schema, cloneValue(values), [], [], fields, locale, diagnostics);
 
   return {
     snapshot: {
