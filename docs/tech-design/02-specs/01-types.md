@@ -216,7 +216,8 @@ export type FormEngineErrorCode =
   | 'DATASOURCE_FAILED'
   | 'SNAPSHOT_FAILED'
   | 'PERMISSION_DENIED'
-  | 'RENDER_FAILED';
+  | 'RENDER_FAILED'
+  | 'ENGINE_DISPOSED';
 
 export class FormEngineError extends Error {
   constructor(
@@ -229,6 +230,8 @@ export class FormEngineError extends Error {
   }
 }
 ```
+
+> 完整错误码以 `packages/types/src/errors.ts` 为准（含 `MIGRATION_FAILED`、`VALUE_NORMALIZE_FAILED`、`SNAPSHOT_VERSION_UNSUPPORTED` 等后续新增码）。
 
 ## 11. 类型治理要求
 

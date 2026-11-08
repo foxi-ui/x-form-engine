@@ -117,7 +117,7 @@ const organizationPlugin: FormEnginePlugin = {
 
 ## 9. 事件系统
 
-事件适用于通知，不应用作强类型服务调用的替代品。
+事件适用于通知，不应用作强类型服务调用的替代品。`emit` 隔离监听器异常：单个监听器抛错不影响其余监听器、也不向 `emit` 抛出，仅记录日志（错误仍走 `FormEngineError`，不走 EventBus 传播）。
 
 ```ts
 export interface EventBus {

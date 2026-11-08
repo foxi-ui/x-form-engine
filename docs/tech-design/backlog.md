@@ -5,27 +5,22 @@
 
 ## 现状核对与排期优先级（2026-11-08 已逐条复核）
 
-> 33 项已复核：**3 已解决、30 待处理**（P1 正确性 ×6 / P2 加固 ×20 / P3 发布门禁 ×3 / Future ×1）。
+> 33 项已复核：**9 已解决、24 待处理**（P1 正确性 ×0 / P2 加固 ×20 / P3 发布门禁 ×3 / Future ×1）。
 > 优先级沿用：P1 = 正确性/一致性，尽早处理；P2 = 加固/测试补强，不阻塞新功能；P3 = 生产化/发布前必须。
 
-### ✅ 已解决（3）
+### ✅ 已解决（9）
 
 | 项 | 结论 |
 |---|---|
 | T7 | `no-react-deps.test.ts` 已补源码 import 扫描 |
 | D3 | sdk 现含 `.tsx` 测试，`@testing-library/react`/`@types/react` 为合理 devDep |
 | G1 | AGENTS.md 已更新为「已实现」措辞 |
-
-### 🔴 P1 正确性 / 一致性（6，应尽早处理）
-
-| 项 | 缺口 |
-|---|---|
-| R3 | `FormRenderer` 取 platform 漏 `engine.options.platform`，两处来源未合并 |
-| R4 | `disabled/readOnly` 在 useEffect 后置，首帧可编辑闪烁（权限 UX 边界） |
-| P1 | `installPlugin` 无 disposed 守卫，销毁后仍可安装 |
-| P2 | EventBus `emit` 无异常隔离，监听器抛错中断派发 |
-| P3 | `resolvePluginOrder` 在 try 外，依赖失败不派发 `plugin:failed`（违反 spec 03 §5.8） |
-| P5 | `toJS` 对 Date/File/Blob 按引用，候选快照可能被后续修改污染 |
+| R3 | `FormRenderer` platform 合并 `props.platform ?? engine.options.platform ?? 'pc'` |
+| R4 | `disabled/readOnly` 作为初始 `pattern` 传入 `createForm`，首帧即生效 |
+| P1 | `installPlugin` 加 `disposed` 守卫，抛 `ENGINE_DISPOSED` |
+| P2 | `EventBus.emit` 隔离监听器异常，不中断派发、不向 emit 抛出 |
+| P3 | `resolvePluginOrder` 移入事务 try 块，依赖失败派发 `plugin:failed` |
+| P5 | `createCandidateSnapshot` 入口深拷贝 Date/File/Blob，快照不再引用可变叶子 |
 
 ### 🟡 P2 加固 / 测试补强（20）
 
