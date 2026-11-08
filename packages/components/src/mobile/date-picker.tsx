@@ -10,6 +10,7 @@ type DatePickerFieldProps = {
   value?: unknown;
   onChange?: (value: string) => void;
   placeholder?: string;
+  disabled?: boolean;
 };
 
 /** 按本地年月日输出 `YYYY-MM-DD`；禁止用 `toISOString()`，避免时区偏移。 */
@@ -39,13 +40,20 @@ export function parseDateValue(value: unknown): Date | null {
 export const DatePicker = connect(
   AntdMobileDatePicker,
   mapProps((props) => {
-    const { value, onChange, placeholder } = props as typeof props & DatePickerFieldProps;
+    const { value, onChange, placeholder, disabled } = props as typeof props &
+      DatePickerFieldProps;
     return {
       ...props,
       value: parseDateValue(value),
       onConfirm: (date: Date) => onChange?.(formatDateValue(date)),
       children: (date: Date | null, actions: { open: () => void }) => (
-        <List.Item clickable onClick={() => actions.open()}>
+        <List.Item
+          clickable
+          disabled={disabled}
+          onClick={() => {
+            if (!disabled) actions.open();
+          }}
+        >
           {date ? formatDateValue(date) : placeholder ?? '请选择日期'}
         </List.Item>
       ),

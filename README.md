@@ -29,6 +29,7 @@ pnpm typecheck
 # 启动 demo
 pnpm --filter playground dev        # 渲染器 demo（M1）
 pnpm --filter designer-demo dev     # 设计器 demo（M2）
+pnpm --filter mobile-demo dev       # 移动渲染器 demo（M4）
 ```
 
 ## 包结构

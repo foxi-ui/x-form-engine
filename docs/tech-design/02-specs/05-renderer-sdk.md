@@ -30,6 +30,7 @@ export interface FormRendererProps {
   readOnly?: boolean;
   scope?: Record<string, unknown>;
   onValuesChange?: (values: Record<string, unknown>) => void;
+  onDiagnostic?: (diagnostic: PlatformFallbackDiagnostic) => void;
 }
 ```
 

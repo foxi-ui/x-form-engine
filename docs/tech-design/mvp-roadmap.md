@@ -579,8 +579,8 @@ MVP 插件初始化可以同步完成。
 
 | 编号 | 能力 | MVP 处理 | 后续迭代 |
 |---|---|---|---|
-| FUT-01 | 完整 Mobile Renderer | 基础响应式兜底 | M4（已落地：七类 P0） |
-| FUT-02 | Mobile 专用组件库 | 支持注册入口 | M4（已落地：七类 P0） |
+| FUT-01 | 完整 Mobile Renderer | antd-mobile 独立实现 | M4（已落地：七类 P0） |
+| FUT-02 | Mobile 专用组件库 | 移动物料入口 | M4（已落地：七类 P0） |
 | FUT-03 | 异步 Plugin | 同步插件 | M2 |
 | FUT-04 | Schema Migration | 版本识别 | M2 |
 | FUT-05 | 高级 Datasource | 基础远程请求 | M2 |

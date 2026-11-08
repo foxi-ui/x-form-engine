@@ -39,7 +39,7 @@ pnpm workspace, split by responsibility. **Implemented** (M1–M4): `types`, `co
 | `packages/sdk` | Public consumer entry (`createFormEngine`, `FormEngineProvider`, `FormRenderer`, schema parse/validate) | implemented |
 | `packages/adapters` | Value 规范化 + Candidate Snapshot 生成 + 实体/字典参考适配器 | implemented |
 | `packages/services` | Permission 解析、Formatter、i18n、静态 Datasource | implemented |
-| `apps/` | playground (M1 demo), designer-demo (M2 demo) | implemented |
+| `apps/` | playground (M1 demo), designer-demo (M2 demo), mobile-demo (M4 demo) | implemented |
 
 Dependency direction is one-way and must be preserved: `types` depends on nothing; `core/registry` does not depend on React; `renderer/core` does not depend on Ant Design; `designer` never depends on Renderer; `formily/adapter` does not depend on Designable. Business projects depend on the two public packages `@x-form-engine/sdk` and `@x-form-engine/components`, and must not depend on internal implementation packages such as `core`, `renderer`, or `formily`.
 
