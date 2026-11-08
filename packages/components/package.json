@@ -8,11 +8,15 @@
     ".": {
       "types": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./mobile": {
+      "types": "./mobile.ts",
+      "default": "./mobile.ts"
     }
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --out-dir dist",
+    "build": "tsup src/index.ts mobile.ts --format esm,cjs --dts --sourcemap --clean --out-dir dist",
     "typecheck": "tsc --noEmit"
   },
   "publishConfig": {
@@ -29,6 +33,11 @@
           "types": "./dist/index.d.cts",
           "default": "./dist/index.cjs"
         }
+      },
+      "./mobile": {
+        "types": "./dist/mobile.d.ts",
+        "import": "./dist/mobile.js",
+        "require": "./dist/mobile.cjs"
       }
     }
   },

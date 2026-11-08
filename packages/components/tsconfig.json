@@ -5,5 +5,5 @@
     "types": ["node", "vitest/globals", "testing-library__jest-dom"],
     "noEmit": true
   },
-  "include": ["src"]
+  "include": ["src", "mobile.ts"]
 }
