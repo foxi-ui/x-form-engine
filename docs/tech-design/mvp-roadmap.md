@@ -194,7 +194,7 @@ MVP 建议采用适度合并：
 ## BLOCK-01：权限与只读渲染规则冲突
 
 级别：P0  
-状态：待修订  
+状态：已解决  
 涉及文档：
 
 - form-engine-architecture-design.md
@@ -253,7 +253,7 @@ interface FormAccessResult {
 ## BLOCK-02：Readonly Renderer 缺少 PC / Mobile 平台契约
 
 级别：P0（组件契约阻塞）  
-状态：待修订  
+状态：已解决  
 涉及文档：
 
 - 01-types.md
@@ -316,7 +316,7 @@ ReadonlyUnknown
 ## BLOCK-03：Value 与 Snapshot 生成和持久化边界不明确
 
 级别：P0  
-状态：待修订  
+状态：已解决  
 涉及文档：
 
 - 01-types.md
@@ -406,7 +406,7 @@ interface FieldSnapshot {
 ## BLOCK-04：字段身份和重复数组路径不稳定
 
 级别：P0（涉及数组组件时）  
-状态：待修订  
+状态：已解决  
 涉及文档：
 
 - 01-types.md
@@ -452,7 +452,7 @@ interface RepeatItemSnapshot {
 ## BLOCK-05：Value 规范化不能静默丢失数据
 
 级别：P1  
-状态：待修订  
+状态：已解决  
 涉及文档：
 
 - 02-component-spec.md
@@ -492,7 +492,7 @@ interface NormalizeResult<T> {
 ## BLOCK-06：Runtime 与 Designer 技术依赖边界不明确
 
 级别：P1  
-状态：设计确认即可，不阻塞 MVP 启动  
+状态：已确认  
 涉及文档：
 
 - ADR-0001
@@ -526,7 +526,7 @@ MVP 暂时沿用已验证的 React / Formily / Designable 组合，不因为未�
 ## BLOCK-07：Plugin 同步安装与异步生命周期不一致
 
 级别：P1  
-状态：MVP 限定同步插件  
+状态：已实现（同步插件）  
 涉及文档：
 
 - form-engine-architecture-design.md
@@ -609,26 +609,26 @@ MVP 插件初始化可以同步完成。
 
 ### 任务
 
-- [ ] M1-01：确定 Types 公共类型。
-- [ ] M1-02：实现 Engine 创建与销毁。
-- [ ] M1-03：实现 Component Registry。
-- [ ] M1-04：实现同步 Plugin。
-- [ ] M1-05：实现 Schema 基础解析。
-- [ ] M1-06：实现 Schema 基础校验。
-- [ ] M1-07：实现 Formily Adapter。
-- [ ] M1-08：实现 PC Renderer。
-- [ ] M1-09：实现基础组件。
-- [ ] M1-10：实现基础校验和联动。
-- [ ] M1-11：实现基础 Playground。
+- [x] M1-01：确定 Types 公共类型。
+- [x] M1-02：实现 Engine 创建与销毁。
+- [x] M1-03：实现 Component Registry。
+- [x] M1-04：实现同步 Plugin。
+- [x] M1-05：实现 Schema 基础解析。
+- [x] M1-06：实现 Schema 基础校验。
+- [x] M1-07：实现 Formily Adapter。
+- [x] M1-08：实现 PC Renderer。
+- [x] M1-09：实现基础组件。
+- [x] M1-10：实现基础校验和联动。
+- [x] M1-11：实现基础 Playground。
 
 ### 验收
 
-- [ ] 可以创建 Engine。
-- [ ] 可以注册组件和插件。
-- [ ] 可以使用 Schema 渲染表单。
-- [ ] 可以正常填写和校验。
-- [ ] 可以获取标准化 Value。
-- [ ] Engine 销毁后资源正常释放。
+- [x] 可以创建 Engine。
+- [x] 可以注册组件和插件。
+- [x] 可以使用 Schema 渲染表单。
+- [x] 可以正常填写和校验。
+- [x] 可以获取标准化 Value。
+- [x] Engine 销毁后资源正常释放。
 
 ## M2：Designer 闭环
 
@@ -636,23 +636,23 @@ MVP 插件初始化可以同步完成。
 
 ### 任务
 
-- [ ] M2-01：实现 Designable Adapter。
-- [ ] M2-02：实现基础物料面板。
-- [ ] M2-03：实现基础属性配置面板。
-- [ ] M2-04：实现 Schema 导出。
-- [ ] M2-05：实现 Schema 导入。
-- [ ] M2-06：实现 Schema 保存和加载。
-- [ ] M2-07：实现 Schema 版本标识。
-- [ ] M2-08：实现设计器预览。
-- [ ] M2-09：验证 Designer 与 Runtime 解耦。
+- [x] M2-01：实现 Designable Adapter。
+- [x] M2-02：实现基础物料面板。
+- [x] M2-03：实现基础属性配置面板。
+- [x] M2-04：实现 Schema 导出。
+- [x] M2-05：实现 Schema 导入。
+- [x] M2-06：实现 Schema 保存和加载。
+- [x] M2-07：实现 Schema 版本标识。
+- [x] M2-08：实现设计器预览。
+- [x] M2-09：验证 Designer 与 Runtime 解耦。
 
 ### 验收
 
-- [ ] 可以拖拽创建表单。
-- [ ] 可以配置字段基础属性。
-- [ ] 可以保存并重新打开。
-- [ ] 可以通过独立 Runtime 渲染设计器产出的 Schema。
-- [ ] 设计器预览与 Runtime 结果一致。
+- [x] 可以拖拽创建表单。
+- [x] 可以配置字段基础属性。
+- [x] 可以保存并重新打开。
+- [x] 可以通过独立 Runtime 渲染设计器产出的 Schema。
+- [x] 设计器预览与 Runtime 结果一致。
 
 ## M3：Value / Snapshot / Readonly 闭环
 
@@ -784,16 +784,16 @@ UserSelect 和 Upload 可以根据实际工期采用简化实现，但必须保�
 
 以下事项完成后，允许进入正式 MVP 编码。
 
-- [ ] BLOCK-01 权限与只读规则统一。
-- [ ] BLOCK-02 组件平台契约确定。
-- [ ] BLOCK-03 Snapshot 生成与持久化边界确定。
-- [ ] BLOCK-04 字段和重复行身份规则确定。
-- [ ] BLOCK-05 Value 规范化规则确定。
-- [ ] BLOCK-06 Runtime 与 Designer 依赖边界确认。
-- [ ] BLOCK-07 同步 Plugin 生命周期确定。
-- [ ] Core / Contract / Future 范围得到确认。
-- [ ] MVP 验收场景得到确认。
-- [ ] M1 任务拆分完成。
+- [x] BLOCK-01 权限与只读规则统一。
+- [x] BLOCK-02 组件平台契约确定。
+- [x] BLOCK-03 Snapshot 生成与持久化边界确定。
+- [x] BLOCK-04 字段和重复行身份规则确定。
+- [x] BLOCK-05 Value 规范化规则确定。
+- [x] BLOCK-06 Runtime 与 Designer 依赖边界确认。
+- [x] BLOCK-07 同步 Plugin 生命周期确定。
+- [x] Core / Contract / Future 范围得到确认。
+- [x] MVP 验收场景得到确认。
+- [x] M1 任务拆分完成。
 
 其中 BLOCK-01 至 BLOCK-05 是核心协议和数据安全相关的实质阻塞项。BLOCK-06 和 BLOCK-07 可以通过明确的 MVP 限定决策解除阻塞，不需要等待后续高级能力实现。
 

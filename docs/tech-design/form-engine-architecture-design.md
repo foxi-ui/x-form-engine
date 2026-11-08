@@ -170,7 +170,7 @@ form-engine/
 ### 4.1 组件定义
 
 ```ts
-export type Platform = 'pc' | 'mobile' | 'readonly';
+export type Platform = 'pc' | 'mobile'; // 'readonly' 是 RenderMode，不是 Platform（权威见 02-specs/01-types.md 与 packages/types）
 
 export interface ComponentCapabilities {
   editable: boolean;
@@ -441,7 +441,7 @@ SchemaCompiler 只处理引擎扩展，不替代 Formily Schema 解析器。
 - **结构类**（`visible` / `display` / 布局）按平台合并，平台配置覆盖通用配置。
 - **权限类**（`disabled` / `readonly`）取 AND，权限结果只收敛（更严格）不放开。
 - **`x-component-props`** 仅在无冲突时作默认值，不覆盖权限收敛结果。
-- 只读渲染不套编辑态平台配置，也不套权限（见 §9）。
+- 只读渲染不套编辑态平台配置，但**必须**套权限收敛结果：无权限上下文时 fail-closed，只读不得绕过字段读取权限（见 `mvp-roadmap.md` BLOCK-01）。
 
 ### 6.4 `x-engine` 缺失时的缺省行为
 
@@ -951,69 +951,16 @@ export class FormEngineError extends Error {
 
 ## 17. 研发实施阶段
 
-### M1：核心渲染引擎
+里程碑与分期以《MVP 实施基线》`docs/tech-design/mvp-roadmap.md` §6 为唯一权威，本文不再重复定义。
 
-交付：
+| 阶段 | 主题 | 状态 |
+|---|---|---|
+| M1 | Engine 内核 | 已完成 |
+| M2 | Designer 闭环 | 已完成 |
+| M3 | Value / Snapshot / Readonly 闭环 | 已完成 |
+| M4 | 工程化与发布 | 未开始 |
 
-- Monorepo 工程和构建体系。
-- 公共 Types。
-- Component Registry。
-- Plugin System。
-- Runtime Context / Scope。
-- Formily Adapter。
-- PC Renderer 基础能力。
-- 基础组件集。
-- SDK 最小公共 API。
-
-验收：
-
-- 能注册内置和自定义组件。
-- 能渲染 Formily 原生 Schema。
-- 能执行原生校验、联动和 Effects。
-- 能通过 SDK 创建 Engine 和 Renderer。
-- 单元测试和基础集成测试通过。
-
-### M2：设计器、只读与数据适配
-
-交付：
-
-- Designable Adapter。
-- Designer Materials / Setters。
-- Mobile Renderer。
-- Readonly Renderer。
-- Datasource Service。
-- Value Adapter。
-- Snapshot Adapter。
-- Schema 版本和迁移基础能力。
-
-验收：
-
-- 设计器产出的 Schema 可被 Renderer 消费。
-- PC 与移动端提交值结构一致。
-- 提交结果包含 Value 和 Snapshot。
-- 只读渲染器可使用历史 Snapshot 展示数据。
-- 远程人员、部门和字典组件可用。
-
-### M3：SDK 开放与生产化
-
-交付：
-
-- 插件扩展规范。
-- 自定义组件开发文档。
-- 权限和国际化服务。
-- Devtools / 调试能力。
-- 性能优化。
-- E2E 和兼容性测试。
-- Schema / Snapshot 迁移工具。
-- 发布、版本管理和变更日志规范。
-
-验收：
-
-- 外部业务项目可独立接入 SDK。
-- 第三方组件可按规范扩展。
-- 插件安装、卸载和冲突处理稳定。
-- 历史表单可长期兼容。
-- 生产环境具备必要的监控、错误定位和回滚能力。
+各阶段任务与验收标准见 `mvp-roadmap.md` §6。
 
 ---
 
