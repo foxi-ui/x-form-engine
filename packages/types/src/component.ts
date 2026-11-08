@@ -1,4 +1,5 @@
 import type { ComponentName } from './base';
+import type { ReadonlyImplementations } from './readonly';
 
 export interface ComponentCapabilities {
   editable: boolean;
@@ -30,6 +31,10 @@ export interface AdapterContext {
   path: string;
   locale: string;
   displayState?: Record<string, unknown>;
+  /** 记录一个可恢复的规范化告警（不阻断提交）。 */
+  warn?(code: string, message: string): void;
+  /** 记录一个不可恢复的规范化错误（阻断提交）。 */
+  error?(code: string, message: string): void;
 }
 
 export interface ComponentAdapter<Value = unknown, Snapshot = unknown> {
@@ -53,7 +58,9 @@ export interface ComponentImplementations<Impl = unknown> {
   mobile?: Impl;
 }
 
-export interface ComponentBinding<Impl = unknown> {
+export interface ComponentBinding<Impl = unknown, ReadonlyImpl = unknown> {
   protocol: ComponentProtocolDefinition;
   implementations: ComponentImplementations<Impl>;
+  /** 只读渲染实现：按 当前平台 → default → Formatter → Unknown 兜底解析。 */
+  readonly?: ReadonlyImplementations<ReadonlyImpl>;
 }

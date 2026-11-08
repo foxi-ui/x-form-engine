@@ -122,6 +122,22 @@ importers:
         specifier: ^5
         version: 5.4.21(@types/node@22.20.5)(less@4.9.1)
 
+  packages/adapters:
+    dependencies:
+      '@x-form-engine/core':
+        specifier: workspace:*
+        version: link:../core
+      '@x-form-engine/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 3.2.7
+        version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)(less@4.9.1)
+
   packages/components:
     dependencies:
       '@ant-design/icons':
@@ -356,9 +372,15 @@ importers:
       '@formily/reactive':
         specifier: 2.3.7
         version: 2.3.7
+      '@x-form-engine/adapters':
+        specifier: workspace:*
+        version: link:../adapters
       '@x-form-engine/formily':
         specifier: workspace:*
         version: link:../formily
+      '@x-form-engine/services':
+        specifier: workspace:*
+        version: link:../services
       '@x-form-engine/types':
         specifier: workspace:*
         version: link:../types
@@ -405,12 +427,18 @@ importers:
 
   packages/sdk:
     dependencies:
+      '@x-form-engine/adapters':
+        specifier: workspace:*
+        version: link:../adapters
       '@x-form-engine/core':
         specifier: workspace:*
         version: link:../core
       '@x-form-engine/renderer':
         specifier: workspace:*
         version: link:../renderer
+      '@x-form-engine/services':
+        specifier: workspace:*
+        version: link:../services
       '@x-form-engine/types':
         specifier: workspace:*
         version: link:../types
@@ -427,6 +455,19 @@ importers:
       jsdom:
         specifier: 26.1.0
         version: 26.1.0
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 3.2.7
+        version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)(less@4.9.1)
+
+  packages/services:
+    dependencies:
+      '@x-form-engine/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
       typescript:
         specifier: 5.9.3
         version: 5.9.3

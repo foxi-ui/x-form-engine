@@ -6,3 +6,5 @@ export * from './plugin/plugin-manager';
 export * from './engine';
 export * from './schema/parser';
 export * from './schema/validator';
+export * from './migration/migration-registry';
+export * from './identity/field-identity';

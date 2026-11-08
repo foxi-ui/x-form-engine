@@ -2,16 +2,16 @@ import { basicComponents } from '@x-form-engine/components';
 import {
   FormEngineProvider,
   FormRenderer,
+  ReadonlyRenderer,
   createFormEngine,
+  defaultFormattersPlugin,
 } from '@x-form-engine/sdk';
-import type { FormRendererInstance } from '@x-form-engine/sdk';
+import type { FormRendererInstance, FormSubmitResult } from '@x-form-engine/sdk';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 /**
- * M1 演示 schema：使用 `basicComponents` 中已登记的 Input / Select / DatePicker / Textarea。
- *
- * 说明：M1 的 Formily 适配层尚未注册装饰器（`x-decorator`），因此字段标签
- * 暂时通过 placeholder 呈现；装饰器适配列入 M2。
+ * M3 演示 schema：复用 M1 的 Input / Select / DatePicker / Textarea。
+ * 提交后生成候选快照（Value + Snapshot），并用独立只读渲染器做历史还原。
  */
 const demoSchema: Record<string, unknown> = {
   type: 'object',
@@ -79,6 +79,7 @@ export default function App(): JSX.Element {
         platform: 'pc',
         locale: 'zh-CN',
         components: basicComponents,
+        plugins: [defaultFormattersPlugin],
       }),
     []
   );
@@ -86,7 +87,7 @@ export default function App(): JSX.Element {
   useEffect(() => () => engine.dispose(), [engine]);
 
   const formRef = useRef<FormRendererInstance>(null);
-  const [submittedValues, setSubmittedValues] = useState<Record<string, unknown> | null>(null);
+  const [submitted, setSubmitted] = useState<FormSubmitResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = useCallback(async () => {
@@ -99,11 +100,10 @@ export default function App(): JSX.Element {
         return;
       }
 
-      // M1 验收点：提交成功后打印标准化 Value。
       console.log('[playground] submit values =', result.values);
-      setSubmittedValues(result.values);
+      console.log('[playground] submit snapshot =', result.snapshot);
+      setSubmitted(result);
     } catch (error: unknown) {
-      // Formily 校验失败时 submit() 会 reject（errors 数组），此处做非阻塞提示。
       console.error('[playground] submit failed =', error);
       setErrorMessage('校验未通过：请先补全必填项（详情见控制台）。');
     }
@@ -114,10 +114,15 @@ export default function App(): JSX.Element {
       <main style={pageStyle}>
         <h1 style={{ fontSize: 22, marginBottom: 8 }}>x-form-engine playground</h1>
         <p style={{ color: '#666', marginTop: 0 }}>
-          M1 演示：创建 Engine → 渲染 Schema → 填写 → 提交打印 Value。
+          M3 演示：填写 → 提交生成 Value + 候选 Snapshot → 只读历史还原。
         </p>
 
-        <FormRenderer ref={formRef} schema={demoSchema} />
+        <FormRenderer
+          ref={formRef}
+          schema={demoSchema}
+          schemaId="demo-employee"
+          schemaVersion={1}
+        />
 
         <button
           type="button"
@@ -139,9 +144,21 @@ export default function App(): JSX.Element {
           <p style={{ color: '#cf1322', marginTop: 16 }}>{errorMessage}</p>
         ) : null}
 
-        {submittedValues ? (
+        {submitted ? (
           <section style={{ marginTop: 24 }}>
-            <h2 style={{ fontSize: 16 }}>提交的 Value</h2>
+            <h2 style={{ fontSize: 16 }}>历史只读还原（Snapshot）</h2>
+            <div
+              style={{
+                border: '1px solid #eee',
+                borderRadius: 4,
+                padding: 12,
+                background: '#fafafa',
+              }}
+            >
+              <ReadonlyRenderer schema={demoSchema} snapshot={submitted.snapshot} />
+            </div>
+
+            <h2 style={{ fontSize: 16, marginTop: 24 }}>提交的 Value</h2>
             <pre
               style={{
                 background: '#f5f5f5',
@@ -150,7 +167,19 @@ export default function App(): JSX.Element {
                 overflowX: 'auto',
               }}
             >
-              {JSON.stringify(submittedValues, null, 2)}
+              {JSON.stringify(submitted.values, null, 2)}
+            </pre>
+
+            <h2 style={{ fontSize: 16 }}>候选 Snapshot</h2>
+            <pre
+              style={{
+                background: '#f5f5f5',
+                borderRadius: 4,
+                padding: 12,
+                overflowX: 'auto',
+              }}
+            >
+              {JSON.stringify(submitted.snapshot, null, 2)}
             </pre>
           </section>
         ) : null}

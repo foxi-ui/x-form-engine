@@ -1,3 +1,4 @@
 export { basicComponents } from './definitions/basic';
 export { basicDecorators } from './definitions/decorators';
-export type { ReactComponentBinding } from './types';
+export { ReadonlyText, readonlyComponents } from './readonly/readonly-components';
+export type { ReactComponentBinding, ReadonlyComponent } from './types';

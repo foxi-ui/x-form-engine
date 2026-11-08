@@ -1,5 +1,7 @@
 # 08. 独立只读渲染器设计
 
+> 实现状态（M3，2026-11-08）：已实现独立只读渲染器 `ReadonlyRenderer`（`packages/renderer`）、Formatter 注册表与默认 Formatter（`packages/services`）、默认只读/Unknown 兜底（`packages/components` + renderer 内置）。详见 `docs/superpowers/specs/2026-11-08-m3-value-snapshot-readonly-design.md`。
+
 ## 1. 目标
 
 提供面向历史表单、审批详情和数据归档的独立只读渲染能力。只读展示不应简单复用编辑态组件并设置 `disabled`。

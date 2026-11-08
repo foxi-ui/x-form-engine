@@ -1,33 +1,29 @@
 import { createForm, onFormValuesChange } from '@formily/core';
 import { FormProvider } from '@formily/react';
 import { toJS } from '@formily/reactive';
+import { createCandidateSnapshot, normalizeFormValues } from '@x-form-engine/adapters';
 import { createEngineSchemaField } from '@x-form-engine/formily';
-import type { FormSubmitResult } from '@x-form-engine/types';
+import { filterWritableValues } from '@x-form-engine/services';
+import type { FormSubmitResult, FormValue } from '@x-form-engine/types';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useFormEngine } from './context';
 import type { FormRendererInstance, FormRendererProps } from './types';
-
-/** M1 占位快照：真实 Candidate Snapshot 生成留到 M3。 */
-function createPlaceholderSnapshot(): FormSubmitResult['snapshot'] {
-  return {
-    snapshotVersion: '1.0.0',
-    schemaId: '',
-    schemaVersion: 0,
-    createdAt: new Date().toISOString(),
-    fields: {},
-  };
-}
 
 export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
   function FormRenderer(props, ref) {
     const engine = useFormEngine();
     const platform = props.platform ?? 'pc';
 
-    // 回调放在 ref 中，保证 onValuesChange 变化不会重建 form。
+    // 回调与提交配置放在 ref 中，保证变化不会重建 form。
     const onChangeRef = useRef(props.onValuesChange);
     useEffect(() => {
       onChangeRef.current = props.onValuesChange;
     }, [props.onValuesChange]);
+
+    const propsRef = useRef(props);
+    useEffect(() => {
+      propsRef.current = props;
+    });
 
     const form = useMemo(
       () =>
@@ -71,9 +67,37 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
           // 校验失败时 Formily 会 reject（throw form.errors），直接向上抛。
           await form.validate();
 
+          const current = propsRef.current;
+          const locale = current.locale ?? engine.options.locale ?? 'zh-CN';
+          const rawValues = toJS(form.values) as FormValue;
+
+          // 1. Value 规范化（组件 adapter 归一）
+          const normalized = normalizeFormValues(engine, current.schema, rawValues, {
+            locale,
+          });
+
+          // 2. 提交前剔除无写权限字段（有权限信封时）
+          const writableValues = current.permission
+            ? filterWritableValues(current.permission, normalized.value)
+            : normalized.value;
+
+          // 3. 生成候选快照（Candidate Snapshot）
+          const { snapshot } = createCandidateSnapshot(
+            engine,
+            current.schema,
+            writableValues,
+            {
+              locale,
+              schemaId: current.schemaId,
+              schemaVersion: current.schemaVersion,
+            }
+          );
+
           return {
-            values: toJS(form.values),
-            snapshot: createPlaceholderSnapshot(),
+            values: writableValues,
+            snapshot,
+            schemaId: current.schemaId,
+            schemaVersion: current.schemaVersion,
           };
         },
         destroy: () => {
@@ -81,7 +105,7 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
           // 其生命周期订阅随 React unmount / FormProvider 销毁而清理。
         },
       }),
-      [form]
+      [form, engine]
     );
 
     return (

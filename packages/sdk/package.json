@@ -16,8 +16,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@x-form-engine/adapters": "workspace:*",
     "@x-form-engine/core": "workspace:*",
     "@x-form-engine/renderer": "workspace:*",
+    "@x-form-engine/services": "workspace:*",
     "@x-form-engine/types": "workspace:*"
   },
   "devDependencies": {

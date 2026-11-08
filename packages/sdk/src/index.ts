@@ -8,6 +8,10 @@ export * from '@x-form-engine/types';
 
 export {
   createFormEngine,
+  createMigrationRegistry,
+  createItemId,
+  extractStableItemKey,
+  joinFieldId,
   KNOWN_X_ENGINE_KEYS,
   parseSchemaDocument,
   validateEngineSchema,
@@ -15,8 +19,33 @@ export {
 export type { SchemaValidationResult } from '@x-form-engine/core';
 
 export {
+  createCandidateSnapshot,
+  createDictSnapshot,
+  createEntitySnapshots,
+  normalizeEntityValue,
+  normalizeFormValues,
+} from '@x-form-engine/adapters';
+export type {
+  CandidateSnapshotOptions,
+  NormalizeOptions,
+  SnapshotDiagnostic,
+} from '@x-form-engine/adapters';
+
+export {
+  canSubmit,
+  createI18nService,
+  createStaticDatasourceService,
+  defaultFormatters,
+  defaultFormattersPlugin,
+  filterWritableValues,
+  resolveFieldAccess,
+  resolveFormAccess,
+} from '@x-form-engine/services';
+
+export {
   FormEngineProvider,
   FormRenderer,
+  ReadonlyRenderer,
   useFormEngine,
 } from '@x-form-engine/renderer';
 export type { FormRendererInstance, FormRendererProps } from '@x-form-engine/renderer';

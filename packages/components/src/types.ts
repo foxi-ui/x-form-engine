@@ -1,4 +1,4 @@
-import type { ComponentBinding } from '@x-form-engine/types';
+import type { ComponentBinding, ReadonlyComponentProps } from '@x-form-engine/types';
 import type { ComponentType } from 'react';
 
 /**
@@ -8,4 +8,9 @@ import type { ComponentType } from 'react';
  * 这里收窄为 React 组件；这是唯一允许的具体实现类型边界，
  * 组件协议本身仍保持 UI 无关。
  */
-export type ReactComponentBinding = ComponentBinding<ComponentType<unknown>>;
+export type ReadonlyComponent = ComponentType<ReadonlyComponentProps>;
+
+export type ReactComponentBinding = ComponentBinding<
+  ComponentType<unknown>,
+  ReadonlyComponent
+>;

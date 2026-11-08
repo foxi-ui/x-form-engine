@@ -660,28 +660,30 @@ MVP 插件初始化可以同步完成。
 
 ### 任务
 
-- [ ] M3-01：确定 Value 协议。
-- [ ] M3-02：实现 Value 规范化和校验。
-- [ ] M3-03：实现稳定 fieldId。
-- [ ] M3-04：实现基础数组 itemId。
-- [ ] M3-05：实现 Candidate Snapshot。
-- [ ] M3-06：定义 Canonical Snapshot 后端协议。
-- [ ] M3-07：实现 Snapshot 持久化闭环。
-- [ ] M3-08：实现 PC Readonly Renderer。
-- [ ] M3-09：实现 Formatter Registry。
-- [ ] M3-10：实现 Default Readonly Fallback。
-- [ ] M3-11：实现 Unknown Fallback。
-- [ ] M3-12：实现基础权限处理。
-- [ ] M3-13：实现历史 Schema 加载和展示。
+- [x] M3-01：确定 Value 协议。
+- [x] M3-02：实现 Value 规范化和校验。
+- [x] M3-03：实现稳定 fieldId。
+- [x] M3-04：实现基础数组 itemId。
+- [x] M3-05：实现 Candidate Snapshot。
+- [x] M3-06：定义 Canonical Snapshot 后端协议（`CanonicalSnapshot` 类型 + 提交信封协议，见 `verification/05`）。
+- [x] M3-07：实现 Snapshot 持久化闭环（前端 transport-free：`submit()` 产出候选 + `SnapshotService.validate` + Demo 内存闭环；后端原子持久化留待联调）。
+- [x] M3-08：实现 PC Readonly Renderer。
+- [x] M3-09：实现 Formatter Registry。
+- [x] M3-10：实现 Default Readonly Fallback。
+- [x] M3-11：实现 Unknown Fallback。
+- [x] M3-12：实现基础权限处理（fail-closed，Schema 提示只能收紧）。
+- [x] M3-13：实现历史 Schema 加载和展示（有序迁移链 + 只读还原）。
+
+> 实现边界：M3-06/M3-07 的「权威快照生成、原子持久化、后端鉴权」属于后端职责，本仓库只交付协议与传输无关的前端实现；M3-12 的「未授权无法读取」由前端 fail-closed 收敛，后端必须独立强制校验。
 
 ### 验收
 
-- [ ] 提交记录同时保存 Value 和 Canonical Snapshot。
-- [ ] 可以读取历史记录。
-- [ ] 可以正确还原字段标题和展示值。
-- [ ] 当前 Schema 修改不影响历史记录。
-- [ ] 缺少组件时能够降级展示。
-- [ ] 未授权用户无法读取受保护的数据。
+- [x] 提交记录同时保存 Value 和 Candidate Snapshot（后端补全为 Canonical）。
+- [x] 可以读取历史记录（Demo 内存闭环）。
+- [x] 可以正确还原字段标题和展示值。
+- [x] 当前 Schema 修改不影响历史记录（快照冻结 displayValue，不查实时数据源）。
+- [x] 缺少组件时能够降级展示（Unknown Fallback + 诊断）。
+- [x] 未授权用户无法读取受保护的数据（前端 fail-closed；后端独立强制）。
 
 ## M4：工程化与发布
 

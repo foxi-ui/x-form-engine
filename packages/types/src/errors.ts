@@ -8,6 +8,9 @@ export type FormEngineErrorCode =
   | 'DATASOURCE_FAILED'
   | 'SNAPSHOT_FAILED'
   | 'PERMISSION_DENIED'
+  | 'MIGRATION_FAILED'
+  | 'VALUE_NORMALIZE_FAILED'
+  | 'SNAPSHOT_VERSION_UNSUPPORTED'
   | 'RENDER_FAILED';
 
 export class FormEngineError extends Error {
