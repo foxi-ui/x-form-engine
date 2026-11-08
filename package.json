@@ -7,11 +7,20 @@
   "scripts": {
     "test": "vitest",
     "test:run": "vitest run",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "build": "pnpm --filter './packages/*' build",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "publish:beta": "pnpm -r publish --tag beta"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@types/node": "^22.10.0",
     "jsdom": "26.1.0",
+    "tsup": "^9.0.0",
     "typescript": "5.9.3",
     "vitest": "3.2.7"
   }
