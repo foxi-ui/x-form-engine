@@ -1,4 +1,8 @@
-import type { FormSubmitResult, PermissionEnvelope } from '@x-form-engine/types';
+import type {
+  FormSubmitResult,
+  PermissionEnvelope,
+  PlatformFallbackDiagnostic,
+} from '@x-form-engine/types';
 
 export interface FormRendererProps {
   schema: Record<string, unknown>;
@@ -9,6 +13,8 @@ export interface FormRendererProps {
   readOnly?: boolean;
   scope?: Record<string, unknown>;
   onValuesChange?: (values: Record<string, unknown>) => void;
+  /** mobile 平台缺失实现回退 pc 时的诊断回调（仅当前 Schema 引用的组件）。 */
+  onDiagnostic?: (diagnostic: PlatformFallbackDiagnostic) => void;
   /** 快照信封：schemaId / schemaVersion / locale（缺省时用空值兜底）。 */
   schemaId?: string;
   schemaVersion?: number;

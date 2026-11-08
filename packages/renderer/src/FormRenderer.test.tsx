@@ -139,22 +139,24 @@ test('onValuesChange 回读 form.values 且与 getValues 一致', async () => {
   expect(seen.at(-1)).toEqual(ref.current!.getValues());
 });
 
-test('platform 未传时回退到 engine.options.platform', () => {
+test('platform 未传时回退到 engine.options.platform，missing mobile 实现回退 pc 并派发诊断', () => {
   const engine = createFormEngine({ platform: 'mobile', components: [inputBinding] });
-  expect(() =>
-    render(
-      <FormEngineProvider engine={engine}>
-        <FormRenderer
-          schema={{ type: 'object', properties: { name: { type: 'string', 'x-component': 'Input' } } }}
-        />
-      </FormEngineProvider>
-    )
-  ).toThrowError(
-    expect.objectContaining({
-      code: 'COMPONENT_CAPABILITY_MISMATCH',
-      details: expect.objectContaining({ platform: 'mobile' }),
-    })
+  const onDiagnostic = vi.fn();
+  render(
+    <FormEngineProvider engine={engine}>
+      <FormRenderer
+        schema={{ type: 'object', properties: { name: { type: 'string', 'x-component': 'Input' } } }}
+        onDiagnostic={onDiagnostic}
+      />
+    </FormEngineProvider>
   );
+  expect(onDiagnostic).toHaveBeenCalledWith({
+    kind: 'component',
+    name: 'Input',
+    requestedPlatform: 'mobile',
+    fallbackPlatform: 'pc',
+  });
+  expect(screen.getByTestId('field')).toBeTruthy();
 });
 
 test('props.platform 优先于 engine.options.platform', () => {

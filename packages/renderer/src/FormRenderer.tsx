@@ -4,9 +4,10 @@ import { toJS } from '@formily/reactive';
 import { createCandidateSnapshot, normalizeFormValues } from '@x-form-engine/adapters';
 import { createEngineSchemaField } from '@x-form-engine/formily';
 import { filterWritableValues } from '@x-form-engine/services';
-import type { FormSubmitResult, FormValue } from '@x-form-engine/types';
+import type { FormSubmitResult, FormValue, PlatformFallbackDiagnostic } from '@x-form-engine/types';
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useFormEngine } from './context';
+import { filterDiagnosticsBySchema } from './diagnostics';
 import type { FormRendererInstance, FormRendererProps } from './types';
 
 function resolvePattern(
@@ -50,7 +51,7 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
       []
     );
 
-    const SchemaField = useMemo(
+    const { SchemaField, diagnostics } = useMemo(
       () => createEngineSchemaField(engine, platform),
       [engine, platform]
     );
@@ -116,6 +117,40 @@ export const FormRenderer = forwardRef<FormRendererInstance, FormRendererProps>(
       }),
       [form, engine]
     );
+
+    // 诊断派发放在所有既有 hooks 之后，保持 hooks 顺序稳定。
+    const visibleDiagnostics = useMemo(
+      () => filterDiagnosticsBySchema(diagnostics, props.schema),
+      [diagnostics, props.schema]
+    );
+
+    // 同一 `kind:name` 每次挂载（或 engine/platform 变化）只派发一次。
+    const reportedDiagnostics = useRef<Set<string>>(new Set());
+    useEffect(() => {
+      reportedDiagnostics.current = new Set();
+    }, [engine, platform]);
+
+    useEffect(() => {
+      for (const diagnostic of visibleDiagnostics) {
+        const key = `${diagnostic.kind}:${diagnostic.name}`;
+        if (reportedDiagnostics.current.has(key)) {
+          continue;
+        }
+        reportedDiagnostics.current.add(key);
+
+        propsRef.current.onDiagnostic?.(diagnostic);
+        engine.events.emit<PlatformFallbackDiagnostic>(
+          'component:platform-fallback',
+          diagnostic
+        );
+
+        if (engine.options.debug === true) {
+          console.warn(
+            `[x-form-engine] ${diagnostic.kind} "${diagnostic.name}" 缺少 ${diagnostic.requestedPlatform} 平台实现，已回退到 ${diagnostic.fallbackPlatform} 实现`
+          );
+        }
+      }
+    }, [engine, visibleDiagnostics]);
 
     return (
       <FormProvider form={form}>
