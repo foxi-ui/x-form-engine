@@ -67,6 +67,7 @@ pnpm workspace monorepo，按职责拆包，依赖方向单向。
 
 完整文档地图见 [`docs/README.md`](docs/README.md)。核心入口：
 
+- [`docs/guide/README.md`](docs/guide/README.md) — 业务接入指南（渐进式：渲染 → Schema → 校验联动 → 提交快照）
 - [`docs/tech-design/form-engine-architecture-design.md`](docs/tech-design/form-engine-architecture-design.md) — 架构基线
 - [`docs/tech-design/mvp-roadmap.md`](docs/tech-design/mvp-roadmap.md) — MVP 实施基线与里程碑
 - [`docs/tech-design/02-specs/README.md`](docs/tech-design/02-specs/README.md) — 专题契约规范
