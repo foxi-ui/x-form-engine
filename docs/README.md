@@ -22,7 +22,7 @@
 
 ### 业务接入指南
 
-- [`guide/README.md`](guide/README.md) — 面向业务开发者的渐进式接入手册：从渲染第一张表单到提交 Value / Snapshot（第 1–4 章已完成，第 5–10 章占位）。
+- [`guide/README.md`](guide/README.md) — 面向业务开发者的渐进式接入手册：从渲染第一张表单到提交 Value / Snapshot，再到移动端渲染（第 1–4、6 章已完成，其余占位）。
 - [`guide/examples/employee-onboarding/`](guide/examples/employee-onboarding/) — 贯穿示例「员工入职登记」的完整可复制代码。
 
 ### 契约 / 规范（02-specs）

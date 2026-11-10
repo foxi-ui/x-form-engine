@@ -5,8 +5,10 @@
 | 文件 | 作用 |
 |---|---|
 | `schema.ts` | 表单 Schema、业务值类型、scope 计算函数、Schema 文档信封 |
-| `engine.ts` | 创建并配置 `FormEngine` |
-| `EmployeeOnboardingForm.tsx` | 完整表单组件：渲染 → 校验 → 提交 → 保存 |
+| `engine.ts` | 创建并配置 PC 端 `FormEngine` |
+| `EmployeeOnboardingForm.tsx` | PC 端完整表单组件：渲染 → 校验 → 提交 → 保存 |
+| `mobile-engine.tsx` | 移动端 Engine + 一个 PC 专用组件（演示回退诊断） |
+| `EmployeeOnboardingMobileForm.tsx` | 移动端表单：复用同一 Schema，提交 Value 与 PC 一致 |
 
 ## 放进已有工程
 

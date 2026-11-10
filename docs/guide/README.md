@@ -1,6 +1,6 @@
 # x-form-engine 业务接入指南
 
-> 状态：draft（第 1–4 章已完成，第 5–10 章待编写）｜ 最后更新：2026-11-09
+> 状态：draft（第 1–4、6 章已完成，第 5、7–10 章待编写）｜ 最后更新：2026-11-10
 
 本指南面向**第一次使用 x-form-engine 的业务开发者**。读完后，你应该能在一个 React 后台里独立接入第一张可校验、可提交的表单，并知道提交结果里的 `values` 与 `snapshot` 分别是什么、该怎么保存。
 
@@ -43,7 +43,7 @@ flowchart TD
 | [`03-validation-and-linkage.md`](03-validation-and-linkage.md) | 校验、条件显隐、派生值、初始值与实例 API | ✅ 已完成 |
 | [`04-submit-and-snapshot.md`](04-submit-and-snapshot.md) | `submit()` 语义、Value / Snapshot、业务保存 | ✅ 已完成 |
 | [`05-readonly.md`](05-readonly.md) | 只读渲染与历史回显 | ⬜ 待编写 |
-| [`06-mobile.md`](06-mobile.md) | 移动端物料入口、平台回退诊断 | ⬜ 待编写 |
+| [`06-mobile.md`](06-mobile.md) | 移动端物料入口、七类 P0 组件、平台回退诊断 | ✅ 已完成 |
 | [`07-designer.md`](07-designer.md) | 设计器导出 Schema 的业务渲染 | ⬜ 待编写 |
 | [`08-custom-components.md`](08-custom-components.md) | 组件协议与自定义组件注册 | ⬜ 待编写 |
 | [`09-api-reference.md`](09-api-reference.md) | 公开 API 速查 | ⬜ 待编写 |
@@ -59,6 +59,7 @@ flowchart TD
 | 02 | 补齐入职日期、备注，认识组件目录 |
 | 03 | 条件部门说明、试用期与预计转正日期、编辑回填 |
 | 04 | 提交后拿到 `values` + 候选快照并保存 |
+| 06 | 同一 Schema 的移动端渲染，PC 专用组件的回退诊断 |
 
 完整代码在 [`examples/employee-onboarding/`](examples/employee-onboarding/)，可直接复制进业务工程。
 仓库内的 `apps/playground` 渲染了同一张表，可作为可运行参考：
