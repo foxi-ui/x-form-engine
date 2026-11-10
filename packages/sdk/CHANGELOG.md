@@ -1,6 +1,18 @@
 # @x-form-engine/sdk
 
-## 0.0.1-beta
+## 0.0.1-beta.1
+
+### Patch Changes
+
+- M4 移动端渲染器：`@x-form-engine/components/mobile` 入口、七个 P0 antd-mobile 组件 + FormItem、逐字段 PC 回退诊断、`apps/mobile-demo` 验收应用、移动端 bundle 纯净性校验。
+- Updated dependencies
+  - @x-form-engine/types@0.0.1-beta.1
+  - @x-form-engine/core@0.0.1-beta.1
+  - @x-form-engine/renderer@0.0.1-beta.1
+  - @x-form-engine/adapters@0.0.1-beta.1
+  - @x-form-engine/services@0.0.1-beta.1
+
+## 0.0.1-beta.0
 
 ### Patch Changes
 

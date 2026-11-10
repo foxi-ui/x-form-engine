@@ -1,6 +1,6 @@
 {
   "name": "@x-form-engine/components",
-  "version": "0.0.1-beta",
+  "version": "0.0.1-beta.1",
   "type": "module",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -21,17 +21,17 @@
   },
   "publishConfig": {
     "registry": "https://npm.bugduo.com/",
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
+    "main": "./dist/src/index.js",
+    "types": "./dist/src/index.d.ts",
     "exports": {
       ".": {
         "import": {
-          "types": "./dist/index.d.ts",
-          "default": "./dist/index.js"
+          "types": "./dist/src/index.d.ts",
+          "default": "./dist/src/index.js"
         },
         "require": {
-          "types": "./dist/index.d.cts",
-          "default": "./dist/index.cjs"
+          "types": "./dist/src/index.d.cts",
+          "default": "./dist/src/index.cjs"
         }
       },
       "./mobile": {
