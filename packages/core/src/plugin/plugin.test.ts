@@ -1,6 +1,6 @@
 import type { ComponentBinding } from '@x-form-engine/types';
 import { createFormEngine } from '../engine';
-import { resolvePluginOrder } from './dependency-resolver';
+import { resolvePluginOrder } from './generic/dependency-resolver';
 
 const BINDING: ComponentBinding = {
   protocol: {

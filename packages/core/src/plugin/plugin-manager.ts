@@ -5,7 +5,7 @@ import type {
   Registry,
 } from '@x-form-engine/types';
 import { FormEngineError } from '@x-form-engine/types';
-import { resolvePluginOrder } from './dependency-resolver';
+import { resolvePluginOrder } from './generic/dependency-resolver';
 
 export interface PluginManager {
   install(plugin: FormEnginePlugin): void;

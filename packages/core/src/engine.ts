@@ -9,7 +9,7 @@ import type {
 } from '@x-form-engine/types';
 import { FormEngineError } from '@x-form-engine/types';
 import { createEventBus } from './events/event-bus';
-import { resolvePluginOrder } from './plugin/dependency-resolver';
+import { resolvePluginOrder } from './plugin/generic/dependency-resolver';
 import { createPluginManager } from './plugin/plugin-manager';
 import type { PluginManager } from './plugin/plugin-manager';
 import { createEngineRegistry } from './registry/engine-registry';
