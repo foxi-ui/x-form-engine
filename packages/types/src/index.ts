@@ -5,6 +5,8 @@ export * from './value';
 export * from './services';
 export * from './errors';
 export * from './engine';
+export * from './plugin';
+export * from './designer';
 export * from './permission';
 export * from './migration';
 export * from './readonly';
