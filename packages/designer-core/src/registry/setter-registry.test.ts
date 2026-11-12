@@ -80,8 +80,8 @@ describe('createSetterRegistry', () => {
     const registry = createSetterRegistry();
     registry.register(setter());
     const def = registry.get('StringSetter')!;
-    expect(def.validate?.('hello')).toEqual({ valid: true });
-    expect(def.validate?.(123)).toEqual({ valid: false });
+    expect(def.validate?.('hello', {})).toEqual({ valid: true });
+    expect(def.validate?.(123, {})).toEqual({ valid: false });
   });
 
   test('resolve 命中已注册 Setter 返回 found:true', () => {
