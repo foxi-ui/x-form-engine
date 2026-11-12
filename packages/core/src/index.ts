@@ -2,6 +2,7 @@ export * from './registry/registry';
 export * from './registry/engine-registry';
 export * from './events/event-bus';
 export * from './plugin/generic/dependency-resolver';
+export * from './plugin/generic/plugin-host';
 export * from './plugin/plugin-manager';
 export * from './engine';
 export * from './schema/parser';
