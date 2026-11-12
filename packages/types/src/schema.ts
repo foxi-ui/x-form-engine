@@ -8,7 +8,10 @@ export const ENGINE_SCHEMA_VERSION = '1.0.0';
  * 只提供版本轴 + 可扩展槽位，保持 `types` 包 UI / Formily 无关。
  */
 export interface DesignerMetadata {
-  /** 元数据版本，用于后续有序迁移。 */
+  /**
+   * 元数据版本，用于版本检测。设计器元数据迁移轴尚未纳入 `migration.ts` 的
+   * `VersionAxis`（Phase 5/7 补齐后再做有序迁移，见 phase-1 报告遗留项）。
+   */
   version?: string;
   [key: string]: unknown;
 }

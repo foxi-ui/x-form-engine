@@ -1,5 +1,6 @@
 import type { Platform } from './base';
 import type { EventBus } from './engine';
+import type { PluginInstallOptions } from './plugin';
 import type { FormSchemaDocument } from './schema';
 
 /**
@@ -71,6 +72,7 @@ export interface DesignerMaterialDefinition {
   icon?: unknown;
   keywords?: string[];
 
+  /** 组件标识；当 `runtimeTarget.kind === 'component'` 时须与其 `componentName` 一致（C10）。 */
   componentName: string;
 
   /** 生成 Formily 原生 + x-engine 扩展 Schema。 */
@@ -204,6 +206,8 @@ export interface DesignerRegistry<T extends { name: string }> {
 export interface MaterialRegistry extends DesignerRegistry<DesignerMaterialDefinition> {
   getByCategory(category: string): DesignerMaterialDefinition[];
   clear(): void;
+  /** 读取注册阶段累积的诊断（如缺失平台实现、非法 runtimeTarget，C5/C10）。 */
+  getDiagnostics(): SchemaDiagnostic[];
 }
 
 export interface SetterRegistry extends DesignerRegistry<SetterDefinition> {}
@@ -281,33 +285,6 @@ export interface SchemaEditor {
 // Designer Plugin
 // ---------------------------------------------------------------------------
 
-/** 插件安装状态。 */
-export type PluginStatus =
-  | 'registered'
-  | 'installing'
-  | 'active'
-  | 'failed'
-  | 'disposed';
-
-/** 插件安装选项。 */
-export interface PluginInstallOptions {
-  /** 是否覆盖同名插件（默认 false，重复安装抛 PLUGIN_CONFLICT）。 */
-  force?: boolean;
-}
-
-/** 插件依赖缺失错误信息。 */
-export interface PluginDependencyError {
-  plugin: string;
-  missing: string[];
-}
-
-/** 插件生命周期事件。 */
-export interface PluginLifecycleEvent {
-  plugin: string;
-  status: PluginStatus;
-  error?: unknown;
-}
-
 /**
  * Designer 插件（C9，与 Runtime `FormEnginePlugin` 解耦）。
  *
@@ -318,6 +295,10 @@ export interface DesignerPlugin {
   version: string;
   dependencies?: string[];
 
+  /**
+   * 安装插件，可返回一个清理函数。若同时实现 `dispose`，二者的调用顺序 / 互斥
+   * 关系由 Generic Plugin Core（Phase 2）统一定义，避免重复或遗漏清理。
+   */
   install(context: DesignerPluginContext): void | (() => void);
 
   dispose?(): void;

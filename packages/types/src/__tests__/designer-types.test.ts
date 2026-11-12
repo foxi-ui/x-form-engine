@@ -186,3 +186,7 @@ test('MaterialCreateContext / DesignerComponentProps 可扩展且 UI 无关', ()
   expectTypeOf<MaterialCreateContext['platform']>().toEqualTypeOf<Platform | undefined>();
   expectTypeOf<DesignerComponentProps['children']>().toEqualTypeOf<unknown | undefined>();
 });
+
+test('MaterialRegistry 提供注册诊断读取入口（C5/C10）', () => {
+  expectTypeOf<MaterialRegistry['getDiagnostics']>().toEqualTypeOf<() => SchemaDiagnostic[]>();
+});
