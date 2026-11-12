@@ -9,6 +9,7 @@
 | `EmployeeOnboardingForm.tsx` | PC 端完整表单组件：渲染 → 校验 → 提交 → 保存 |
 | `mobile-engine.tsx` | 移动端 Engine + 一个 PC 专用组件（演示回退诊断） |
 | `EmployeeOnboardingMobileForm.tsx` | 移动端表单：复用同一 Schema，提交 Value 与 PC 一致 |
+| `EmployeeSelector.tsx` | 自定义「员工选择器」组件（协议 + 编辑/只读实现 + Adapter） |
 
 ## 放进已有工程
 
