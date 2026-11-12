@@ -17,7 +17,7 @@ import {
 
 - PC 入口 `@x-form-engine/components` 提供桌面 `antd` 实现；
 - 移动端入口 `@x-form-engine/components/mobile` 提供 `antd-mobile` 实现；
-- 两个入口**共享同一份组件协议**（`FormComponentDefinition`），因此业务 Value 协议完全一致。
+- 两个入口**共享同一份组件协议**（`ComponentProtocolDefinition`），因此业务 Value 协议完全一致。
 
 移动端依赖 `antd-mobile@5.43.0`，已作为 `@x-form-engine/components` 的依赖带入。如果你的业务代码会直接使用 `antd-mobile` 的组件（如示例里的 `Button`），建议显式安装：
 

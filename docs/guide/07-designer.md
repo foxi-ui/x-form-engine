@@ -7,7 +7,7 @@
 - 设计器产出的 Schema 形态：`x-decorator` + `x-component` + `x-component-props`
 - 设计器导出 JSON 的信封结构与版本字段
 - 业务侧加载设计器 Schema 并渲染的完整流程
-- 设计器物料与业务渲染组件共用同一份 `FormComponentDefinition`
+- 设计器物料与业务渲染组件共用同一份 `ComponentBinding`
 - 预览模式与编辑模式的差异
 - Schema 升级/迁移的边界与注意事项
 

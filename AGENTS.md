@@ -49,7 +49,7 @@ Three data classes are deliberately kept separate — do not collapse them:
 - **Value** — stable business values (e.g. user IDs, not display names).
 - **Snapshot** — frozen display information captured at submission for faithful history rendering.
 
-Component identity is unified: one `FormComponentDefinition` drives designer material, PC/mobile editing, and readonly rendering; implementations map per platform and adapters handle value normalization/serialization/snapshot creation/restoration. Snapshot generation happens in `submit()`, which validates and returns `{ values, snapshot }` but never performs business HTTP itself.
+Component identity is unified: one `ComponentBinding` drives designer material, PC/mobile editing, and readonly rendering; implementations map per platform and adapters handle value normalization/serialization/snapshot creation/restoration. Snapshot generation happens in `submit()`, which validates and returns `{ values, snapshot }` but never performs business HTTP itself.
 
 ## Non-negotiable design constraints
 
