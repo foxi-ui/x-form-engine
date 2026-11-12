@@ -1,8 +1,8 @@
-# 兼容性基线报告（Phase 0 / Task 0.1）
+# 兼容性基线报告（Phase 0 / Task 0.1，重新审计）
 
 > 依据：`docs/architecture/02-form-engine-v2-task.md` Task 0.1
-> 审计日期：2026-11-12
-> 原则：以下均为仓库 lockfile / 实际安装 / 源码实测结果，不做无授权的大版本升级。
+> 审计日期：2026-11-13（重新审计，不沿用 2026-11-12 结论）
+> 原则：以下均为 lockfile / 实际安装 / 源码实测结果，不做无授权的大版本升级。
 
 ---
 
@@ -13,7 +13,7 @@
 | 依赖 | 声明版本 | 实际安装版本 |
 |---|---|---|
 | `react` | `17.0.2` | `17.0.2`（单一实例，`node_modules/.pnpm/react@17.0.2`） |
-| `react-dom` | `17.0.2` | `17.0.2`（单一实例，`react-dom@17.0.2_react@17.0.2`） |
+| `react-dom` | `17.0.2` | `17.0.2`（单一实例） |
 | `@types/react` | `17.0.0` | `17.0.0` |
 | `@types/react-dom` | `17.0.0` | `17.0.0` |
 
@@ -23,38 +23,21 @@
 
 | 依赖 | 版本 |
 |---|---|
-| `antd` | `4.22.8` |
-| `antd-mobile` | `5.43.0` |
+| `antd` | `4.22.8`（单实例，peer react 17） |
+| `antd-mobile` | `5.43.0`（单实例） |
 | `@ant-design/icons` | `4.8.3` |
 
 ### Formily 全家桶
 
-所有 Formily 包均为 **`2.3.7`**（单一版本，无跨版本混用）：
+所有 Formily 包均为 **`2.3.7`**（单一版本，无跨版本混用）：`@formily/core`、`@formily/react`、`@formily/json-schema`、`@formily/path`、`@formily/reactive`、`@formily/reactive-react`、`@formily/shared`、`@formily/antd`。
 
-- `@formily/core`
-- `@formily/react`
-- `@formily/json-schema`
-- `@formily/path`
-- `@formily/reactive`
-- `@formily/reactive-react`
-- `@formily/shared`
-- `@formily/antd`
-
-注意：`@formily/react`、`@formily/antd` 在 `node_modules/.pnpm` 内存在 **两个 peer 变体目录**（`pnpm list` 显示 `(2 variations)`），原因是 `react-is` peer 解析不同；`@formily/core` 等无 React peer 的包是单目录。应用层通过 vite `resolve.dedupe` 保证运行时单实例（见 §5）。
+注意：`@formily/react`、`@formily/antd` 在 `node_modules/.pnpm` 内存在 **两个 peer 变体目录**（`pnpm` 对 `react-is` peer 解析不同导致），`@formily/core` 等无 React peer 的包是单目录。应用层通过 vite `resolve.dedupe` 保证运行时单实例（见 §5）。
 
 ### Designable 全家桶
 
-所有 Designable 包均为 **`1.0.0-beta.45`**：
+所有 Designable 包均为 **`1.0.0-beta.45`**：`@designable/core`、`@designable/react`、`@designable/react-settings-form`、`@designable/formily-antd`、`@designable/formily-setters`、`@designable/formily-transformer`、`@designable/shared`。
 
-- `@designable/core`
-- `@designable/react`
-- `@designable/react-settings-form`
-- `@designable/formily-antd`
-- `@designable/formily-setters`
-- `@designable/formily-transformer`
-- `@designable/shared`
-
-`@designable/react`、`@designable/react-settings-form` 同样存在两个 peer 变体目录，`@designable/core` 是单目录。
+`@designable/react`、`@designable/react-settings-form` 存在两个 peer 变体目录；`@designable/core` 是单目录。
 
 ### `react-is` 的多个实例（需要关注）
 
@@ -83,34 +66,25 @@
 | Vite | `^5`（demo） |
 | changesets | `^3.0.3` |
 
-根脚本：
-
-```json
-{
-  "test": "vitest",
-  "test:run": "vitest run",
-  "typecheck": "pnpm -r typecheck",
-  "build": "pnpm --filter './packages/*' build"
-}
-```
+根脚本：`test`（vitest）、`test:run`（vitest run）、`typecheck`（`pnpm -r typecheck`）、`build`（`pnpm --filter './packages/*' build`）。
 
 ---
 
 ## 3. peerDependencies 策略现状
 
-**现状：所有包均未声明 `peerDependencies`。** 各包把 React / Formily / Designable / antd 直接放在 `dependencies` 中（例如 `components` 依赖 `react`、`antd`、`antd-mobile`；`designer` 依赖 Designable 全家桶；`formily/renderer` 依赖 `react`、`@formily/*`）。
+**现状：所有包均未声明 `peerDependencies`。** 各包把 React / Formily / Designable / antd 直接放在 `dependencies` 中（如 `components` 依赖 `react`/`antd`/`antd-mobile`；`designer` 依赖 Designable 全家桶；`formily/renderer` 依赖 `react`/`@formily/*`）。
 
-这带来两个问题：
+两个问题：
 
 1. 宿主项目可能因 pnpm peer 差异产生多实例（Demo 靠 `resolve.dedupe` 兜底）。
-2. 公共包对外发布时会把宿主依赖写进 `dependencies`，不利于外部项目统一 React/antd 实例。
+2. 公共包发布时会把宿主依赖写进 `dependencies`，不利于外部项目统一 React/antd 实例。
 
-建议策略（进入 Phase 1/9 时落地，不擅自升级版本）：
+建议策略（Phase 9 落地，不擅自升级版本）：
 
-- `react` / `react-dom`：公共 UI 包改为 `peerDependencies`（`^17.0.0`）。
+- `react`/`react-dom`：公共 UI 包改为 `peerDependencies`（`^17.0.0`）。
 - `@formily/*`：`formily`、`renderer`、`components`、`designer` 的宿主 Formily 依赖改为 peer 或外部化。
-- `antd` / `antd-mobile`：`components`、`designer` 的 UI 宿主依赖改为 peer（`antd` `^4.22.8`、`antd-mobile` `^5.43.0`）。
-- `@designable/*`：Designable 相关依赖只允许出现在未来的 `designer-designable` Adapter 包中，且作为 peer/外部依赖，不允许进入 `designer-core`。
+- `antd`/`antd-mobile`：`components`、`designer` 的 UI 宿主依赖改为 peer（`antd` `^4.22.8`、`antd-mobile` `^5.43.0`）。
+- `@designable/*`：只允许出现在未来的 `designer-designable` Adapter 包，且作为 peer/外部依赖，不允许进入 `designer-core`。
 - `react-is`：在 workspace 内显式钉住 `17.0.2`，避免 `autoInstallPeers` 解析到 19。
 
 ---
@@ -125,46 +99,41 @@ tsup src/index.ts --format esm,cjs --dts --sourcemap --clean --out-dir dist
 
 （`components` 额外构建 `mobile.ts` 子入口。）
 
-实测 `packages/renderer/dist/index.js`：宿主依赖（`react`、`react-dom`、`@formily/*`、`@x-form-engine/*`）保持为 `import` 语句，**没有被打包进产物**。即 tsup 对 dependencies 默认外部化，构建产物不包含宿主依赖。
+实测宿主依赖（`react`、`react-dom`、`@formily/*`、`@x-form-engine/*`）保持为 `import` 语句，**没有被打包进产物**（tsup 对 dependencies 默认外部化）。
 
-产物文件（以 `renderer` 为例）：
+产物文件（以 `renderer` 为例）：`index.js`（ESM）、`index.cjs`（CJS）、`index.d.ts`/`index.d.cts`（DTS）、sourcemap。
 
-- `index.js`（ESM）
-- `index.cjs`（CJS）
-- `index.d.ts` / `index.d.cts`（类型声明）
-- `index.js.map` / `index.cjs.map`
-
-`publishConfig` 已为各包提供发布态 `main` / `types` / `exports`（ESM + CJS + DTS）。
+`publishConfig` 已为各包提供发布态 `main`/`types`/`exports`（ESM + CJS + DTS）；`types` 包发布态使用 `./dist/index.d.ts` + `./dist/index.d.cts`。
 
 ---
 
 ## 5. Designable 与 React17 / antd4 的兼容验证方式
 
-- **锁版本**：Designable 固定 `1.0.0-beta.45`，antd 固定 `4.22.8`，React 固定 `17.0.2`。
+- **锁版本**：Designable `1.0.0-beta.45`，antd `4.22.8`，React `17.0.2`。
 - **运行时单实例**：`apps/designer-demo/vite.config.ts` 通过 `resolve.dedupe` 收敛 `react`、`react-dom`、`@formily/{antd,core,json-schema,react}`、`@designable/{core,react,react-settings-form}`。
-- **smoke 测试**：`packages/designer/src/__tests__/designable-smoke.test.tsx`（`Designable 依赖链在 designer 包内可运行`）。
-- **引导顺序测试**：`packages/designer/src/__tests__/designer.test.ts`（`启动顺序正确：当前树非空且物料可被匹配`）。
-- **画布/schema 往返**：`packages/designer/src/__tests__/schema-io.test.ts`、`materials.test.tsx`、`preview.test.tsx`、`setters.test.tsx`。
+- **smoke 测试**：`packages/designer/src/__tests__/designable-smoke.test.tsx`（Designable 依赖链可运行）。
+- **引导顺序测试**：`packages/designer/src/__tests__/designer.test.ts`。
+- **画布/schema 往返**：`schema-io.test.ts`、`materials.test.tsx`、`preview.test.tsx`、`setters.test.tsx`。
 - **完整 Workbench**：`apps/designer-demo`（`pnpm --filter designer-demo dev|build`）。
 
-当前验证结果：`pnpm -r typecheck` 全绿；`pnpm test:run` 49 文件 / 201 用例全绿。
+当前验证结果：`pnpm -r typecheck` 全绿；`pnpm test:run` 53 文件 / 248 用例全绿。
 
 ---
 
 ## 6. 依赖边界现状小结
 
 - React / React DOM：单一 17.0.2，无重复。
-- Formily：单一 2.3.7 版本，但存在 peer 变体目录。
-- Designable：单一 1.0.0-beta.45 版本，但存在 peer 变体目录。
+- Formily：单一 2.3.7 版本，但 `@formily/react`/`@formily/antd` 存在 peer 变体目录。
+- Designable：单一 1.0.0-beta.45 版本，但 `@designable/react` 等存在 peer 变体目录。
 - `react-is`：存在 16/17/18/19 四个实例，其中 19 由 `designer-demo` 的 `autoInstallPeers` 引入，需在发布前治理。
 - 构建产物：宿主依赖外部化，不打包进 dist。
-- peerDependencies：当前全部缺失，是 Phase 1/9 需要补齐的发布边界。
+- peerDependencies：当前全部缺失，是 Phase 9 需要补齐的发布边界。
 
 ---
 
 ## 7. 风险与暂停条件对照
 
 - 无“找不到目标文档/多个候选版本”问题（`docs/architecture/01~03` 唯一）。
-- 无“源码与架构决策重大冲突”需暂停：`FormSchemaDocument` 与任务书 C1 描述一致（`schema: Record<string, unknown>`，无 `designerMetadata`，待 Phase 1 兼容扩展）。
-- Plugin Manager 行为与任务书描述一致，抽取泛型核心可行。
+- 无“源码与架构决策重大冲突”需暂停：`FormSchemaDocument` 与 C1 描述一致（`schema: Record<string, unknown>`，已含 `designerMetadata?` 兼容扩展）。
+- Plugin Manager 已迁移到泛型核心，行为与任务书一致，无需暂停。
 - 唯一需提前治理的依赖风险是 `react-is` 多实例与 peerDependencies 缺失，属可解问题，不触发暂停条件。
