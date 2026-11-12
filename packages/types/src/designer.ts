@@ -296,8 +296,11 @@ export interface DesignerPlugin {
   dependencies?: string[];
 
   /**
-   * 安装插件，可返回一个清理函数。若同时实现 `dispose`，二者的调用顺序 / 互斥
-   * 关系由 Generic Plugin Core（Phase 2）统一定义，避免重复或遗漏清理。
+   * 安装插件，可返回一个清理函数。
+   *
+   * 若同时实现 `dispose`，卸载时 `dispose()` 先执行，再执行此处返回的
+   * teardown；两者各自异常隔离（一个抛错不影响另一个）。语义由 Generic
+   * Plugin Core 定义，见 `packages/core/src/plugin/generic/plugin-host.ts`。
    */
   install(context: DesignerPluginContext): void | (() => void);
 

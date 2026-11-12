@@ -272,6 +272,59 @@ test('disposeAll 幂等', () => {
   expect(teardownCalls).toBe(1);
 });
 
+test('onEvent 抛错不影响 disposeAll：全部插件停用且资源释放', () => {
+  const resources = [new TestResourceRegistry()];
+  const host = createGenericPluginHost<
+    InstallablePlugin<TestContext>,
+    TestContext
+  >({
+    createContext: () => ({ registry: resources[0] }),
+    resources,
+    onEvent: () => {
+      throw new Error('onEvent boom');
+    },
+  });
+  host.install(
+    makePlugin({
+      name: 'A',
+      install: (context) => {
+        context.registry.register('X', 'a');
+      },
+    })
+  );
+  host.install(
+    makePlugin({
+      name: 'B',
+      install: (context) => {
+        context.registry.register('Y', 'b');
+      },
+    })
+  );
+
+  expect(() => host.disposeAll()).not.toThrow();
+  expect(host.list().every((entry) => entry.active === false)).toBe(true);
+  expect(resources[0].list()).toEqual([]);
+});
+
+test('onEvent 抛错不影响 install 成功：插件保持 active 且不向外抛', () => {
+  const resources = [new TestResourceRegistry()];
+  const host = createGenericPluginHost<
+    InstallablePlugin<TestContext>,
+    TestContext
+  >({
+    createContext: () => ({ registry: resources[0] }),
+    resources,
+    onEvent: () => {
+      throw new Error('onEvent boom');
+    },
+  });
+  const p = makePlugin({ name: 'p' });
+
+  expect(() => host.install(p)).not.toThrow();
+  expect(host.isInstalled('p')).toBe(true);
+  expect(host.list()).toEqual([{ plugin: p, active: true }]);
+});
+
 test('单插件 teardown 抛错不影响其它插件卸载', () => {
   const { host, events } = makeHostWithEvents();
   let goodTeardownCalled = false;
@@ -344,6 +397,38 @@ test('uninstall 未安装/已卸载插件为幂等 no-op', () => {
   expect(() => host.uninstall('A')).not.toThrow();
   expect(teardownCalls).toBe(1);
   expect(host.isInstalled('A')).toBe(false);
+});
+
+test('卸载后同名插件重装抛 PLUGIN_CONFLICT', () => {
+  const { host } = makeHost();
+  host.install(makePlugin({ name: 'A' }));
+  host.uninstall('A');
+
+  expect(() => host.install(makePlugin({ name: 'A' }))).toThrowError(
+    expect.objectContaining({ code: 'PLUGIN_CONFLICT' })
+  );
+});
+
+test('uninstall 后 list 仍保留该插件记录且 active 为 false', () => {
+  const { host } = makeHost();
+  const p = makePlugin({ name: 'A' });
+  host.install(p);
+
+  host.uninstall('A');
+
+  expect(host.list()).toEqual([{ plugin: p, active: false }]);
+});
+
+test('依赖方已 uninstall 后，卸载被依赖项不被依赖保护拦截', () => {
+  const { host } = makeHost();
+  host.install(makePlugin({ name: 'B' }));
+  host.install(makePlugin({ name: 'A', dependencies: ['B'] }));
+
+  // A 先卸载后不再是 active 依赖方，B 可正常卸载。
+  host.uninstall('A');
+
+  expect(() => host.uninstall('B')).not.toThrow();
+  expect(host.isInstalled('B')).toBe(false);
 });
 
 test('依赖保护：卸载被 active 插件依赖的插件抛 PLUGIN_DEPENDENCY_ACTIVE', () => {

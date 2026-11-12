@@ -55,7 +55,7 @@ test('守卫识别副作用/动态 import、require、export-from 与父目录�
 
   const allowed = [
     "import { FormEngineError } from '@x-form-engine/types'",
-    "import type { PluginDefinition } from '@x-form-engine/types/plugin'",
+    "import type { PluginDefinition } from '@x-form-engine/types'",
     "import { resolvePluginOrder } from './dependency-resolver'",
   ];
   for (const line of allowed) {

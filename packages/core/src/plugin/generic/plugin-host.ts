@@ -1,5 +1,8 @@
 import { FormEngineError } from '@x-form-engine/types';
-import type { PluginLifecycleEvent } from '@x-form-engine/types';
+import type {
+  PluginDefinition,
+  PluginLifecycleEvent,
+} from '@x-form-engine/types';
 import { resolvePluginOrder } from './dependency-resolver';
 
 /**
@@ -13,11 +16,8 @@ export interface PluginResourceRegistry {
   unregister(name: string, source?: string): void;
 }
 
-/** 可被通用宿主安装的插件最小契约。 */
-export interface InstallablePlugin<C> {
-  name: string;
-  version: string;
-  dependencies?: string[];
+/** 可被通用宿主安装的插件最小契约（`name` / `version` / `dependencies` 复用 `PluginDefinition`）。 */
+export interface InstallablePlugin<C> extends PluginDefinition {
   install(context: C): void | (() => void); // 返回可选清理函数
   dispose?(context: C): void; // 可选显式 dispose
 }
@@ -144,7 +144,14 @@ export function createGenericPluginHost<P extends InstallablePlugin<C>, C>(
   const { resources } = options;
 
   const emit = (event: PluginLifecycleEvent): void => {
-    options.onEvent?.(event);
+    // 生命周期通知不得破坏宿主的异常隔离 / 事务保证：`onEvent` 由调用方
+    // 提供，其抛错不能中断 `disposeAll` 的拆卸循环或把已成功的 `install`
+    // 变成「看起来失败」的半安装态。
+    try {
+      options.onEvent?.(event);
+    } catch {
+      // 通知失败静默忽略。
+    }
   };
 
   /**

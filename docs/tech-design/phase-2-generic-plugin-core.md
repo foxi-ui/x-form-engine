@@ -144,7 +144,7 @@ $ pnpm test:run
 2. **卸载后重装语义未定**：当前 `installedNames` 永久保留，卸载后同名插件不可重装（与迁移前一致）。是否允许「卸载后重装」留待 Phase 4 结合 Designer 热插拔场景裁定。
 3. **惰性宿主创建**：`createPluginManager` 在首次调用时才创建宿主（为规避 `engine.registry` 的字段初始化时序）。若未来改为立即创建，需调整 `Engine` 构造顺序并补回归测试。
 4. **Generic Host 未从包入口导出**：`createGenericPluginHost` / `InstallablePlugin` / `PluginResourceRegistry` 目前是 `core` 内部模块。Phase 4 若在独立包中复用，需要决定「导出 core 子路径」还是「下沉到独立包」，不得跨包引用 `src` 内部路径。
-5. **依赖边界守卫的剩余限制**：守卫已覆盖静态 import / export-from / 副作用 import / 动态 `import()` / `require()`，并用 `path.resolve` 与 `^@x-form-engine/types($|/)` 收紧白名单；但按任务书范围仍只扫描 `.ts`，不扫描 `.tsx` 生产文件（当前 `generic/` 无 `.tsx`，新增时需同步扩展）。另有独立问题：`packages/adapters/src/__tests__/no-ui-deps.test.ts` 的既有守卫会递归进 `node_modules` 符号链接、扫到其它 workspace 包源码，本 Phase 未修改，建议后续在包级守卫中统一排除 `node_modules`。
+5. **依赖边界守卫的剩余限制**：守卫已覆盖静态 import / export-from / 副作用 import / 动态 `import()` / `require()`，并用 `path.resolve` 与 `^@x-form-engine/types($|/)` 收紧白名单；但按任务书范围仍只扫描 `.ts`，不扫描 `.tsx` 生产文件（当前 `generic/` 无 `.tsx`，新增时需同步扩展）。关于 `packages/adapters` / `packages/services` 既有的 `no-ui-deps` 守卫：已核查，无影响 —— 二者只在各自包目录内扫描（`resolve(__dirname, '../..')`），且正则仅精确匹配 `from 'antd'` 等说明符；本 Phase 的 core 守卫测试中 `import 'antd/dist/reset.css'` 只是测试文件内的字符串字面量（非生产源码、非 `from` 形式），不会被其命中。
 
 ---
 
