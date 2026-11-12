@@ -210,7 +210,10 @@ export interface MaterialRegistry extends DesignerRegistry<DesignerMaterialDefin
   getDiagnostics(): SchemaDiagnostic[];
 }
 
-export interface SetterRegistry extends DesignerRegistry<SetterDefinition> {}
+export interface SetterRegistry extends DesignerRegistry<SetterDefinition> {
+  /** 解析 `SetterBinding`：未注册 / 校验失败必须可诊断（C5），不静默丢弃。 */
+  resolve(binding: SetterBinding): SetterResolveResult;
+}
 
 export interface PanelDefinition {
   name: string;

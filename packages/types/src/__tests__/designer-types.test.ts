@@ -190,3 +190,9 @@ test('MaterialCreateContext / DesignerComponentProps 可扩展且 UI 无关', ()
 test('MaterialRegistry 提供注册诊断读取入口（C5/C10）', () => {
   expectTypeOf<MaterialRegistry['getDiagnostics']>().toEqualTypeOf<() => SchemaDiagnostic[]>();
 });
+
+test('SetterRegistry.resolve 解析 SetterBinding 返回 SetterResolveResult（C5）', () => {
+  expectTypeOf<SetterRegistry['resolve']>().toEqualTypeOf<
+    (binding: SetterBinding) => SetterResolveResult
+  >();
+});
