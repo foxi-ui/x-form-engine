@@ -20,6 +20,16 @@
 
 - [`tech-design/form-engine-architecture-design.md`](tech-design/form-engine-architecture-design.md) — 架构基线：目标、分层、monorepo 布局、领域模型、适配器、错误处理。
 
+### Form Engine V2 架构（已订正，待实施）
+
+| 文档 | 角色 | 状态 |
+|---|---|---|
+| [`architecture/01-form-engine-v2.md`](architecture/01-form-engine-v2.md) | V2 完整架构设计方案（**决策依据**） | 已订正（V2.1），待实施 |
+| [`architecture/02-form-engine-v2-task.md`](architecture/02-form-engine-v2-task.md) | V2 Claude Code 工程改造任务书（**执行依据**，Phase 0–9） | 已订正，待实施 |
+| [`architecture/03-form-engine-v2-review.md`](architecture/03-form-engine-v2-review.md) | V2 架构文档审核报告（C1–C9 事实核查） | 只读归档 |
+
+> V2 架构**尚未实施**：`01` 是架构决策依据，`02` 是执行依据，二者均为**规划**，不代表当前代码已实现。设计器当前实现仍以 `packages/designer`（Designable 1.x 适配，M2）为准，V2 落地后再切换权威。
+
 ### 业务接入指南
 
 - [`guide/README.md`](guide/README.md) — 面向业务开发者的渐进式接入手册：从渲染第一张表单到提交 Value / Snapshot，再到移动端渲染（第 1–4、6 章已完成，其余占位）。

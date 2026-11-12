@@ -19,6 +19,9 @@ Documentation is written in Simplified Chinese with Mermaid diagrams; match that
 - `docs/tech-design/pending-confirmations.md` — 13 backend/business/security questions to close before backend integration.
 - `docs/tech-design/02-specs/` — topic specs `01`–`10`. Each carries a status stamp (`implemented` / `proposed` / superseded) and a `落地对照` pointer to the owning `packages/*` source.
 - `docs/tech-design/verification/` + `adr/` — read-only facts and decisions.
+- `docs/architecture/01-form-engine-v2.md` — Form Engine V2 完整架构设计方案（**已订正、待实施**；C1–C13 决策依据）。
+- `docs/architecture/02-form-engine-v2-task.md` — Form Engine V2 Claude Code 工程改造任务书（V2 执行依据，Phase 0–9）。
+- `docs/architecture/03-form-engine-v2-review.md` — V2 架构文档审核报告（C1–C9 事实核查结论，只读归档）。
 
 Recommended order: freeze `01` + `02` (public contracts) → implement `03` + `04` (registry/plugin + Formily adapter kernel) → parallelize `05`–`07` → review `08`/`09` against real business components and backend storage.
 
@@ -64,6 +67,54 @@ These recur across the specs and are the easiest things to violate during implem
 7. **Public API stability**: `types` must stay free of React/Formily/Designable/UI dependencies; `unknown` over `any`; never leak Formily internal types across all public packages.
 8. **`submit()` is transport-free** and `getFormilyForm()` (if exposed at all) is a version-coupled escape hatch, not a normal business API.
 9. **Docs must not drift from code.** When a PR lands a protocol/interface, it must set the owning spec's status stamp to `implemented` and add the `落地对照` pointer to the source; `packages/types` (and other implemented packages) are the single authority, so specs must not re-copy type definitions. Process artifacts (spikes, plans) stay out of `docs/tech-design/`.
+
+## Form Engine V2 (Designer framework) — 已确认约束
+
+V2 架构（Designer Core + Designable Adapter + Generic Plugin Core）尚待实施，但以下约束已确认，后续编码不得违反。详细依据见 `docs/architecture/01-form-engine-v2.md` 与 `docs/architecture/02-form-engine-v2-task.md`。
+
+### 架构事实约束
+
+- `FormSchemaDocument` 已存在于 `packages/types/src/schema.ts`，修改前先检查现有定义，禁止重定义；设计器元数据只在现有类型上做 `designerMetadata?` 兼容扩展。
+- `ComponentBinding` 是现有 Runtime 组件绑定核心（`packages/types/src/component.ts`）。
+- `createDesignerMaterials` 是 Designable 适配派生工具（`packages/designer/src/materials.ts:115`），不是 MaterialRegistry；当前对缺 `implementations.pc` 的 binding **静默跳过**（`materials.ts:127-130`）。
+- 当前 Parser / Validator 等能力分散在 `core/schema/{parser,validator}.ts` + `formily/component-map.ts`，无统一 SchemaCompiler。
+- Snapshot：`createCandidateSnapshot` 已实现；`restoreSnapshot` 仅类型声明（`component.ts:44`）；Canonical Snapshot 后端协作未落地。类型存在 ≠ 完整 Restore 闭环完成。
+
+### Designer 依赖约束
+
+- Designer Core 不得依赖 Designable。
+- Designer Core 不得依赖 antd / antd-mobile。
+- Designer Core 不得依赖 Runtime Renderer / FormEngine。
+- Designable 只能通过 Adapter 接入。
+- Designer 插件不得暴露或依赖 Designable TreeNode。
+- SchemaEditor 只操作 Schema Document。
+
+### Plugin 约束
+
+- Generic Plugin Core 不依赖 Runtime / Designer 业务上下文，是独立前置任务（Phase 2）。
+- Runtime / Designer 各自提供 Plugin Host。
+- 插件注册资源必须归属插件。
+- 插件卸载必须处理依赖保护和资源清理（单插件 `uninstall(name)`）。
+- 不得直接复制 Runtime Plugin Manager 实现为 Designer Plugin Manager。
+
+### Schema 一致性约束
+
+- 每个普通 Material 必须声明 Runtime Target（`component` / `schema-container` / `designer-only`）。
+- Schema 导出必须检查 Material Target。
+- Runtime 解析必须检查组件是否可用。
+- 缺失组件、平台实现或 Setter 时必须产生诊断。
+- 禁止静默跳过不支持的节点。
+- `designer-only` 节点不能直接进入最终 Runtime Schema。
+
+### 工程执行约束
+
+- 先审计再修改。
+- 先逻辑分层再拆 Package。
+- 不创建空壳 Package。
+- 不擅自升级依赖。
+- 不将规划能力标记为已实现。
+- 每个 Phase 必须有测试和验收报告。
+- 先完成 Generic Plugin Core 前置任务（Phase 2），再让 Designer Core（Phase 4）依赖它。
 
 ## Implementation milestones (from the docs)
 
