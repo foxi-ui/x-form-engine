@@ -38,3 +38,14 @@ test('validateEngineSchema 对非字符串 engineSchemaVersion 报错', () => {
   expect(r.valid).toBe(false);
   expect(r.errors.some((e) => e.includes('unsupported engineSchemaVersion'))).toBe(true);
 });
+
+test('parseSchemaDocument 保留 designerMetadata（C1 端到端，不静默丢弃）', () => {
+  const doc = parseSchemaDocument({
+    schemaId: 's1',
+    version: 1,
+    engineSchemaVersion: '1.0.0',
+    schema: { type: 'object' },
+    designerMetadata: { version: '1.0.0', layout: { x: 1 } },
+  });
+  expect(doc.designerMetadata).toEqual({ version: '1.0.0', layout: { x: 1 } });
+});

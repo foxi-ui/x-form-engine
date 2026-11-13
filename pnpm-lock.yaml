@@ -314,6 +314,9 @@ importers:
       '@x-form-engine/core':
         specifier: workspace:*
         version: link:../core
+      '@x-form-engine/designer-designable':
+        specifier: workspace:*
+        version: link:../designer-designable
       '@x-form-engine/formily':
         specifier: workspace:*
         version: link:../formily
@@ -427,6 +430,9 @@ importers:
       '@x-form-engine/components':
         specifier: workspace:*
         version: link:../components
+      '@x-form-engine/core':
+        specifier: workspace:*
+        version: link:../core
       '@x-form-engine/designer-core':
         specifier: workspace:*
         version: link:../designer-core

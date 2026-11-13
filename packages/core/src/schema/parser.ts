@@ -1,5 +1,5 @@
 import { FormEngineError } from '@x-form-engine/types';
-import type { FormSchemaDocument } from '@x-form-engine/types';
+import type { DesignerMetadata, FormSchemaDocument } from '@x-form-engine/types';
 import { isPlainObject } from './internal';
 
 /**
@@ -43,6 +43,9 @@ export function parseSchemaDocument(input: unknown): FormSchemaDocument {
   }
   if (typeof input.updatedAt === 'string') {
     doc.updatedAt = input.updatedAt;
+  }
+  if (isPlainObject(input.designerMetadata)) {
+    doc.designerMetadata = input.designerMetadata as DesignerMetadata;
   }
 
   return doc;

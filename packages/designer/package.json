@@ -50,6 +50,7 @@
     "@formily/shared": "2.3.7",
     "@x-form-engine/components": "workspace:*",
     "@x-form-engine/core": "workspace:*",
+    "@x-form-engine/designer-designable": "workspace:*",
     "@x-form-engine/formily": "workspace:*",
     "@x-form-engine/types": "workspace:*",
     "antd": "4.22.8",
