@@ -10,7 +10,7 @@ function base(name: string) {
       version: '1.0.0',
       meta: { title: name, category: 'basic' },
       capabilities: { editable: true, readonly: true, mobile: false },
-      schema: { type: 'object' },
+      schema: { type: 'object' as const },
     },
   };
 }
