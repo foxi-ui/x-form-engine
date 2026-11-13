@@ -1,0 +1,46 @@
+{
+  "name": "designer-consumer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "外部项目消费验证（Task 9.4）：不引用仓库源码路径，仅通过 pnpm pack 产物消费公开 API。",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@x-form-engine/components": "file:.packs/x-form-engine-components-0.0.1-beta.1.tgz",
+    "@x-form-engine/core": "file:.packs/x-form-engine-core-0.0.1-beta.1.tgz",
+    "@x-form-engine/designer-core": "file:.packs/x-form-engine-designer-core-0.0.1-beta.1.tgz",
+    "@x-form-engine/designer-designable": "file:.packs/x-form-engine-designer-designable-0.0.1-beta.1.tgz",
+    "@x-form-engine/materials-basic": "file:.packs/x-form-engine-materials-basic-0.0.1-beta.1.tgz",
+    "@x-form-engine/plugins-advanced": "file:.packs/x-form-engine-plugins-advanced-0.0.1-beta.1.tgz",
+    "@x-form-engine/plugins-basic": "file:.packs/x-form-engine-plugins-basic-0.0.1-beta.1.tgz",
+    "@x-form-engine/setters-advanced": "file:.packs/x-form-engine-setters-advanced-0.0.1-beta.1.tgz",
+    "@x-form-engine/setters-basic": "file:.packs/x-form-engine-setters-basic-0.0.1-beta.1.tgz",
+    "@x-form-engine/types": "file:.packs/x-form-engine-types-0.0.1-beta.1.tgz"
+  },
+  "devDependencies": {
+    "@types/react": "17.0.0",
+    "@types/react-dom": "17.0.0",
+    "jsdom": "26.1.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "typescript": "5.9.3",
+    "vitest": "3.2.7"
+  },
+  "pnpm": {
+    "overrides": {
+      "@x-form-engine/components": "file:.packs/x-form-engine-components-0.0.1-beta.1.tgz",
+      "@x-form-engine/core": "file:.packs/x-form-engine-core-0.0.1-beta.1.tgz",
+      "@x-form-engine/designer-core": "file:.packs/x-form-engine-designer-core-0.0.1-beta.1.tgz",
+      "@x-form-engine/designer-designable": "file:.packs/x-form-engine-designer-designable-0.0.1-beta.1.tgz",
+      "@x-form-engine/materials-basic": "file:.packs/x-form-engine-materials-basic-0.0.1-beta.1.tgz",
+      "@x-form-engine/plugins-advanced": "file:.packs/x-form-engine-plugins-advanced-0.0.1-beta.1.tgz",
+      "@x-form-engine/plugins-basic": "file:.packs/x-form-engine-plugins-basic-0.0.1-beta.1.tgz",
+      "@x-form-engine/setters-advanced": "file:.packs/x-form-engine-setters-advanced-0.0.1-beta.1.tgz",
+      "@x-form-engine/setters-basic": "file:.packs/x-form-engine-setters-basic-0.0.1-beta.1.tgz",
+      "@x-form-engine/types": "file:.packs/x-form-engine-types-0.0.1-beta.1.tgz"
+    }
+  }
+}

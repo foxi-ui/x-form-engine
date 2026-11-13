@@ -8,6 +8,7 @@
     "test": "vitest",
     "test:run": "vitest run",
     "typecheck": "pnpm -r typecheck",
+    "check:boundaries": "node scripts/check-dependency-boundaries.mjs",
     "build": "pnpm --filter './packages/*' build",
     "changeset": "changeset",
     "version-packages": "changeset version",

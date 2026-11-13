@@ -19,6 +19,7 @@
     "@x-form-engine/components": "workspace:*",
     "@x-form-engine/core": "workspace:*",
     "@x-form-engine/designer": "workspace:*",
+    "@x-form-engine/designer-designable": "workspace:*",
     "@x-form-engine/formily": "workspace:*",
     "antd": "4.22.8",
     "react": "17.0.2",

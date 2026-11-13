@@ -1,0 +1,4 @@
+node_modules/
+.packs/
+*.tgz
+pnpm-lock.yaml

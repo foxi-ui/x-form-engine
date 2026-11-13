@@ -84,4 +84,23 @@ describe('schema-adapter（Task 5.4）', () => {
     (doc as any).engineSchemaVersion = '0.0.0';
     expect(() => schemaDocumentToTree(doc)).toThrow(/engineSchemaVersion/);
   });
+
+  test('S1：提供组件/装饰器注册表时，引用已注册组件可正常导出', () => {
+    const doc = treeToSchemaDocument(inputTree(), {
+      schemaId: 's1',
+      components: new Set(['Input']),
+      decorators: new Set(['FormItem']),
+    });
+    expect(doc.schemaId).toBe('s1');
+  });
+
+  test('S1：引用未注册组件时导出被拒绝（不静默失配）', () => {
+    expect(() =>
+      treeToSchemaDocument(inputTree(), {
+        schemaId: 's1',
+        components: new Set(['Select']),
+        decorators: new Set(['FormItem']),
+      })
+    ).toThrow(/未注册的组件/);
+  });
 });

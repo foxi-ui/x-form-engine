@@ -20,15 +20,17 @@
 
 - [`tech-design/form-engine-architecture-design.md`](tech-design/form-engine-architecture-design.md) — 架构基线：目标、分层、monorepo 布局、领域模型、适配器、错误处理。
 
-### Form Engine V2 架构（已订正，待实施）
+### Form Engine V2 架构（已实施 Phase 0–9）
 
 | 文档 | 角色 | 状态 |
 |---|---|---|
-| [`architecture/01-form-engine-v2.md`](architecture/01-form-engine-v2.md) | V2 完整架构设计方案（**决策依据**） | 已订正（V2.1），待实施 |
-| [`architecture/02-form-engine-v2-task.md`](architecture/02-form-engine-v2-task.md) | V2 Claude Code 工程改造任务书（**执行依据**，Phase 0–9） | 已订正，待实施 |
+| [`architecture/01-form-engine-v2.md`](architecture/01-form-engine-v2.md) | V2 完整架构设计方案（**决策依据**，C1–C13） | 已订正 |
+| [`architecture/02-form-engine-v2-task.md`](architecture/02-form-engine-v2-task.md) | V2 Claude Code 工程改造任务书（**执行依据**，Phase 0–9） | 已实施（Phase 0–9） |
 | [`architecture/03-form-engine-v2-review.md`](architecture/03-form-engine-v2-review.md) | V2 架构文档审核报告（C1–C9 事实核查） | 只读归档 |
+| [`architecture/04-form-engine-v2-review-2.md`](architecture/04-form-engine-v2-review-2.md) | V2 二次审核报告（第一性原理，S1–S6） | 只读归档（S1 已落地） |
+| [`tech-design/phase-{1..9}-*.md`](tech-design/phase-1-types-protocol.md) | V2 各 Phase 完成报告（验收依据） | 已归档 |
 
-> V2 架构**尚未实施**：`01` 是架构决策依据，`02` 是执行依据，二者均为**规划**，不代表当前代码已实现。设计器当前实现仍以 `packages/designer`（Designable 1.x 适配，M2）为准，V2 落地后再切换权威。
+> V2 架构**已按 Phase 0–9 实施**：`designer-core`（headless）+ `designer-designable`（Designable Adapter）为权威新栈，`materials-basic`/`setters-basic`/`plugins-basic`/`setters-advanced`/`plugins-advanced` 为基础/高级扩展；`packages/designer` 是 `@deprecated` 兼容 Facade。外部消费验证见 `examples/designer-consumer`。
 
 ### 业务接入指南
 
@@ -45,7 +47,7 @@
 | [`04-formily-adapter.md`](tech-design/02-specs/04-formily-adapter.md) | Formily 2.x 适配 | 已实现（见 `packages/formily`） |
 | [`05-renderer-sdk.md`](tech-design/02-specs/05-renderer-sdk.md) | Renderer、实例 API、SDK | 已实现（PC + Mobile + Readonly） |
 | [`06-runtime-context.md`](tech-design/02-specs/06-runtime-context.md) | Context、Scope、事件、服务注入 | 已实现 |
-| [`07-designer-adapter.md`](tech-design/02-specs/07-designer-adapter.md) | Designable 1.x 适配 | 已实现（见 `packages/designer`） |
+| [`07-designer-adapter.md`](tech-design/02-specs/07-designer-adapter.md) | Designable 1.x 适配 | 已实现（见 `packages/designer-designable`；`packages/designer` 为兼容 Facade） |
 | [`08-readonly-renderer.md`](tech-design/02-specs/08-readonly-renderer.md) | 只读渲染器与 Formatter | 已实现 |
 | [`09-value-snapshot.md`](tech-design/02-specs/09-value-snapshot.md) | Value、Snapshot、历史回显协议 | 已实现（权威见 `packages/types/value.ts`） |
 | [`10-testing-and-roadmap.md`](tech-design/02-specs/10-testing-and-roadmap.md) | 测试、验收、研发计划 | 里程碑已迁至 `mvp-roadmap.md` |

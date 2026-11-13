@@ -6,7 +6,7 @@ Guidance for coding agents working in this repository.
 
 ## Repository state
 
-This repo is an implemented pnpm monorepo (React + TypeScript + Formily 2.3). M1 is complete — the engine kernel, PC renderer, and base components across six packages (`types`, `core`, `formily`, `renderer`, `components`, `sdk`) plus `apps/playground`. M2's **Designer closed loop** is also complete — `packages/designer` (Designable 1.x adapter: materials, schema round-trip/import-export, bootstrap, preview, OptionsSetter) plus the `apps/designer-demo` full Workbench. M3's **Value / Snapshot / Readonly 闭环** is complete — `packages/adapters` (Value 规范化 + Candidate Snapshot 生成), `packages/services` (权限解析 / Formatter / i18n / 静态数据源), the independent Readonly renderer (`ReadonlyRenderer`), and schema/snapshot 有序迁移注册表 in `core`. M4's **Mobile renderer** is also complete — the `@x-form-engine/components/mobile` entry, seven P0 antd-mobile components + FormItem, per-field PC fallback diagnostics, and the `apps/mobile-demo` acceptance app. Use `pnpm test:run` for the full Vitest suite, `pnpm -r typecheck` for all packages, and `pnpm --filter playground dev|build` / `pnpm --filter designer-demo dev|build` / `pnpm --filter mobile-demo dev|build` for the demo apps. Still remaining: asynchronous plugins, backend Canonical Snapshot integration, Devtools/diagnostics, E2E/compatibility/performance testing, and release/version governance.
+This repo is an implemented pnpm monorepo (React + TypeScript + Formily 2.3). M1 is complete — the engine kernel, PC renderer, and base components across six packages (`types`, `core`, `formily`, `renderer`, `components`, `sdk`) plus `apps/playground`. M2's **Designer closed loop** is complete — `packages/designer` (Designable 1.x adapter) plus the `apps/designer-demo` full Workbench. M3's **Value / Snapshot / Readonly 闭环** is complete — `packages/adapters`, `packages/services`, the independent Readonly renderer (`ReadonlyRenderer`), and schema/snapshot 有序迁移注册表 in `core`. M4's **Mobile renderer** is complete — the `@x-form-engine/components/mobile` entry, seven P0 antd-mobile components + FormItem, per-field PC fallback diagnostics, and `apps/mobile-demo`. The **Form Engine V2 Designer framework (Phase 0–9)** is also complete — `designer-core` (headless Designer Core), `designer-designable` (Designable Adapter), Generic Plugin Core in `core/plugin/generic`, plus the `materials-basic`/`setters-basic`/`plugins-basic`/`setters-advanced`/`plugins-advanced` extension packages and the external consumer demo `examples/designer-consumer`; `packages/designer` is now a `@deprecated` compat facade. Use `pnpm test:run` for the full Vitest suite, `pnpm -r typecheck` for all packages, `pnpm check:boundaries` for the dependency-boundary gate, and `pnpm --filter playground dev|build` / `pnpm --filter designer-demo dev|build` / `pnpm --filter mobile-demo dev|build` for the demo apps. Still remaining: asynchronous plugins, backend Canonical Snapshot integration, Devtools/diagnostics, E2E/compatibility/performance testing, and release/version governance.
 
 Documentation is written in Simplified Chinese with Mermaid diagrams; match that style when editing or adding docs.
 
@@ -19,9 +19,11 @@ Documentation is written in Simplified Chinese with Mermaid diagrams; match that
 - `docs/tech-design/pending-confirmations.md` — 13 backend/business/security questions to close before backend integration.
 - `docs/tech-design/02-specs/` — topic specs `01`–`10`. Each carries a status stamp (`implemented` / `proposed` / superseded) and a `落地对照` pointer to the owning `packages/*` source.
 - `docs/tech-design/verification/` + `adr/` — read-only facts and decisions.
-- `docs/architecture/01-form-engine-v2.md` — Form Engine V2 完整架构设计方案（**已订正、待实施**；C1–C13 决策依据）。
-- `docs/architecture/02-form-engine-v2-task.md` — Form Engine V2 Claude Code 工程改造任务书（V2 执行依据，Phase 0–9）。
+- `docs/architecture/01-form-engine-v2.md` — Form Engine V2 完整架构设计方案（**已订正**；C1–C13 决策依据）。
+- `docs/architecture/02-form-engine-v2-task.md` — Form Engine V2 Claude Code 工程改造任务书（V2 执行依据，Phase 0–9，**已实施**）。
 - `docs/architecture/03-form-engine-v2-review.md` — V2 架构文档审核报告（C1–C9 事实核查结论，只读归档）。
+- `docs/architecture/04-form-engine-v2-review-2.md` — V2 二次审核报告（第一性原理；S1–S6 发现，只读归档，S1 已落地）。
+- `docs/tech-design/phase-{1..9}-*.md` — V2 各 Phase 完成报告（验收依据）。
 
 Recommended order: freeze `01` + `02` (public contracts) → implement `03` + `04` (registry/plugin + Formily adapter kernel) → parallelize `05`–`07` → review `08`/`09` against real business components and backend storage.
 
@@ -37,14 +39,19 @@ pnpm workspace, split by responsibility. **Implemented** (M1–M4): `types`, `co
 | `packages/core` | Registry, Plugin, Context, Scope, Events, Runtime, `x-engine` schema parser/validator | implemented |
 | `packages/formily` | Formily adapter (component/decorator map + SchemaField) | implemented |
 | `packages/renderer` | UI-agnostic render core, React entry, PC Renderer, Mobile renderer, Readonly Renderer | implemented (PC + Mobile + Readonly) |
-| `packages/designer` | Designable 1.x adapter — materials, schema round-trip, bootstrap, preview, setters | implemented |
+| `packages/designer` | Designable 1.x 适配（**legacy**）— 现为 `@deprecated` 兼容 Facade，Designable 耦合实现已迁 `designer-designable` | deprecated compat facade |
+| `packages/designer-core` | Headless Designer Core：Material/Setter/Panel/Command/Toolbar Registry + Designer Plugin Host + SchemaEditor + `createDesigner` | implemented |
+| `packages/designer-designable` | Designable Adapter：`createDesignableAdapter` + Material/Setter/Schema 转换 + `createDesignableEngine`/`createDesignableMaterials` | implemented |
+| `packages/materials-basic` | 基础物料（`basicMaterials`，ComponentBinding 派生） | implemented |
+| `packages/setters-basic` / `packages/setters-advanced` | 基础 7 Setter / 高级 ExpressionSetter | implemented |
+| `packages/plugins-basic` / `packages/plugins-advanced` | 基础 4 插件 / 表达式配置示例插件 | implemented |
 | `packages/components` | Shared component definitions + platform implementations (PC entry + `@x-form-engine/components/mobile` subpath + readonly) | implemented |
 | `packages/sdk` | Public consumer entry (`createFormEngine`, `FormEngineProvider`, `FormRenderer`, schema parse/validate) | implemented |
 | `packages/adapters` | Value 规范化 + Candidate Snapshot 生成 + 实体/字典参考适配器 | implemented |
 | `packages/services` | Permission 解析、Formatter、i18n、静态 Datasource | implemented |
 | `apps/` | playground (M1 demo), designer-demo (M2 demo), mobile-demo (M4 demo) | implemented |
 
-Dependency direction is one-way and must be preserved: `types` depends on nothing; `core/registry` does not depend on React; `renderer/core` does not depend on Ant Design; `designer` never depends on Renderer; `formily/adapter` does not depend on Designable. Business projects depend on the two public packages `@x-form-engine/sdk` and `@x-form-engine/components`, and must not depend on internal implementation packages such as `core`, `renderer`, or `formily`.
+Dependency direction is one-way and must be preserved: `types` depends on nothing; `core/registry` does not depend on React; `renderer/core` does not depend on Ant Design; `designer` never depends on Renderer; `formily/adapter` does not depend on Designable. **V2 Designer** additions: `designer-core` depends only on `types` + `core` (Generic Plugin Core), never on Designable / antd / Runtime Renderer / FormEngine (C13); `designer-designable` is the sole Designable-coupled package; advanced extensions depend only on public `types` / `designer-core` API, never on `core`/`renderer`/`components` internals. Enforce with `pnpm check:boundaries`. Business projects depend on the two public packages `@x-form-engine/sdk` and `@x-form-engine/components`, and must not depend on internal implementation packages such as `core`, `renderer`, or `formily`.
 
 Three data classes are deliberately kept separate — do not collapse them:
 
@@ -68,16 +75,16 @@ These recur across the specs and are the easiest things to violate during implem
 8. **`submit()` is transport-free** and `getFormilyForm()` (if exposed at all) is a version-coupled escape hatch, not a normal business API.
 9. **Docs must not drift from code.** When a PR lands a protocol/interface, it must set the owning spec's status stamp to `implemented` and add the `落地对照` pointer to the source; `packages/types` (and other implemented packages) are the single authority, so specs must not re-copy type definitions. Process artifacts (spikes, plans) stay out of `docs/tech-design/`.
 
-## Form Engine V2 (Designer framework) — 已确认约束
+## Form Engine V2 (Designer framework) — 已实施（Phase 0–9）
 
-V2 架构（Designer Core + Designable Adapter + Generic Plugin Core）尚待实施，但以下约束已确认，后续编码不得违反。详细依据见 `docs/architecture/01-form-engine-v2.md` 与 `docs/architecture/02-form-engine-v2-task.md`。
+V2 架构（Designer Core + Designable Adapter + Generic Plugin Core）已按 `docs/architecture/02-form-engine-v2-task.md` Phase 0–9 落地。以下约束已确认，后续编码不得违反。阶段验收见 `docs/tech-design/phase-{1..9}-*.md`；架构二次审核见 `docs/architecture/04-form-engine-v2-review-2.md`（S1–S6，其中 S1 导出一致性闸门已在 Phase 9 落地）。
 
 ### 架构事实约束
 
 - `FormSchemaDocument` 已存在于 `packages/types/src/schema.ts`，修改前先检查现有定义，禁止重定义；设计器元数据只在现有类型上做 `designerMetadata?` 兼容扩展。
 - `ComponentBinding` 是现有 Runtime 组件绑定核心（`packages/types/src/component.ts`）。
-- `createDesignerMaterials` 是 Designable 适配派生工具（`packages/designer/src/materials.ts:115`），不是 MaterialRegistry；当前对缺 `implementations.pc` 的 binding **静默跳过**（`materials.ts:127-130`）。
-- 当前 Parser / Validator 等能力分散在 `core/schema/{parser,validator}.ts` + `formily/component-map.ts`，无统一 SchemaCompiler。
+- `createDesignableMaterials`（ComponentBinding → Designable 物料，含富 propsSchema）已迁至 `packages/designer-designable/src/designable-materials.ts`；`createDesignableEngine` 在 `designer-designable/src/designable-engine.ts`；`packages/designer` 仅保留 `@deprecated` 兼容 Facade（Task 9.5）。
+- 一致性闸门在 `core/src/schema/consistency.ts`：`checkSchemaComponentRegistrations` / `checkMaterialRuntimeTarget` / `validateDesignerExport`（S1），已接进 `treeToSchemaDocument` 导出路径。
 - Snapshot：`createCandidateSnapshot` 已实现；`restoreSnapshot` 仅类型声明（`component.ts:44`）；Canonical Snapshot 后端协作未落地。类型存在 ≠ 完整 Restore 闭环完成。
 
 ### Designer 依赖约束
@@ -115,6 +122,8 @@ V2 架构（Designer Core + Designable Adapter + Generic Plugin Core）尚待实
 - 不将规划能力标记为已实现。
 - 每个 Phase 必须有测试和验收报告。
 - 先完成 Generic Plugin Core 前置任务（Phase 2），再让 Designer Core（Phase 4）依赖它。
+- 包 `exports`/`main`/`module`/`types` 指向 `dist`（Task 9.3）：改动源码后须先 `pnpm build` 再 `pnpm test:run` / `pnpm -r typecheck`，否则跑的是旧 `dist` 产物。
+- 外部消费验证见 `examples/designer-consumer`（独立 workspace，消费 `pnpm pack` 产物；`scripts/rewire-dist-exports.mjs` 负责 dist 出口重写）。
 
 ## Implementation milestones (from the docs)
 

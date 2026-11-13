@@ -20,8 +20,10 @@ import { FormItem, Input, Switch } from '@formily/antd';
 import { basicComponents, basicDecorators } from '@x-form-engine/components';
 import { createFormEngine } from '@x-form-engine/core';
 import {
-  createDesignerMaterials,
-  createEngineDesigner,
+  createDesignableEngine,
+  createDesignableMaterials,
+} from '@x-form-engine/designer-designable';
+import {
   DesignerPreview,
   exportSchemaDocument,
   importSchemaDocument,
@@ -40,8 +42,8 @@ const CompositePanelItem = CompositePanel.Item as FC<{
 const SCHEMA_ID = 'designer-demo';
 const STORAGE_KEY = 'x-form-engine:designer-demo:schema';
 
-const materials = createDesignerMaterials(basicComponents);
-const engine = createEngineDesigner(materials);
+const materials = createDesignableMaterials(basicComponents);
+const engine = createDesignableEngine(materials);
 const previewEngine = createFormEngine({
   components: basicComponents,
   decorators: basicDecorators,
@@ -153,13 +155,13 @@ export default function App() {
       <Workbench>
         <StudioPanel>
           <CompositePanel>
-            <CompositePanelItem title="组件" icon="ComponentSource">
+            <CompositePanelItem title="组件" icon="Component">
               <ResourceWidget title="组件" sources={Object.values(materials)} />
             </CompositePanelItem>
-            <CompositePanelItem title="组件树" icon="OutlineSource">
+            <CompositePanelItem title="组件树" icon="Outline">
               <OutlineTreeWidget />
             </CompositePanelItem>
-            <CompositePanelItem title="历史" icon="HistorySource">
+            <CompositePanelItem title="历史" icon="History">
               <HistoryWidget />
             </CompositePanelItem>
           </CompositePanel>

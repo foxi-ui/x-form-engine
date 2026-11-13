@@ -50,6 +50,35 @@ export function checkSchemaComponentRegistrations(
 }
 
 /**
+ * 设计器导出一致性闸门（S1）：组合 Schema→Runtime 组件注册校验与
+ * Material→Runtime target 校验。error 级诊断表示「画了、Runtime 渲染不出」的失配，
+ * 由导出路径调用方决定拒绝或降级。纯函数 + 依赖倒置，宿主为 `core`，不违反 C13。
+ */
+export interface DesignerExportCheckOptions {
+  components: ReadonlySet<string>;
+  decorators: ReadonlySet<string>;
+  /** 参与本次导出的物料（可选），逐一做 runtimeTarget 可映射校验。 */
+  materials?: DesignerMaterialDefinition[];
+}
+
+export function validateDesignerExport(
+  schema: unknown,
+  options: DesignerExportCheckOptions
+): SchemaDiagnostic[] {
+  const diagnostics = checkSchemaComponentRegistrations(
+    schema,
+    options.components,
+    options.decorators
+  );
+
+  for (const material of options.materials ?? []) {
+    diagnostics.push(...checkMaterialRuntimeTarget(material, options.components));
+  }
+
+  return diagnostics;
+}
+
+/**
  * Material Target 检查（Task 7.1）：校验 Material 的 `component` target 在 Runtime
  * 注册表中可映射。`designer-only` / `schema-container` 不参与组件注册校验；
  * 缺 `runtimeTarget` 的诊断由 MaterialRegistry 注册阶段负责（Phase 4）。

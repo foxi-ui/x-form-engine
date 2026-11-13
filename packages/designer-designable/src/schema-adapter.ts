@@ -1,9 +1,13 @@
 import { TreeNode } from '@designable/core';
 import { transformToSchema, transformToTreeNode } from '@designable/formily-transformer';
 import type { ISchema } from '@formily/json-schema';
-import { parseSchemaDocument, validateEngineSchema } from '@x-form-engine/core';
+import { parseSchemaDocument, validateDesignerExport, validateEngineSchema } from '@x-form-engine/core';
 import { ENGINE_SCHEMA_VERSION, FormEngineError } from '@x-form-engine/types';
-import type { DesignerMetadata, FormSchemaDocument } from '@x-form-engine/types';
+import type {
+  DesignerMaterialDefinition,
+  DesignerMetadata,
+  FormSchemaDocument,
+} from '@x-form-engine/types';
 
 export interface TreeToSchemaOptions {
   schemaId: string;
@@ -11,6 +15,16 @@ export interface TreeToSchemaOptions {
   previousVersion?: number;
   /** 设计器元数据（C1）：与 Runtime Schema 分离，随文档往返。 */
   designerMetadata?: DesignerMetadata;
+  /**
+   * Runtime 组件注册表（由 app 从 `engine.registry.components.list()` 派生）。
+   * 提供后，导出将经 `validateDesignerExport` 做一致性闸门（S1）：
+   * 引用未注册的组件/装饰器会产生 error 级诊断并拒绝导出。
+   */
+  components?: ReadonlySet<string>;
+  /** Runtime 装饰器注册表。 */
+  decorators?: ReadonlySet<string>;
+  /** 参与本次导出的物料，逐一做 runtimeTarget 可映射校验。 */
+  materials?: DesignerMaterialDefinition[];
 }
 
 /**
@@ -31,6 +45,22 @@ export function treeToSchemaDocument(
   const result = validateEngineSchema(schema);
   if (!result.valid) {
     throw new FormEngineError('SCHEMA_INVALID', result.errors.join('; '));
+  }
+
+  // S1：一致性闸门——引用未注册组件/装饰器、物料 runtimeTarget 失配时拒绝导出。
+  if (options.components || options.decorators || options.materials) {
+    const diagnostics = validateDesignerExport(schema, {
+      components: options.components ?? new Set<string>(),
+      decorators: options.decorators ?? new Set<string>(),
+      materials: options.materials,
+    });
+    const errors = diagnostics.filter((d) => d.severity === 'error');
+    if (errors.length > 0) {
+      throw new FormEngineError(
+        'SCHEMA_INVALID',
+        errors.map((d) => d.message).join('; ')
+      );
+    }
   }
 
   const doc: FormSchemaDocument = {

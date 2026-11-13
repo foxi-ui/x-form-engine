@@ -59,6 +59,9 @@ importers:
       '@x-form-engine/designer':
         specifier: workspace:*
         version: link:../../packages/designer
+      '@x-form-engine/designer-designable':
+        specifier: workspace:*
+        version: link:../../packages/designer-designable
       '@x-form-engine/formily':
         specifier: workspace:*
         version: link:../../packages/formily
