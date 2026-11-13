@@ -8,5 +8,6 @@ export * from './engine';
 export * from './schema/parser';
 export * from './schema/validator';
 export * from './schema/diagnostics';
+export * from './schema/consistency';
 export * from './migration/migration-registry';
 export * from './identity/field-identity';
