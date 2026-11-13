@@ -37,6 +37,7 @@
     "@formily/react": "2.3.7",
     "@formily/reactive": "2.3.7",
     "@x-form-engine/adapters": "workspace:*",
+    "@x-form-engine/core": "workspace:*",
     "@x-form-engine/formily": "workspace:*",
     "@x-form-engine/services": "workspace:*",
     "@x-form-engine/types": "workspace:*",
@@ -51,7 +52,6 @@
     "@types/react-dom": "17.0.0",
     "@types/testing-library__jest-dom": "5.14.9",
     "@x-form-engine/components": "workspace:*",
-    "@x-form-engine/core": "workspace:*",
     "jsdom": "26.1.0",
     "typescript": "5.9.3",
     "vitest": "3.2.7"

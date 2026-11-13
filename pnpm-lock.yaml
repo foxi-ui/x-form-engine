@@ -578,6 +578,9 @@ importers:
       '@x-form-engine/adapters':
         specifier: workspace:*
         version: link:../adapters
+      '@x-form-engine/core':
+        specifier: workspace:*
+        version: link:../core
       '@x-form-engine/formily':
         specifier: workspace:*
         version: link:../formily
@@ -615,9 +618,6 @@ importers:
       '@x-form-engine/components':
         specifier: workspace:*
         version: link:../components
-      '@x-form-engine/core':
-        specifier: workspace:*
-        version: link:../core
       jsdom:
         specifier: 26.1.0
         version: 26.1.0
