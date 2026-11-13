@@ -377,6 +377,103 @@ importers:
         specifier: 3.2.7
         version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)(less@4.9.1)
 
+  packages/designer-designable:
+    dependencies:
+      '@ant-design/icons':
+        specifier: 4.8.3
+        version: 4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@designable/core':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive@2.3.7)
+      '@designable/formily-antd':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/antd@2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3))(@formily/core@2.3.7)(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3))(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2))(@formily/reactive@2.3.7)(@formily/shared@2.3.7)(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)
+      '@designable/formily-setters':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/antd@2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3))(@formily/core@2.3.7)(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3))(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2))(@formily/reactive@2.3.7)(@formily/shared@2.3.7)(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)
+      '@designable/formily-transformer':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/core@2.3.7)(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive@2.3.7)
+      '@designable/react':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2))(@formily/reactive@2.3.7)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react@17.0.2)
+      '@designable/react-settings-form':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45(@formily/antd@2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3))(@formily/core@2.3.7)(@formily/json-schema@2.3.7(typescript@5.9.3))(@formily/path@2.3.7)(@formily/react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3))(@formily/reactive-react@2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2))(@formily/reactive@2.3.7)(@formily/shared@2.3.7)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@designable/shared':
+        specifier: 1.0.0-beta.45
+        version: 1.0.0-beta.45
+      '@formily/antd':
+        specifier: 2.3.7
+        version: 2.3.7(@ant-design/icons@4.8.3(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(@types/react-dom@17.0.0)(@types/react@17.0.0)(antd@4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2))(prop-types@15.8.1)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3)
+      '@formily/core':
+        specifier: 2.3.7
+        version: 2.3.7
+      '@formily/json-schema':
+        specifier: 2.3.7
+        version: 2.3.7(typescript@5.9.3)
+      '@formily/react':
+        specifier: 2.3.7
+        version: 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)(typescript@5.9.3)
+      '@formily/reactive':
+        specifier: 2.3.7
+        version: 2.3.7
+      '@formily/reactive-react':
+        specifier: 2.3.7
+        version: 2.3.7(@types/react-dom@17.0.0)(@types/react@17.0.0)(react-dom@17.0.2(react@17.0.2))(react-is@17.0.2)(react@17.0.2)
+      '@formily/shared':
+        specifier: 2.3.7
+        version: 2.3.7
+      '@x-form-engine/components':
+        specifier: workspace:*
+        version: link:../components
+      '@x-form-engine/designer-core':
+        specifier: workspace:*
+        version: link:../designer-core
+      '@x-form-engine/types':
+        specifier: workspace:*
+        version: link:../types
+      antd:
+        specifier: 4.22.8
+        version: 4.22.8(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      react:
+        specifier: 17.0.2
+        version: 17.0.2
+      react-dom:
+        specifier: 17.0.2
+        version: 17.0.2(react@17.0.2)
+      react-is:
+        specifier: 17.0.2
+        version: 17.0.2
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 5.16.5
+        version: 5.16.5
+      '@testing-library/react':
+        specifier: 12.1.5
+        version: 12.1.5(react-dom@17.0.2(react@17.0.2))(react@17.0.2)
+      '@types/react':
+        specifier: 17.0.0
+        version: 17.0.0
+      '@types/react-dom':
+        specifier: 17.0.0
+        version: 17.0.0
+      '@types/testing-library__jest-dom':
+        specifier: 5.14.9
+        version: 5.14.9
+      jsdom:
+        specifier: 26.1.0
+        version: 26.1.0
+      less:
+        specifier: 4.9.1
+        version: 4.9.1
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 3.2.7
+        version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)(less@4.9.1)
+
   packages/formily:
     dependencies:
       '@formily/core':
