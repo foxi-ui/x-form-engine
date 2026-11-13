@@ -551,6 +551,25 @@ importers:
         specifier: 3.2.7
         version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)(less@4.9.1)
 
+  packages/plugins-advanced:
+    dependencies:
+      '@x-form-engine/designer-core':
+        specifier: workspace:*
+        version: link:../designer-core
+      '@x-form-engine/setters-advanced':
+        specifier: workspace:*
+        version: link:../setters-advanced
+      '@x-form-engine/types':
+        specifier: workspace:*
+        version: link:../types
+    devDependencies:
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: 3.2.7
+        version: 3.2.7(@types/node@22.20.5)(jsdom@26.1.0)(less@4.9.1)
+
   packages/plugins-basic:
     dependencies:
       '@x-form-engine/designer-core':
